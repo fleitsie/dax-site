@@ -15,7 +15,7 @@ Static HTML/CSS/JS artist website for DAX J (techno DJ/producer). No build syste
 
 ## Design System
 
-**shows.html** uses a strict terminal/monospace aesthetic ():
+**shows.html** uses a strict terminal/monospace aesthetic:
 - Font: IBM Plex Mono only — weights 300, 400, 500. No display fonts.
 - Colors: `#000` background, `#fff` text, `#3fe1b1` cyan accent on hover
 - All text uppercase, dense, small (0.52–0.72rem)
