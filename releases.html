@@ -17,11 +17,13 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* soft vignette at edges */
+    /* vignette — offset to account for sidebar, vignette offset for sidebar */
     body::after {
       content: '';
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse at 50% 50%, transparent 28%, rgba(0,0,0,0.65) 100%);
+      position: fixed;
+      top: 0; bottom: 0;
+      left: 240px; right: 0;
+      background: radial-gradient(circle at center, transparent 0%, transparent 41%, #000 100%);
       pointer-events: none;
       z-index: 50;
     }
@@ -62,11 +64,11 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.55);
     }
 
-    /* subtle inner vignette on each image */
+    /* cinematic inner vignette on each image */
     .tile-inner::after {
       content: '';
       position: absolute; inset: 0;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
+      box-shadow: inset 0 0 70px rgba(0,0,0,0.6);
       pointer-events: none;
       z-index: 3;
     }
@@ -77,6 +79,7 @@
       pointer-events: none;
       user-select: none;
       -webkit-user-drag: none;
+      filter: saturate(0.7) contrast(1.15) brightness(0.95);
     }
 
     .tile-gloss {
@@ -200,8 +203,8 @@
     #modal-info {
       flex: 1; min-width: 0;
       opacity: 0;
-      transform: translateY(18px);
-      transition: opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s;
+      transform: translateY(40px);
+      transition: opacity 1.8s cubic-bezier(0.19, 1, 0.22, 1), transform 1.8s cubic-bezier(0.19, 1, 0.22, 1);
     }
 
     #modal-info.reveal {
@@ -227,22 +230,42 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.8);
       pointer-events: none;
       will-change: transform, top, left, width, height;
+      transform-style: preserve-3d;
+      backface-visibility: visible;
     }
 
     #flying-art img {
       width: 100%; height: 100%;
       object-fit: cover; display: block;
+      backface-visibility: visible;
     }
 
-    /* Tiles fade out when modal opening */
-    #scene.fading .tile { transition: opacity 0.35s ease; opacity: 0; }
-    .label.fading { transition: opacity 0.35s ease; opacity: 0 !important; }
-    #sidebar.fading { transition: opacity 0.35s ease; opacity: 0; }
+    /* Phase 1: Tiles lift up slightly (the "breathe in") */
+    .tile.lifting {
+      transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1) !important;
+    }
+    /* Phase 2: Tiles scatter outward with organic movement */
+    .tile.scattering {
+      transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1) !important;
+      opacity: 0 !important;
+    }
+    /* The clicked tile stays visible during scatter */
+    .tile.scatter-origin {
+      opacity: 1 !important;
+      z-index: 10;
+    }
+    .label.fading { transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1); opacity: 0 !important; }
+    #sidebar.fading { transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1); opacity: 0; }
 
-    /* Tiles fade back in when modal closing */
-    #scene.returning .tile { transition: opacity 0.35s ease 0.15s; opacity: 1; }
-    .label.returning { transition: opacity 0.35s ease 0.15s; }
-    #sidebar.returning { transition: opacity 0.35s ease 0.15s; }
+    /* Phase reverse: Tiles pop back into grid */
+    .tile.gathering {
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s cubic-bezier(0.19, 1, 0.22, 1) !important;
+      opacity: 1 !important;
+    }
+
+    /* Tiles return when modal closing */
+    .label.returning { transition: opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1) 0.15s; }
+    #sidebar.returning { transition: opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1) 0.15s; }
 
     #modal-title {
       font-size: 1.4rem; font-weight: 500;
@@ -304,14 +327,14 @@
 
     #modal-close {
       position: fixed; bottom: 3rem; left: 50%;
-      transform: translateX(-50%) translateY(12px);
+      transform: translateX(-50%) translateY(20px);
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.52rem; letter-spacing: 0.24em;
       text-transform: uppercase; color: rgba(255,255,255,0.5);
       background: none; border: 1px solid rgba(255,255,255,0.25);
       padding: 0.6rem 2.4rem; cursor: pointer; z-index: 210;
       opacity: 0;
-      transition: color 0.15s, border-color 0.15s, opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
+      transition: color 0.15s, border-color 0.15s, opacity 1.8s cubic-bezier(0.19, 1, 0.22, 1) 0.9s, transform 1.8s cubic-bezier(0.19, 1, 0.22, 1) 0.9s;
     }
 
     #modal-close.reveal {
@@ -1323,51 +1346,128 @@
         // ── Animated open ──
         var tileRect = clickedTileEl.getBoundingClientRect();
 
-        // Fade out tiles, sidebar, label
-        document.getElementById('scene').classList.add('fading');
+        // Pause layout so we can animate tile transforms via CSS
+        layoutPaused = true;
+
+        // Mark clicked tile so it stays visible during scatter
+        clickedTileEl.classList.add('scatter-origin');
+
+        // Calculate scatter directions: each tile moves away from clicked tile
+        var originCX = tileRect.left + tileRect.width / 2;
+        var originCY = tileRect.top + tileRect.height / 2;
+
+        var allTileEls = document.getElementById('scene').querySelectorAll('.tile');
+        // Pre-calculate scatter offsets for each tile
+        allTileEls.forEach(function(t) {
+          if (t === clickedTileEl) return;
+          var r = t.getBoundingClientRect();
+          var tcx = r.left + r.width / 2;
+          var tcy = r.top + r.height / 2;
+          var dx = tcx - originCX;
+          var dy = tcy - originCY;
+          var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          var push = 280 + dist * 0.5;
+          t._scatterTX = (dx / dist) * push;
+          t._scatterTY = (dy / dist) * push;
+        });
+
+        // Fade sidebar, label
         document.querySelector('.label').classList.add('fading');
         document.getElementById('sidebar').classList.add('fading');
 
-        // Create flying artwork
-        var flyer = document.createElement('div');
-        flyer.id = 'flying-art';
-        var flyImg = document.createElement('img');
-        flyImg.src = encodeURI(rel.art);
-        flyer.appendChild(flyImg);
+        // ── Phase 1: The beat — 1 second pause, tiles feel alive ──
+        // Slight lift upward (breathing in)
+        setTimeout(function() {
+          allTileEls.forEach(function(t) {
+            if (t === clickedTileEl) return;
+            t.classList.add('lifting');
+            var cur = t.style.transform || '';
+            t.style.transform = cur + ' translateY(-12px)';
+          });
+        }, 400);
 
-        // Start at tile position
-        flyer.style.top = tileRect.top + 'px';
-        flyer.style.left = tileRect.left + 'px';
-        flyer.style.width = tileRect.width + 'px';
-        flyer.style.height = tileRect.height + 'px';
-        document.body.appendChild(flyer);
+        // ── Phase 2: Scatter — tiles flurry away ──
+        setTimeout(function() {
+          allTileEls.forEach(function(t) {
+            if (t === clickedTileEl) return;
+            t.classList.remove('lifting');
+            t.classList.add('scattering');
+            var cur = t.style.transform || '';
+            // Remove the lift, replace with scatter + slight random rotation
+            var baseTransform = cur.replace(/ translateY\(-12px\)/, '');
+            var randomRot = (Math.random() - 0.5) * 25;
+            t.style.transform = baseTransform + ' translate(' + t._scatterTX + 'px,' + t._scatterTY + 'px) rotate(' + randomRot + 'deg)';
+          });
 
-        // Show overlay bg (but content hidden)
-        overlay.classList.add('open');
-        overlay.offsetHeight;
-        overlay.classList.add('visible');
-        modalOpen = true;
-
-        // Calculate where modal-art will be
-        requestAnimationFrame(function() {
-          var artEl = document.getElementById('modal-art');
-          var artRect = artEl.getBoundingClientRect();
-
-          // Animate flyer to modal-art position
-          flyer.style.transition = 'top 0.5s cubic-bezier(0.16, 1, 0.3, 1), left 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1), height 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-          flyer.style.top = artRect.top + 'px';
-          flyer.style.left = artRect.left + 'px';
-          flyer.style.width = artRect.width + 'px';
-          flyer.style.height = artRect.height + 'px';
-
-          // After flight lands, reveal modal content and remove flyer
+          // ── Phase 3: Spiral — cinematic slow-motion rotation ──
           setTimeout(function() {
-            artEl.classList.add('reveal');
-            document.getElementById('modal-info').classList.add('reveal');
-            document.getElementById('modal-close').classList.add('reveal');
-            if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
-          }, 480);
-        });
+            var flyer = document.createElement('div');
+            flyer.id = 'flying-art';
+            var flyImg = document.createElement('img');
+            flyImg.src = encodeURI(rel.art);
+            flyer.appendChild(flyImg);
+
+            // Start at tile position
+            var freshRect = clickedTileEl.getBoundingClientRect();
+            flyer.style.top = freshRect.top + 'px';
+            flyer.style.left = freshRect.left + 'px';
+            flyer.style.width = freshRect.width + 'px';
+            flyer.style.height = freshRect.height + 'px';
+            flyer.style.transform = 'perspective(1400px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)';
+            document.body.appendChild(flyer);
+
+            clickedTileEl.style.opacity = '0';
+
+            overlay.classList.add('open');
+            overlay.offsetHeight;
+            overlay.classList.add('visible');
+            modalOpen = true;
+
+            requestAnimationFrame(function() {
+              var artEl = document.getElementById('modal-art');
+              var artRect = artEl.getBoundingClientRect();
+
+              // Sassy lift — kicks up with attitude, tilts like it's looking over its shoulder
+              flyer.style.transition = 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+              var midX = (freshRect.left + artRect.left) * 0.5;
+              var midY = Math.min(freshRect.top, artRect.top) - 40;
+              flyer.style.top = midY + 'px';
+              flyer.style.left = midX + 'px';
+              flyer.style.width = (artRect.width * 0.65) + 'px';
+              flyer.style.height = (artRect.height * 0.65) + 'px';
+              flyer.style.transform = 'perspective(1400px) rotateY(45deg) rotateX(-8deg) rotateZ(-3deg)';
+
+              // Swagger across — confident glide, leans the other way
+              setTimeout(function() {
+                flyer.style.transition = 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+                flyer.style.top = (artRect.top + 10) + 'px';
+                flyer.style.left = artRect.left + 'px';
+                flyer.style.width = artRect.width + 'px';
+                flyer.style.height = artRect.height + 'px';
+                flyer.style.transform = 'perspective(1400px) rotateY(-12deg) rotateX(4deg) rotateZ(1.5deg)';
+
+                // Lands with a little head-tilt, then settles
+                setTimeout(function() {
+                  flyer.style.transition = 'transform 0.6s cubic-bezier(0.19, 1, 0.22, 1)';
+                  flyer.style.transform = 'perspective(1400px) rotateY(3deg) rotateX(-1deg) rotateZ(-0.3deg)';
+
+                  // Final exhale — perfectly flat
+                  setTimeout(function() {
+                    flyer.style.transition = 'transform 0.4s cubic-bezier(0.19, 1, 0.22, 1)';
+                    flyer.style.transform = 'perspective(1400px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)';
+
+                    setTimeout(function() {
+                      artEl.classList.add('reveal');
+                      document.getElementById('modal-info').classList.add('reveal');
+                      document.getElementById('modal-close').classList.add('reveal');
+                      if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+                    }, 300);
+                  }, 400);
+                }, 550);
+              }, 400);
+            });
+          }, 350); // delay after scatter starts before spiral begins
+        }, 900); // the scatter happens ~1s after click
 
       } else {
         // ── Instant open (from sidebar) ──
@@ -1391,61 +1491,141 @@
       document.getElementById('modal-close').classList.remove('reveal');
 
       if (lastClickedTile) {
-        // ── Animated close ──
-        var tileRect = lastClickedTile.getBoundingClientRect();
+        // ── Animated close: reverse the full sequence ──
         var artRect = artEl.getBoundingClientRect();
-
-        // Create flyer at modal-art position
-        var flyer = document.createElement('div');
-        flyer.id = 'flying-art';
-        var flyImg = document.createElement('img');
-        flyImg.src = document.getElementById('modal-art-img').src;
-        flyer.appendChild(flyImg);
-        flyer.style.top = artRect.top + 'px';
-        flyer.style.left = artRect.left + 'px';
-        flyer.style.width = artRect.width + 'px';
-        flyer.style.height = artRect.height + 'px';
-        document.body.appendChild(flyer);
-
-        // Hide modal art
-        artEl.classList.remove('reveal');
-
-        // Fade out overlay bg
-        overlay.classList.remove('visible');
-
-        // Bring tiles back
-        var sc = document.getElementById('scene');
         var lb = document.querySelector('.label');
         var sb = document.getElementById('sidebar');
-        sc.classList.remove('fading');
-        lb.classList.remove('fading');
-        sb.classList.remove('fading');
-        sc.classList.add('returning');
-        lb.classList.add('returning');
-        sb.classList.add('returning');
+        var allTiles = document.getElementById('scene').querySelectorAll('.tile');
+        var savedTile = lastClickedTile;
 
-        // Animate flyer back to tile
-        requestAnimationFrame(function() {
-          flyer.style.transition = 'top 0.45s cubic-bezier(0.16, 1, 0.3, 1), left 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1), height 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease 0.2s';
-          flyer.style.top = tileRect.top + 'px';
-          flyer.style.left = tileRect.left + 'px';
-          flyer.style.width = tileRect.width + 'px';
-          flyer.style.height = tileRect.height + 'px';
-          flyer.style.opacity = '0';
-        });
+        // Phase 1: Content fades down (reverse of fade-up)
+        // info + close button already have reveal removed above
 
+        // Phase 2: After content fades, reverse spiral back to tile
         setTimeout(function() {
-          overlay.classList.remove('open');
-          if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
-          sc.classList.remove('returning');
-          lb.classList.remove('returning');
-          sb.classList.remove('returning');
-        }, 500);
+          // Create flyer at modal-art position
+          var flyer = document.createElement('div');
+          flyer.id = 'flying-art';
+          var flyImg = document.createElement('img');
+          flyImg.src = document.getElementById('modal-art-img').src;
+          flyer.appendChild(flyImg);
+          flyer.style.top = artRect.top + 'px';
+          flyer.style.left = artRect.left + 'px';
+          flyer.style.width = artRect.width + 'px';
+          flyer.style.height = artRect.height + 'px';
+          flyer.style.transform = 'perspective(1400px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)';
+          document.body.appendChild(flyer);
+
+          // Hide modal art (flyer replaces it)
+          artEl.classList.remove('reveal');
+
+          // Fade out overlay bg
+          overlay.classList.remove('visible');
+
+          // Sync target with current scroll so there's no drift when we resume
+          targetX = scrollX;
+          targetY = scrollY;
+
+          // Force one layout pass to get tile positions (but keep layout paused)
+          requestAnimationFrame(function() {
+            layoutTiles();
+
+            var tileRect = savedTile.getBoundingClientRect();
+            var midX = (artRect.left + tileRect.left) * 0.5;
+            var midY = Math.min(artRect.top, tileRect.top) - 40;
+
+            // Reverse sass — kicks back with a lean
+            flyer.style.transition = 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+            flyer.style.transform = 'perspective(1400px) rotateY(-12deg) rotateX(4deg) rotateZ(1.5deg)';
+
+            // Swagger back — leans the other way, shrinks toward tile
+            setTimeout(function() {
+              flyer.style.transition = 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+              flyer.style.top = midY + 'px';
+              flyer.style.left = midX + 'px';
+              flyer.style.width = (tileRect.width * 1.5) + 'px';
+              flyer.style.height = (tileRect.height * 1.5) + 'px';
+              flyer.style.transform = 'perspective(1400px) rotateY(45deg) rotateX(-8deg) rotateZ(-3deg)';
+
+              // Tucks back into the grid
+              setTimeout(function() {
+                flyer.style.transition = 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
+                flyer.style.top = tileRect.top + 'px';
+                flyer.style.left = tileRect.left + 'px';
+                flyer.style.width = tileRect.width + 'px';
+                flyer.style.height = tileRect.height + 'px';
+                flyer.style.transform = 'perspective(1400px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)';
+              }, 550);
+            }, 400);
+
+            // Gather tiles back after the dance is done
+            setTimeout(function() {
+              // Remove flyer, show origin tile
+              if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+              savedTile.classList.remove('scatter-origin');
+              savedTile.style.opacity = '';
+
+              // Tiles are still in scattered positions with scattering class
+              // Keep layout paused — compute grid positions manually and transition
+
+              // Swap scattering for gathering
+              allTiles.forEach(function(t) {
+                if (t === savedTile) return;
+                t.classList.remove('scattering');
+                t.classList.add('gathering');
+              });
+
+              // Compute where each tile should be in the grid and set it
+              // (This is what layoutTiles does, replicated here for the transition)
+              requestAnimationFrame(function() {
+                var cxV = VW / 2, cyV = VH / 2;
+                for (var i = 0; i < tiles.length; i++) {
+                  var t = tiles[i];
+                  if (t.el === savedTile) continue;
+                  var sg = staggerFor(t.logR);
+                  var x = t.logC * STEP_X + sg - scrollX + offsetX;
+                  var y = t.logR * STEP_Y - scrollY + offsetY;
+                  // Match globe + depth from layoutTiles
+                  var tcx = x + SZ / 2, tcy = y + SZ / 2;
+                  var gdx = (tcx - cxV) / cxV, gdy = (tcy - cyV) / cyV;
+                  var gDist = Math.sqrt(gdx * gdx + gdy * gdy);
+                  var gFalloff = gDist * gDist * gDist * 0.2;
+                  var fScale = Math.max(0.4, tiles[i].depth * (1 - gFalloff * (1.5 - tiles[i].depth)));
+                  t.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + fScale.toFixed(4) + ')';
+                }
+
+                // After tiles gather back, clean up everything
+                setTimeout(function() {
+                  allTiles.forEach(function(t) {
+                    t.classList.remove('gathering');
+                    t.classList.remove('lifting');
+                  });
+
+                  // Resume normal layout loop
+                  layoutPaused = false;
+                  overlay.classList.remove('open');
+
+                  // Bring back sidebar, label
+                  lb.classList.remove('fading');
+                  sb.classList.remove('fading');
+                  lb.classList.add('returning');
+                  sb.classList.add('returning');
+
+                  setTimeout(function() {
+                    lb.classList.remove('returning');
+                    sb.classList.remove('returning');
+                  }, 500);
+                }, 750);
+              });
+            }, 1500); // after most of the spin is done
+          });
+        }, 500); // wait for content to fade out
 
       } else {
         // ── Instant close ──
         artEl.classList.remove('reveal');
         overlay.classList.remove('visible');
+        layoutPaused = false;
         setTimeout(function() { overlay.classList.remove('open'); }, 400);
       }
 
@@ -1454,7 +1634,7 @@
     }
 
     // ── Scroll-to-release from sidebar ──
-    function scrollToReleaseAndOpen(ri) {
+    function scrollToRelease(ri) {
       var targetSrc = encodeURI(RELEASES[ri].art);
       var N = SRCS.length;
 
@@ -1481,11 +1661,7 @@
         }
       }
 
-      if (bestDist === Infinity) {
-        // Fallback: open without animation
-        openModal(ri);
-        return;
-      }
+      if (bestDist === Infinity) return;
 
       // Calculate scroll position that centers this tile
       var sg = staggerFor(bestR);
@@ -1495,40 +1671,6 @@
       // Set scroll target — the lerp loop will chase it
       targetX = destX;
       targetY = destY;
-
-      // Wait for scroll to settle, then find the tile and open modal
-      var settled = 0;
-      function checkSettle() {
-        var dx = Math.abs(scrollX - targetX);
-        var dy = Math.abs(scrollY - targetY);
-        if (dx < 2 && dy < 2) {
-          settled++;
-          if (settled >= 2) {
-            // Find the tile element showing this release
-            var tileEl = null;
-            for (var i = 0; i < tiles.length; i++) {
-              if (tiles[i].curSrc === targetSrc) {
-                // Pick the one closest to center of viewport
-                var rect = tiles[i].el.getBoundingClientRect();
-                var cx = rect.left + rect.width / 2;
-                var cy = rect.top + rect.height / 2;
-                var screenCX = SIDEBAR_W + VW / 2;
-                var screenCY = VH / 2;
-                if (Math.abs(cx - screenCX) < STEP_X && Math.abs(cy - screenCY) < STEP_Y) {
-                  tileEl = tiles[i].el;
-                  break;
-                }
-              }
-            }
-            openModal(ri, tileEl);
-            return;
-          }
-        } else {
-          settled = 0;
-        }
-        requestAnimationFrame(checkSettle);
-      }
-      requestAnimationFrame(checkSettle);
     }
 
     // ── Sidebar rendering ──
@@ -1542,7 +1684,7 @@
         var title = document.createElement('div');
         title.className = 'sb-release-title';
         title.textContent = rel.artist + ' — ' + rel.title;
-        title.addEventListener('click', function() { scrollToReleaseAndOpen(ri); });
+        title.addEventListener('click', function() { scrollToRelease(ri); });
         div.appendChild(title);
 
         rel.tracks.forEach(function(trk, ti) {
@@ -1583,8 +1725,8 @@
     const SZ     = 338;   // image size (px, square)
     const H_GAP  = 130;   // horizontal gap between images
     const V_GAP  = 120;   // vertical gap between rows
-    const STEP_X = SZ + H_GAP;   // 390
-    const STEP_Y = SZ + V_GAP;   // 380
+    const STEP_X = SZ + H_GAP;
+    const STEP_Y = SZ + V_GAP;
 
     // Row stagger: alternate rows are offset by half a step
     // row mod 3: 0 → 0, 1 → STEP_X/2, 2 → STEP_X/4
@@ -1635,7 +1777,9 @@
         el.appendChild(inner);
         scene.appendChild(el);
 
-        tiles.push({ el, inner, img, gloss, logC: pc - 1, logR: pr - 1, curSrc: '' });
+        // Random depth per tile: dramatic range to test the effect
+        const depth = 0.5 + Math.random() * 0.6;
+        tiles.push({ el, inner, img, gloss, logC: pc - 1, logR: pr - 1, curSrc: '', depth });
 
         // Click vs drag detection
         (function(tile) {
@@ -1695,7 +1839,21 @@
           y -= periodY;
         }
 
-        t.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+        // Globe + depth: position-based scale amplified by per-tile depth
+        const centerX = VW / 2;
+        const centerY = VH / 2;
+        const tileCX = x + SZ / 2;
+        const tileCY = y + SZ / 2;
+        const dx = (tileCX - centerX) / centerX;
+        const dy = (tileCY - centerY) / centerY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Globe curve: how much to shrink based on distance from center
+        const globeFalloff = dist * dist * dist * 0.2;
+        // "Closer" tiles (high depth) resist the shrink, "far" tiles shrink more
+        const finalScale = Math.max(0.4, t.depth * (1 - globeFalloff * (1.5 - t.depth)));
+
+        t.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + finalScale.toFixed(4) + ')';
 
         // Swap image only when it changes (avoids flicker)
         const src = imgFor(t.logC, t.logR);
@@ -1723,10 +1881,14 @@
 
     function lerp(a, b, t) { return a + (b - a) * t; }
 
+    var layoutPaused = false;
+
     function rafLoop() {
-      scrollX += (targetX - scrollX) * STIFFNESS;
-      scrollY += (targetY - scrollY) * STIFFNESS;
-      layoutTiles();
+      if (!layoutPaused) {
+        scrollX += (targetX - scrollX) * STIFFNESS;
+        scrollY += (targetY - scrollY) * STIFFNESS;
+        layoutTiles();
+      }
       requestAnimationFrame(rafLoop);
     }
 
