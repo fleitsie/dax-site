@@ -128,10 +128,31 @@
     @media (max-width: 380px) {
       .shows-list { column-count: 1; }
     }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: 1.6rem;
+      padding: 1.2rem 2rem;
+      z-index: 300;
+      font-size: 0.52rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    nav a {
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: #fff; }
+    nav a.active { color: #fff; }
   </style>
 </head>
 <body>
-  <div class="page">
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="shows.html" class="active">Past Shows</a>
+    <a href="releases.html">MNNM BLK</a>
+  </nav>
+  <div class="page" style="padding-top: 4rem;">
     <p class="site-header">DAX J</p>
     <h1 class="page-title">SHOWS<span class="cursor"></span></h1>
     <div class="year-tabs" id="yearTabs"></div>

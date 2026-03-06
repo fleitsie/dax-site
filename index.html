@@ -4,10 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DAX J</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    body { margin: 0; background: #000; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: #000;
+      color: #fff;
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: 1.6rem;
+      padding: 1.2rem 2rem;
+      z-index: 300;
+      font-size: 0.52rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    nav a {
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: #fff; }
+    nav a.active { color: #fff; }
   </style>
 </head>
 <body>
+  <nav>
+    <a href="index.html" class="active">Home</a>
+    <a href="shows.html">Past Shows</a>
+    <a href="releases.html">MNNM BLK</a>
+  </nav>
 </body>
 </html>

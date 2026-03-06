@@ -87,12 +87,31 @@
       transition: opacity 0.06s linear;
     }
 
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: 1.6rem;
+      padding: 1.2rem 2rem;
+      z-index: 300;
+      font-size: 0.52rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.95);
+    }
+    nav a {
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: #fff; }
+    nav a.active { color: #fff; }
+
     /* ── Sidebar ── */
     #sidebar {
       position: fixed;
-      top: 0; left: 0;
+      top: 2.4rem; left: 0;
       width: 240px;
-      height: 100vh;
+      height: calc(100vh - 2.4rem);
       background: rgba(0,0,0,0.92);
       border-right: 1px solid rgba(255,255,255,0.06);
       z-index: 80;
@@ -299,6 +318,12 @@
   </style>
 </head>
 <body>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="shows.html">Past Shows</a>
+    <a href="releases.html" class="active">MNNM BLK</a>
+  </nav>
 
   <aside id="sidebar">
     <h2>Releases</h2>
