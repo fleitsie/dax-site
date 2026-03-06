@@ -49,6 +49,7 @@
     .tile {
       position: absolute;
       width: 0; height: 0; /* set by JS */
+      cursor: pointer;
     }
 
     /* inner receives 3D tilt */
@@ -595,6 +596,23 @@
         scene.appendChild(el);
 
         tiles.push({ el, inner, img, gloss, logC: pc - 1, logR: pr - 1, curSrc: '' });
+
+        // Click vs drag detection
+        (function(tile) {
+          var downX, downY;
+          tile.el.addEventListener('mousedown', function(e) {
+            downX = e.clientX;
+            downY = e.clientY;
+          });
+          tile.el.addEventListener('mouseup', function(e) {
+            var dx = e.clientX - downX;
+            var dy = e.clientY - downY;
+            if (Math.abs(dx) < 5 && Math.abs(dy) < 5) {
+              var rel = releaseForSrc(tile.curSrc);
+              if (rel) openModal(RELEASES.indexOf(rel));
+            }
+          });
+        })(tiles[tiles.length - 1]);
       }
     }
 
