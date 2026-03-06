@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAX J</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: #000;
+      width: 100%; height: 100vh;
+      overflow: hidden;
+    }
+    canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
+    .bloom { filter: blur(8px); opacity: 0.45; }
+    .bloom2 { filter: blur(28px); opacity: 0.25; }
+    .scanlines {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom, transparent 0px, transparent 2px,
+        rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px
+      );
+      pointer-events: none; z-index: 10;
+    }
+    .vignette {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.8) 100%);
+      pointer-events: none; z-index: 12;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bloom2" class="bloom2"></canvas>
+<canvas id="bloom1" class="bloom"></canvas>
+<canvas id="main"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<script>
+// #bbfc4f
+const GREEN = '187,252,79';
+const GREEN_DIM = '94,126,40';
+
+// 7-segment: [a,b,c,d,e,f,g]
+const SEGS = {
+  '0': [1,1,1,1,1,1,0],
+  '1': [0,1,1,0,0,0,0],
+  '2': [1,1,0,1,1,0,1],
+  '3': [1,1,1,1,0,0,1],
+  '4': [0,1,1,0,0,1,1],
+  '5': [1,0,1,1,0,1,1],
+  '6': [1,0,1,1,1,1,1],
+  '7': [1,1,1,0,0,0,0],
+  '8': [1,1,1,1,1,1,1],
+  '9': [1,1,1,1,0,1,1],
+};
+
+function initCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w: window.innerWidth, h: window.innerHeight };
+}
+
+function getSegPaths(x, y, dw, dh) {
+  const thick = dw * 0.17;
+  const pad = thick * 0.25;
+  const halfH = dh / 2;
+  const skew = thick * 0.45;
+  return [
+    (ctx) => { const l=x+pad+thick,r=x+dw-pad-thick,t=y+pad; ctx.beginPath(); ctx.moveTo(l,t); ctx.lineTo(r,t); ctx.lineTo(r-skew,t+thick); ctx.lineTo(l+skew,t+thick); ctx.closePath(); },
+    (ctx) => { const l=x+dw-pad-thick,t=y+pad+thick*0.5,b=y+halfH-thick*0.3; ctx.beginPath(); ctx.moveTo(l+thick,t); ctx.lineTo(l+thick,b); ctx.lineTo(l+thick/2,b+skew); ctx.lineTo(l,b); ctx.lineTo(l,t+skew); ctx.closePath(); },
+    (ctx) => { const l=x+dw-pad-thick,t=y+halfH+thick*0.3,b=y+dh-pad-thick*0.5; ctx.beginPath(); ctx.moveTo(l+thick/2,t-skew); ctx.lineTo(l+thick,t); ctx.lineTo(l+thick,b); ctx.lineTo(l,b-skew); ctx.lineTo(l,t); ctx.closePath(); },
+    (ctx) => { const l=x+pad+thick,r=x+dw-pad-thick,b=y+dh-pad; ctx.beginPath(); ctx.moveTo(l+skew,b-thick); ctx.lineTo(r-skew,b-thick); ctx.lineTo(r,b); ctx.lineTo(l,b); ctx.closePath(); },
+    (ctx) => { const left=x+pad,t=y+halfH+thick*0.3,b=y+dh-pad-thick*0.5; ctx.beginPath(); ctx.moveTo(left+thick/2,t-skew); ctx.lineTo(left+thick,t); ctx.lineTo(left+thick,b); ctx.lineTo(left,b-skew); ctx.lineTo(left,t); ctx.closePath(); },
+    (ctx) => { const left=x+pad,t=y+pad+thick*0.5,b=y+halfH-thick*0.3; ctx.beginPath(); ctx.moveTo(left+thick,t+skew); ctx.lineTo(left+thick,b); ctx.lineTo(left+thick/2,b+skew); ctx.lineTo(left,b); ctx.lineTo(left,t); ctx.closePath(); },
+    (ctx) => { const l=x+pad+thick,r=x+dw-pad-thick,mid=y+halfH,ht=thick/2; ctx.beginPath(); ctx.moveTo(l,mid); ctx.lineTo(l+skew,mid-ht); ctx.lineTo(r-skew,mid-ht); ctx.lineTo(r,mid); ctx.lineTo(r-skew,mid+ht); ctx.lineTo(l+skew,mid+ht); ctx.closePath(); },
+  ];
+}
+
+function drawDigit(ctx, x, y, dw, dh, char) {
+  const segsOn = SEGS[char] || [0,0,0,0,0,0,0];
+  const paths = getSegPaths(x, y, dw, dh);
+  paths.forEach((drawPath, i) => {
+    if (segsOn[i]) {
+      ctx.fillStyle = `rgb(${GREEN})`;
+    } else {
+      ctx.fillStyle = `rgba(${GREEN_DIM},0.06)`;
+    }
+    drawPath(ctx);
+    ctx.fill();
+  });
+}
+
+function drawColon(ctx, x, y, dh) {
+  const r = dh * 0.04;
+  ctx.fillStyle = `rgb(${GREEN})`;
+  [y + dh * 0.33, y + dh * 0.67].forEach(cy => {
+    ctx.beginPath();
+    ctx.arc(x, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+// Countdown: 5 seconds with milliseconds flying — like a bomb timer
+// Format: 00:05:00 → 00:00:00 (MM:SS:ms)
+const countdownFrom = 5000; // 5 seconds in ms
+const startTime = performance.now();
+
+function render(ctx, w, h) {
+  ctx.clearRect(0, 0, w, h);
+
+  const elapsed = performance.now() - startTime;
+  const remaining = Math.max(0, countdownFrom - elapsed);
+
+  const totalSec = remaining / 1000;
+  const ss = String(Math.floor(totalSec)).padStart(2, '0');
+  const ms = String(Math.floor((remaining % 1000) / 10)).padStart(2, '0');
+  const allDigits = (ss + ms).split('');
+
+  const digitW = 80, digitH = 150, digitGap = 10, colonW = 30;
+  // SS : ms
+  const totalW = 4 * digitW + 2 * digitGap + colonW;
+  const offX = (w - totalW) / 2;
+  const offY = (h - digitH) / 2;
+
+  let cx = offX;
+  // SS
+  drawDigit(ctx, cx, offY, digitW, digitH, allDigits[0]);
+  cx += digitW + digitGap;
+  drawDigit(ctx, cx, offY, digitW, digitH, allDigits[1]);
+  cx += digitW;
+  // Colon
+  cx += colonW * 0.15;
+  drawColon(ctx, cx + colonW * 0.35, offY, digitH);
+  cx += colonW;
+  // ms
+  drawDigit(ctx, cx, offY, digitW, digitH, allDigits[2]);
+  cx += digitW + digitGap;
+  drawDigit(ctx, cx, offY, digitW, digitH, allDigits[3]);
+}
+
+function draw() {
+  ['main', 'bloom1', 'bloom2'].forEach(id => {
+    const canvas = document.getElementById(id);
+    const { ctx, w, h } = initCanvas(canvas);
+    render(ctx, w, h);
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>
