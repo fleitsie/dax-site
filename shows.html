@@ -108,15 +108,44 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #fff;
-      padding: 0.28rem 0;
+      padding: 0.28rem 0.4rem;
+      margin: 0 -0.4rem;
       cursor: default;
       break-inside: avoid;
       display: block;
-      transition: color 0.08s;
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
-    .show-item:hover {
-      color: #3fe1b1;
+    /* Style 1: Cyan scan bar */
+    .show-item::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 0; height: 100%;
+      background: #3fe1b1;
+      z-index: -1;
+      transition: width 0.3s ease-out;
+    }
+    .shows-list[data-style="1"] .show-item:hover { color: #000; }
+    .shows-list[data-style="1"] .show-item:hover::after { width: 100%; }
+    .shows-list[data-style="1"] .show-item:not(:hover)::after { width: 0; }
+
+    /* Style 5: Redact bar */
+    .show-item .redact-bar {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      background: #fff;
+      z-index: 1;
+      pointer-events: none;
+      width: 0;
+    }
+
+    /* Style 4: corridor char spans */
+    .show-item .char {
+      display: inline-block;
     }
 
     @media (max-width: 900px) {
@@ -1194,54 +1223,209 @@
       renderShows(year);
     }
 
-    // ── Scramble effect ──
+    // ── Shared ──
     const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@!$%&*<>/\\|[]^~_+=?';
+    function rg() { return GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; }
 
     function scrambleIn(el, original, duration) {
       if (el._raf) cancelAnimationFrame(el._raf);
       const start = performance.now();
       const len = original.length;
-      function tick(now) {
+      (function tick(now) {
         const p = Math.min((now - start) / duration, 1);
         const resolved = Math.floor(p * len);
         let out = '';
         for (let i = 0; i < len; i++) {
           if (original[i] === ' ') { out += ' '; continue; }
-          out += i < resolved
-            ? original[i]
-            : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+          out += i < resolved ? original[i] : rg();
         }
         el.textContent = out;
         el._raf = p < 1 ? requestAnimationFrame(tick) : null;
         if (p >= 1) el.textContent = original;
-      }
-      el._raf = requestAnimationFrame(tick);
+      })(performance.now());
     }
 
     function scrambleOut(el, original, duration) {
       if (el._raf) cancelAnimationFrame(el._raf);
       const start = performance.now();
       const len = original.length;
-      function tick(now) {
+      (function tick(now) {
         const p = Math.min((now - start) / duration, 1);
         const scrambled = Math.floor((1 - p) * len);
         let out = '';
         for (let i = 0; i < len; i++) {
           if (original[i] === ' ') { out += ' '; continue; }
-          out += i >= scrambled
-            ? original[i]
-            : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+          out += i >= scrambled ? original[i] : rg();
         }
         el.textContent = out;
         el._raf = p < 1 ? requestAnimationFrame(tick) : null;
         if (p >= 1) el.textContent = original;
-      }
-      el._raf = requestAnimationFrame(tick);
+      })(performance.now());
+    }
+
+    // Year -> style mapping: 2026=1, 2025=2, 2024=3, 2023=4, 2022=5, rest=none
+    const STYLE_MAP = { '2026': '1', '2025': '2', '2024': '3', '2023': '4', '2022': '5' };
+
+    // ── 1: Cyan scan bar + scramble ──
+    function attachStyle1(el, original) {
+      el.addEventListener('mouseenter', () => scrambleIn(el, original, 400));
+      el.addEventListener('mouseleave', () => scrambleOut(el, original, 300));
+    }
+
+    // ── 2: Strobe flicker + scramble ──
+    function attachStyle2(el, original) {
+      el.addEventListener('mouseenter', () => {
+        if (el._raf) cancelAnimationFrame(el._raf);
+        if (el._flicker) clearInterval(el._flicker);
+        const start = performance.now();
+        const len = original.length;
+        let flickerState = false;
+        el._flicker = setInterval(() => {
+          flickerState = !flickerState;
+          el.style.color = flickerState ? '#000' : '#fff';
+          el.style.background = flickerState ? '#fff' : 'transparent';
+        }, 50);
+        (function tick(now) {
+          const p = Math.min((now - start) / 500, 1);
+          const resolved = Math.floor(p * len);
+          let out = '';
+          for (let i = 0; i < len; i++) {
+            if (original[i] === ' ') { out += ' '; continue; }
+            out += i < resolved ? original[i] : rg();
+          }
+          el.textContent = out;
+          if (p < 1) {
+            el._raf = requestAnimationFrame(tick);
+          } else {
+            el.textContent = original;
+            clearInterval(el._flicker); el._flicker = null;
+            el.style.color = ''; el.style.background = '';
+            el._raf = null;
+          }
+        })(performance.now());
+      });
+      el.addEventListener('mouseleave', () => {
+        if (el._raf) cancelAnimationFrame(el._raf);
+        if (el._flicker) { clearInterval(el._flicker); el._flicker = null; }
+        el.style.color = ''; el.style.background = '';
+        el.textContent = original;
+      });
+    }
+
+    // ── 3: Glitch split (RGB offset) ──
+    function attachStyle3(el, original) {
+      el.addEventListener('mouseenter', () => {
+        if (el._raf) cancelAnimationFrame(el._raf);
+        const start = performance.now();
+        const len = original.length;
+        (function tick(now) {
+          const p = Math.min((now - start) / 500, 1);
+          const resolved = Math.floor(p * len);
+          const intensity = 1 - p;
+          const ox = Math.round(Math.sin(now * 0.03) * 2 * intensity);
+          const oy = Math.round(Math.cos(now * 0.02) * 1 * intensity);
+          el.style.textShadow = intensity > 0.05
+            ? ox+'px '+oy+'px 0 rgba(255,0,50,'+0.7*intensity+'), '+-ox+'px '+-oy+'px 0 rgba(0,200,255,'+0.7*intensity+')'
+            : 'none';
+          let out = '';
+          for (let i = 0; i < len; i++) {
+            if (original[i] === ' ') { out += ' '; continue; }
+            out += i < resolved ? original[i] : rg();
+          }
+          el.textContent = out;
+          if (p < 1) { el._raf = requestAnimationFrame(tick); }
+          else { el.textContent = original; el.style.textShadow = 'none'; el._raf = null; }
+        })(performance.now());
+      });
+      el.addEventListener('mouseleave', () => {
+        if (el._raf) cancelAnimationFrame(el._raf);
+        el.style.textShadow = 'none';
+        el.textContent = original;
+      });
+    }
+
+    // ── 4: Corridor collapse ──
+    function attachStyle4(el, original) {
+      el.addEventListener('mouseenter', () => {
+        if (el._raf) cancelAnimationFrame(el._raf);
+        const start = performance.now();
+        const len = original.length;
+        el.innerHTML = '';
+        const spans = [];
+        for (let i = 0; i < len; i++) {
+          const s = document.createElement('span');
+          s.className = 'char';
+          s.textContent = original[i];
+          el.appendChild(s);
+          spans.push(s);
+        }
+        (function tick(now) {
+          const p = Math.min((now - start) / 500, 1);
+          const squeeze = p < 0.5 ? p * 2 : 2 - p * 2;
+          const mid = len / 2;
+          for (let i = 0; i < len; i++) {
+            const distFromMid = (i - mid) / mid;
+            spans[i].style.transform = 'translateX(' + (distFromMid * -squeeze * 8) + 'px)';
+            spans[i].style.opacity = squeeze > 0.7 ? 0.3 : 1;
+            if (squeeze > 0.4 && original[i] !== ' ') { spans[i].textContent = rg(); }
+            else { spans[i].textContent = original[i]; }
+          }
+          if (p < 1) { el._raf = requestAnimationFrame(tick); }
+          else { el.textContent = original; el._raf = null; }
+        })(performance.now());
+      });
+      el.addEventListener('mouseleave', () => {
+        if (el._raf) cancelAnimationFrame(el._raf);
+        el.textContent = original;
+      });
+    }
+
+    // ── 5: Redact / declassify ──
+    function attachStyle5(el, original) {
+      let bar = document.createElement('div');
+      bar.className = 'redact-bar';
+      el.appendChild(bar);
+
+      el.addEventListener('mouseenter', () => {
+        if (el._raf) cancelAnimationFrame(el._raf);
+        const start = performance.now();
+        const len = original.length;
+        (function tick(now) {
+          const p = Math.min((now - start) / 600, 1);
+          const lead = Math.min(p * 1.8, 1);
+          const trail = Math.max((p - 0.3) / 0.7, 0);
+          bar.style.left = (trail * 100) + '%';
+          bar.style.width = ((lead - trail) * 100) + '%';
+          const resolved = Math.floor(trail * len);
+          let out = '';
+          for (let i = 0; i < len; i++) {
+            if (original[i] === ' ') { out += ' '; continue; }
+            out += i < resolved ? original[i] : rg();
+          }
+          el.childNodes[0].textContent = out;
+          if (p < 1) { el._raf = requestAnimationFrame(tick); }
+          else { el.childNodes[0].textContent = original; bar.style.width = '0'; el._raf = null; }
+        })(performance.now());
+      });
+      el.addEventListener('mouseleave', () => {
+        if (el._raf) cancelAnimationFrame(el._raf);
+        bar.style.width = '0';
+        if (el.childNodes[0] && el.childNodes[0].nodeType === 3) {
+          el.childNodes[0].textContent = original;
+        } else {
+          const txt = original;
+          el.textContent = txt;
+          el.appendChild(bar);
+        }
+      });
     }
 
     function renderShows(year) {
       const container = document.getElementById('showsGrid');
       const list = shows[year] || [];
+      const style = STYLE_MAP[year] || null;
+
+      container.setAttribute('data-style', style || '');
 
       container.innerHTML = list.map(show => {
         return '<div class="show-item">' + show + '</div>';
@@ -1249,16 +1433,12 @@
 
       container.querySelectorAll('.show-item').forEach(el => {
         const original = el.textContent;
-
-        el.addEventListener('mouseenter', function() {
-          scrambleIn(el, original, 500);
-          el.style.color = '#3fe1b1';
-        });
-
-        el.addEventListener('mouseleave', function() {
-          scrambleOut(el, original, 350);
-          el.style.color = '';
-        });
+        if (style === '1') attachStyle1(el, original);
+        else if (style === '2') attachStyle2(el, original);
+        else if (style === '3') attachStyle3(el, original);
+        else if (style === '4') attachStyle4(el, original);
+        else if (style === '5') attachStyle5(el, original);
+        // No effect for years without a style
       });
     }
 
