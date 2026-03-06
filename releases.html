@@ -91,7 +91,51 @@
   <p class="label">DAX J &nbsp;&mdash;&nbsp; Releases</p>
 
   <script>
-    const SRCS = [
+    const RELEASES = [
+      {
+        title: "Reign Of Terror",
+        label: "Monnom Black",
+        year: 2023,
+        catalog: "MNNOM052",
+        art: "images from me to you/displaywindow/a2791266284_10.jpg",
+        links: { bandcamp: "#", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "A1", title: "Reign Of Terror", src: "" },
+          { side: "A2", title: "Systematic Chaos", src: "" },
+          { side: "B1", title: "Neural Damage", src: "" },
+          { side: "B2", title: "Forced Evolution", src: "" }
+        ]
+      },
+      {
+        title: "Soul Enforcer",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MNNOM045",
+        art: "images from me to you/displaywindow/a3240486097_10.jpg",
+        links: { bandcamp: "#", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "A1", title: "Soul Enforcer", src: "" },
+          { side: "A2", title: "Corrupted Signal", src: "" },
+          { side: "B1", title: "Binary Storm", src: "" }
+        ]
+      },
+      {
+        title: "Chaos Come To Conquer",
+        label: "Monnom Black",
+        year: 2021,
+        catalog: "MNNOM038",
+        art: "images from me to you/displaywindow/a3288770580_10.jpg",
+        links: { bandcamp: "#", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "A1", title: "Chaos Come To Conquer", src: "" },
+          { side: "A2", title: "Absolute Dominion", src: "" },
+          { side: "B1", title: "Retribution", src: "" }
+        ]
+      }
+    ];
+
+    // Derive SRCS from RELEASES art paths + remaining images for grid variety
+    const SRCS = RELEASES.map(function(r) { return encodeURI(r.art); }).concat([
       'images%20from%20me%20to%20you/displaywindow/a0073328866_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a0691030606_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a1082716305_10.jpg',
@@ -104,16 +148,17 @@
       'images%20from%20me%20to%20you/displaywindow/a2412796709_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a2700681520_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a2701339670_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a2791266284_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a3240486097_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a3288770580_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a3414222201_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a3456703649_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a3592528568_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a3612426603_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a4264431482_10.jpg',
       'images%20from%20me%20to%20you/displaywindow/a4279162120_10.jpg'
-    ];
+    ]);
+
+    function releaseForSrc(src) {
+      return RELEASES.find(function(r) { return encodeURI(r.art) === src; }) || null;
+    }
 
     // ── Layout constants ──
     const SZ     = 338;   // image size (px, square)
