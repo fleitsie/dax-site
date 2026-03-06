@@ -92,6 +92,90 @@
       display: inline-block;
     }
 
+    /* ── 8: Split-flap departure board ── */
+    .style-8 .show-item {
+      transition: none;
+      overflow: visible;
+      padding: 0.4rem 0.4rem;
+      line-height: 1;
+    }
+    .style-8 .flap-cell {
+      display: inline-block;
+      position: relative;
+      width: 0.65em;
+      height: 1.4em;
+      text-align: center;
+      background: #181818;
+      border-radius: 2px;
+      margin: 0 0.5px;
+      vertical-align: middle;
+      overflow: hidden;
+      font-size: 0.72rem;
+      color: #e8e8e8;
+    }
+    .style-8 .flap-cell.space {
+      background: none;
+      width: 0.4em;
+    }
+    /* Top half */
+    .style-8 .flap-cell .ftop {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      overflow: hidden;
+      background: #1c1c1c;
+      border-bottom: 1px solid #000;
+    }
+    /* Bottom half */
+    .style-8 .flap-cell .fbot {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      overflow: hidden;
+      background: #181818;
+    }
+    .style-8 .flap-cell .ftop span,
+    .style-8 .flap-cell .fbot span {
+      position: absolute;
+      left: 0; right: 0;
+      height: 200%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .style-8 .flap-cell .ftop span { top: 0; }
+    .style-8 .flap-cell .fbot span { bottom: 0; }
+    /* The flipping panel */
+    .style-8 .flap-cell .fflip {
+      position: absolute;
+      left: 0; right: 0;
+      height: 50%;
+      overflow: hidden;
+      backface-visibility: hidden;
+      transform-origin: bottom center;
+      z-index: 2;
+    }
+    .style-8 .flap-cell .fflip.fflip-top {
+      top: 0;
+      background: #1c1c1c;
+      border-bottom: 1px solid #000;
+    }
+    .style-8 .flap-cell .fflip.fflip-bot {
+      top: 50%;
+      background: #181818;
+      transform-origin: top center;
+    }
+    .style-8 .flap-cell .fflip span {
+      position: absolute;
+      left: 0; right: 0;
+      height: 200%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .style-8 .flap-cell .fflip.fflip-top span { top: 0; }
+    .style-8 .flap-cell .fflip.fflip-bot span { bottom: 0; }
+
     /* ── 7: Redact/declassify ── */
     .style-7 .show-item {
       transition: none;
@@ -134,6 +218,11 @@
     <div class="section style-7">
       <p class="section-title">5 — Redact/declassify (black blocks cover text, then lift off left-to-right revealing beneath)</p>
       <div class="show-list" data-style="7"></div>
+    </div>
+
+    <div class="section style-8">
+      <p class="section-title">6 — Split-flap departure board (Frankfurt airport style, characters flip through mechanically)</p>
+      <div class="show-list" data-style="8"></div>
     </div>
   </div>
 
@@ -457,6 +546,144 @@
       });
     }
 
+    // ══════════════════════════════════════
+    // STYLE 8: Split-flap departure board
+    // Text always visible. On hover, each character flips through
+    // the alphabet mechanically and lands back on itself.
+    // ══════════════════════════════════════
+    const FLAP_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/,.:- ';
+
+    function makeCell(ch) {
+      const isSpace = ch === ' ';
+      const cell = document.createElement('span');
+      cell.className = 'flap-cell' + (isSpace ? ' space' : '');
+
+      if (!isSpace) {
+        const top = document.createElement('div');
+        top.className = 'ftop';
+        const ts = document.createElement('span');
+        ts.textContent = ch;
+        top.appendChild(ts);
+
+        const bot = document.createElement('div');
+        bot.className = 'fbot';
+        const bs = document.createElement('span');
+        bs.textContent = ch;
+        bot.appendChild(bs);
+
+        cell.appendChild(top);
+        cell.appendChild(bot);
+      }
+
+      return cell;
+    }
+
+    function flipCell(cell, fromChar, toChar, onDone) {
+      // Phase 1: top half folds down showing old char, revealing new char on bottom
+      const flipTop = document.createElement('div');
+      flipTop.className = 'fflip fflip-top';
+      const fts = document.createElement('span');
+      fts.textContent = fromChar;
+      flipTop.appendChild(fts);
+      cell.appendChild(flipTop);
+
+      // Set the static bottom to new char already
+      cell.querySelector('.fbot span').textContent = toChar;
+
+      let angle = 0;
+      const speed = 18;
+
+      function tickDown() {
+        angle += speed;
+        if (angle >= 90) {
+          flipTop.remove();
+          // Phase 2: bottom half folds up revealing new char on top
+          cell.querySelector('.ftop span').textContent = toChar;
+
+          const flipBot = document.createElement('div');
+          flipBot.className = 'fflip fflip-bot';
+          const fbs = document.createElement('span');
+          fbs.textContent = toChar;
+          flipBot.appendChild(fbs);
+          cell.appendChild(flipBot);
+
+          // Start folded up at -90, animate to 0
+          let angle2 = -90;
+          function tickUp() {
+            angle2 += speed;
+            if (angle2 >= 0) {
+              flipBot.remove();
+              if (onDone) onDone();
+              return;
+            }
+            flipBot.style.transform = 'rotateX(' + (-angle2) + 'deg)';
+            requestAnimationFrame(tickUp);
+          }
+          flipBot.style.transform = 'rotateX(90deg)';
+          requestAnimationFrame(tickUp);
+          return;
+        }
+        flipTop.style.transform = 'rotateX(' + angle + 'deg)';
+        requestAnimationFrame(tickDown);
+      }
+      requestAnimationFrame(tickDown);
+    }
+
+    function initStyle8(container) {
+      SAMPLE.forEach(text => {
+        const el = document.createElement('div');
+        el.className = 'show-item';
+        container.appendChild(el);
+        const original = text.toUpperCase();
+
+        // Build cells showing the text by default
+        const cells = [];
+        for (let i = 0; i < original.length; i++) {
+          const cell = makeCell(original[i]);
+          el.appendChild(cell);
+          cells.push({ el: cell, char: original[i], isSpace: original[i] === ' ' });
+        }
+
+        let running = false;
+
+        el.addEventListener('mouseenter', () => {
+          if (running) return;
+          running = true;
+
+          // Each cell flips through N random chars then lands back on its real char
+          const stagger = 30;
+          let done = 0;
+
+          cells.forEach((c, i) => {
+            if (c.isSpace) { done++; return; }
+
+            const numFlips = 4 + Math.floor(Math.random() * 6); // 4-9 intermediate flips
+            let step = 0;
+            let current = c.char;
+
+            setTimeout(() => {
+              function doFlip() {
+                step++;
+                const isLast = step > numFlips;
+                const nextChar = isLast ? c.char : FLAP_CHARS[Math.floor(Math.random() * (FLAP_CHARS.length - 1))];
+
+                flipCell(c.el, current, nextChar, () => {
+                  current = nextChar;
+                  if (!isLast) {
+                    doFlip();
+                  } else {
+                    done++;
+                    if (done >= cells.length) running = false;
+                  }
+                });
+              }
+              doFlip();
+            }, i * stagger);
+          });
+        });
+      });
+    }
+
     // ── Init all ──
     document.querySelectorAll('.show-list').forEach(list => {
       const style = list.dataset.style;
@@ -465,6 +692,7 @@
       if (style === '5') initStyle5(list);
       if (style === '6') initStyle6(list);
       if (style === '7') initStyle7(list);
+      if (style === '8') initStyle8(list);
     });
   </script>
 </body>

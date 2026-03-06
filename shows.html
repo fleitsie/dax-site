@@ -148,6 +148,86 @@
       display: inline-block;
     }
 
+    /* Style 6: Split-flap departure board */
+    .shows-list[data-style="6"] .show-item {
+      overflow: visible;
+      padding: 0.4rem 0.4rem;
+      line-height: 1;
+    }
+    .shows-list[data-style="6"] .flap-cell {
+      display: inline-block;
+      position: relative;
+      width: 0.65em;
+      height: 1.4em;
+      text-align: center;
+      background: #181818;
+      border-radius: 2px;
+      margin: 0 0.5px;
+      vertical-align: middle;
+      overflow: hidden;
+      font-size: 0.72rem;
+      color: #e8e8e8;
+    }
+    .shows-list[data-style="6"] .flap-cell.space {
+      background: none;
+      width: 0.4em;
+    }
+    .shows-list[data-style="6"] .flap-cell .ftop {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      overflow: hidden;
+      background: #1c1c1c;
+      border-bottom: 1px solid #000;
+    }
+    .shows-list[data-style="6"] .flap-cell .fbot {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      overflow: hidden;
+      background: #181818;
+    }
+    .shows-list[data-style="6"] .flap-cell .ftop span,
+    .shows-list[data-style="6"] .flap-cell .fbot span {
+      position: absolute;
+      left: 0; right: 0;
+      height: 200%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .shows-list[data-style="6"] .flap-cell .ftop span { top: 0; }
+    .shows-list[data-style="6"] .flap-cell .fbot span { bottom: 0; }
+    .shows-list[data-style="6"] .flap-cell .fflip {
+      position: absolute;
+      left: 0; right: 0;
+      height: 50%;
+      overflow: hidden;
+      backface-visibility: hidden;
+      z-index: 2;
+    }
+    .shows-list[data-style="6"] .flap-cell .fflip.fflip-top {
+      top: 0;
+      background: #1c1c1c;
+      border-bottom: 1px solid #000;
+      transform-origin: bottom center;
+    }
+    .shows-list[data-style="6"] .flap-cell .fflip.fflip-bot {
+      top: 50%;
+      background: #181818;
+      transform-origin: top center;
+    }
+    .shows-list[data-style="6"] .flap-cell .fflip span {
+      position: absolute;
+      left: 0; right: 0;
+      height: 200%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .shows-list[data-style="6"] .flap-cell .fflip.fflip-top span { top: 0; }
+    .shows-list[data-style="6"] .flap-cell .fflip.fflip-bot span { bottom: 0; }
+
     @media (max-width: 900px) {
       .shows-list { column-count: 3; }
     }
@@ -1263,8 +1343,8 @@
       })(performance.now());
     }
 
-    // Year -> style mapping: 2026=1, 2025=2, 2024=3, 2023=4, 2022=5, rest=none
-    const STYLE_MAP = { '2026': '1', '2025': '2', '2024': '3', '2023': '4', '2022': '5' };
+    // Year -> style mapping
+    const STYLE_MAP = { '2026': '1', '2025': '2', '2024': '3', '2023': '4', '2022': '5', '2021': '6' };
 
     // ── 1: Cyan scan bar + scramble ──
     function attachStyle1(el, original) {
@@ -1420,6 +1500,103 @@
       });
     }
 
+    // ── 6: Split-flap departure board ──
+    const FLAP_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/,.:- ';
+
+    function makeFlapCell(ch) {
+      const isSpace = ch === ' ';
+      const cell = document.createElement('span');
+      cell.className = 'flap-cell' + (isSpace ? ' space' : '');
+      if (!isSpace) {
+        const top = document.createElement('div');
+        top.className = 'ftop';
+        const ts = document.createElement('span');
+        ts.textContent = ch;
+        top.appendChild(ts);
+        const bot = document.createElement('div');
+        bot.className = 'fbot';
+        const bs = document.createElement('span');
+        bs.textContent = ch;
+        bot.appendChild(bs);
+        cell.appendChild(top);
+        cell.appendChild(bot);
+      }
+      return cell;
+    }
+
+    function flipFlapCell(cell, fromChar, toChar, onDone) {
+      const flipTop = document.createElement('div');
+      flipTop.className = 'fflip fflip-top';
+      const fts = document.createElement('span');
+      fts.textContent = fromChar;
+      flipTop.appendChild(fts);
+      cell.appendChild(flipTop);
+      cell.querySelector('.fbot span').textContent = toChar;
+      let angle = 0;
+      function tickDown() {
+        angle += 18;
+        if (angle >= 90) {
+          flipTop.remove();
+          cell.querySelector('.ftop span').textContent = toChar;
+          const flipBot = document.createElement('div');
+          flipBot.className = 'fflip fflip-bot';
+          const fbs = document.createElement('span');
+          fbs.textContent = toChar;
+          flipBot.appendChild(fbs);
+          cell.appendChild(flipBot);
+          let a2 = -90;
+          function tickUp() {
+            a2 += 18;
+            if (a2 >= 0) { flipBot.remove(); if (onDone) onDone(); return; }
+            flipBot.style.transform = 'rotateX(' + (-a2) + 'deg)';
+            requestAnimationFrame(tickUp);
+          }
+          flipBot.style.transform = 'rotateX(90deg)';
+          requestAnimationFrame(tickUp);
+          return;
+        }
+        flipTop.style.transform = 'rotateX(' + angle + 'deg)';
+        requestAnimationFrame(tickDown);
+      }
+      requestAnimationFrame(tickDown);
+    }
+
+    function attachStyle6(el, original) {
+      const upper = original.toUpperCase();
+      el.innerHTML = '';
+      const cells = [];
+      for (let i = 0; i < upper.length; i++) {
+        const cell = makeFlapCell(upper[i]);
+        el.appendChild(cell);
+        cells.push({ el: cell, char: upper[i], isSpace: upper[i] === ' ' });
+      }
+      let running = false;
+      el.addEventListener('mouseenter', () => {
+        if (running) return;
+        running = true;
+        let done = 0;
+        cells.forEach((c, i) => {
+          if (c.isSpace) { done++; return; }
+          const numFlips = 4 + Math.floor(Math.random() * 6);
+          let step = 0;
+          let current = c.char;
+          setTimeout(() => {
+            function doFlip() {
+              step++;
+              const isLast = step > numFlips;
+              const next = isLast ? c.char : FLAP_CHARS[Math.floor(Math.random() * (FLAP_CHARS.length - 1))];
+              flipFlapCell(c.el, current, next, () => {
+                current = next;
+                if (!isLast) { doFlip(); }
+                else { done++; if (done >= cells.length) running = false; }
+              });
+            }
+            doFlip();
+          }, i * 30);
+        });
+      });
+    }
+
     function renderShows(year) {
       const container = document.getElementById('showsGrid');
       const list = shows[year] || [];
@@ -1438,6 +1615,7 @@
         else if (style === '3') attachStyle3(el, original);
         else if (style === '4') attachStyle4(el, original);
         else if (style === '5') attachStyle5(el, original);
+        else if (style === '6') attachStyle6(el, original);
         // No effect for years without a style
       });
     }
