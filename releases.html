@@ -1453,6 +1453,84 @@
       lastClickedTile = null;
     }
 
+    // ── Scroll-to-release from sidebar ──
+    function scrollToReleaseAndOpen(ri) {
+      var targetSrc = encodeURI(RELEASES[ri].art);
+      var N = SRCS.length;
+
+      // Current center in logical coordinates
+      var centerLogC = Math.round(scrollX / STEP_X);
+      var centerLogR = Math.round(scrollY / STEP_Y);
+
+      // Search nearby grid positions for one that maps to this release
+      var bestDist = Infinity;
+      var bestC, bestR;
+      var range = Math.max(N, 20);
+      for (var dr = -range; dr <= range; dr++) {
+        for (var dc = -range; dc <= range; dc++) {
+          var lc = centerLogC + dc;
+          var lr = centerLogR + dr;
+          if (SRCS[posMod(lc * 5 + lr * 8, N)] === targetSrc) {
+            var dist = dc * dc + dr * dr;
+            if (dist < bestDist) {
+              bestDist = dist;
+              bestC = lc;
+              bestR = lr;
+            }
+          }
+        }
+      }
+
+      if (bestDist === Infinity) {
+        // Fallback: open without animation
+        openModal(ri);
+        return;
+      }
+
+      // Calculate scroll position that centers this tile
+      var sg = staggerFor(bestR);
+      var destX = bestC * STEP_X + sg + offsetX - VW / 2 + SZ / 2;
+      var destY = bestR * STEP_Y + offsetY - VH / 2 + SZ / 2;
+
+      // Set scroll target — the lerp loop will chase it
+      targetX = destX;
+      targetY = destY;
+
+      // Wait for scroll to settle, then find the tile and open modal
+      var settled = 0;
+      function checkSettle() {
+        var dx = Math.abs(scrollX - targetX);
+        var dy = Math.abs(scrollY - targetY);
+        if (dx < 2 && dy < 2) {
+          settled++;
+          if (settled >= 2) {
+            // Find the tile element showing this release
+            var tileEl = null;
+            for (var i = 0; i < tiles.length; i++) {
+              if (tiles[i].curSrc === targetSrc) {
+                // Pick the one closest to center of viewport
+                var rect = tiles[i].el.getBoundingClientRect();
+                var cx = rect.left + rect.width / 2;
+                var cy = rect.top + rect.height / 2;
+                var screenCX = SIDEBAR_W + VW / 2;
+                var screenCY = VH / 2;
+                if (Math.abs(cx - screenCX) < STEP_X && Math.abs(cy - screenCY) < STEP_Y) {
+                  tileEl = tiles[i].el;
+                  break;
+                }
+              }
+            }
+            openModal(ri, tileEl);
+            return;
+          }
+        } else {
+          settled = 0;
+        }
+        requestAnimationFrame(checkSettle);
+      }
+      requestAnimationFrame(checkSettle);
+    }
+
     // ── Sidebar rendering ──
     function renderSidebar() {
       var list = document.getElementById('sidebar-list');
@@ -1464,7 +1542,7 @@
         var title = document.createElement('div');
         title.className = 'sb-release-title';
         title.textContent = rel.artist + ' — ' + rel.title;
-        title.addEventListener('click', function() { openModal(ri); });
+        title.addEventListener('click', function() { scrollToReleaseAndOpen(ri); });
         div.appendChild(title);
 
         rel.tracks.forEach(function(trk, ti) {
