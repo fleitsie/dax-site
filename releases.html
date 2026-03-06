@@ -204,6 +204,17 @@
       margin-bottom: 1.6rem;
     }
 
+    #modal-desc {
+      font-size: 0.52rem; line-height: 1.6;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 1.4rem;
+      max-height: 6rem;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.12) transparent;
+    }
+
     #modal-tracklist-label {
       font-size: 0.48rem; letter-spacing: 0.24em;
       text-transform: uppercase; color: rgba(255,255,255,0.2);
@@ -300,6 +311,7 @@
         <div id="modal-title"></div>
         <div id="modal-meta"></div>
         <div id="modal-catalog"></div>
+        <div id="modal-desc"></div>
         <div id="modal-tracklist-label">Tracklist:</div>
         <div id="modal-tracklist"></div>
         <div id="modal-links"></div>
@@ -322,72 +334,778 @@
   <script>
     const RELEASES = [
       {
-        title: "LPV",
-        label: "TBC",
+        title: "Reign of Terror",
+        artist: "Dax J",
+        desc: "A classic Dax J ep gets its Monnom Black debut, originally released in 2016 on Electric Deluxe. Vinyl coming soon",
+        label: "Monnom Black",
         year: 2025,
-        catalog: "TBC",
-        art: "images from me to you/displaywindow/a2791266284_10.jpg",
-        links: { bandcamp: "#", beatport: "#", spotify: "#" },
+        catalog: "MONNOM040",
+        art: "images from me to you/displaywindow/a2295175411_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/reign-of-terror", beatport: "#", spotify: "#" },
         tracks: [
-          { side: "A1", title: "Quantum Leap", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/a1-quantum-leap.mp3" },
-          { side: "A2", title: "Beyond The Veil", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/a2-beyond-the-veil.mp3" },
-          { side: "B1", title: "Spatial Interference", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/b1-spatial-interference.mp3" },
-          { side: "B2", title: "Broken Tape", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/b2-broken-tape.mp3" },
-          { side: "C1", title: "Warp Drive Wander", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/c1-warp-drive-wander.mp3" },
-          { side: "C2", title: "Black Sand Beach", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/c2-black-sand-beach.mp3" },
-          { side: "D1", title: "97100", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/d1-97100.mp3" },
-          { side: "D2", title: "Chillness", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/d2-chillness.mp3" }
+          { side: "1", title: "Reign Of Terror", src: "" },
+          { side: "2", title: "Harry The Hatchet", src: "" },
+          { side: "3", title: "Cartagena Square", src: "" },
+          { side: "4", title: "Zulu Nation", src: "" },
+          { side: "5", title: "The Quest", src: "" },
+          { side: "6", title: "Breaking Visions", src: "" },
         ]
       },
       {
-        title: "Soul Enforcer",
+        title: "Quantum Leap EP",
+        artist: "LPV",
+        desc: "LPV makes a striking debut on Monnom Black with an expansive double EP, delivering eight meticulously crafted tracks that fuse dub, bleep, and bass into peak-time weapons. His release showcases a dynamic range, from intense, Basic Channel-inspired dub techno workouts to deeper, bleep-laced techno grooves that weave hypnotic precision with relentless drive. Each track is a versatile cut, crafted for special moments, blending atmospheric depth with pure momentum, cementing LPV’s arrival as a formidable force.",
+        label: "Monnom Black",
+        year: 2025,
+        catalog: "MONNOM039",
+        art: "images from me to you/displaywindow/a1876063433_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/quantum-leap-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Quantum Leap", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/a1-quantum-leap.mp3" },
+          { side: "2", title: "Beyond The Veil", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/a2-beyond-the-veil.mp3" },
+          { side: "3", title: "Spatial Interference", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/b1-spatial-interference.mp3" },
+          { side: "4", title: "Broken Tape", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/b2-broken-tape.mp3" },
+          { side: "5", title: "Warp Drive Wander", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/c1-warp-drive-wander.mp3" },
+          { side: "6", title: "Black Sand Beach", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/c2-black-sand-beach.mp3" },
+          { side: "7", title: "97100", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/d1-97100.mp3" },
+          { side: "8", title: "Chillness", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/d2-chillness.mp3" },
+        ]
+      },
+      {
+        title: "Beyond The Visible Spectrum EP",
+        artist: "UMWELT",
+        desc: "Umwelt unveils his latest EP, featuring six tracks that highlight his unique analog style. Fusing techno, electro, and machine-driven rhythms, crafting his signature sonic landscapes that define the Umwelt sound.",
+        label: "Monnom Black",
+        year: 2025,
+        catalog: "MONNOM038",
+        art: "images from me to you/displaywindow/a1702394469_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/beyond-the-visible-spectrum-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Beyond The Visible Spectrum", src: "" },
+          { side: "2", title: "Holographic Existence", src: "" },
+          { side: "3", title: "The Path of Loneliness", src: "" },
+          { side: "4", title: "Bodyhost", src: "" },
+          { side: "5", title: "Fugitive Forms", src: "" },
+          { side: "6", title: "Ghostdancer", src: "" },
+        ]
+      },
+      {
+        title: "Mechanized EP",
+        artist: "Lars Huismann",
+        desc: "Berlin-based techno producer Lars Huismann makes his debut on Monnom Black with eight tracks crafted with meticulous precision, blending hypnotic melodies and intense dubbed-out grooves.\n\n\n\nsome track snippets -  www.instagram.com/p/DCRNVpIsOXX/?img_index=1",
+        label: "Monnom Black",
+        year: 2024,
+        catalog: "MONNOM037",
+        art: "images from me to you/displaywindow/a2791266284_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/mechanized-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Functions", src: "" },
+          { side: "2", title: "Dominion", src: "" },
+          { side: "3", title: "Orbital", src: "" },
+          { side: "4", title: "Claws", src: "" },
+          { side: "5", title: "Somatic", src: "" },
+          { side: "6", title: "Aeon", src: "" },
+          { side: "7", title: "Metamorphosis", src: "" },
+          { side: "8", title: "Diffusion", src: "" },
+        ]
+      },
+      {
+        title: "War Is Peace, Freedom is Slavery, Ignorance is Strength",
+        artist: "Dax J",
+        desc: "Referencing the political slogans in Orwell's dystopian novel 1984, where language is manipulated to control and oppress, we find a stark reflection in modern society, where truth is frequently distorted, and freedoms are increasingly compromised—echoing the very tactics Orwell warned against",
+        label: "Monnom Black",
+        year: 2024,
+        catalog: "MONNOM036",
+        art: "images from me to you/displaywindow/a2275957915_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/war-is-peace-freedom-is-slavery-ignorance-is-strength", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Royal Flush", src: "" },
+          { side: "2", title: "Liberation Techniques", src: "" },
+          { side: "3", title: "Femme Fatale", src: "" },
+          { side: "4", title: "Anti Gravity Racing", src: "" },
+          { side: "5", title: "Orwellian Times", src: "" },
+          { side: "6", title: "No Time To Lose", src: "" },
+          { side: "7", title: "Tropical Grift", src: "" },
+          { side: "8", title: "Overclocking", src: "" },
+          { side: "9", title: "Meet Your Maker", src: "" },
+          { side: "10", title: "Not tonight pal", src: "" },
+        ]
+      },
+      {
+        title: "The World Of Monnom Black III",
+        artist: "Monnom Black",
+        desc: "",
+        label: "Monnom Black",
+        year: 2023,
+        catalog: "MONNOM035",
+        art: "images from me to you/displaywindow/a1286263440_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/the-world-of-monnom-black-iii", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Silhouetten der Nacht", src: "" },
+          { side: "2", title: "Ceoid", src: "" },
+          { side: "3", title: "Basikstruktur", src: "" },
+          { side: "4", title: "Echoes of The Storm", src: "" },
+          { side: "5", title: "Timeline Off", src: "" },
+          { side: "6", title: "Passing Clouds", src: "" },
+          { side: "7", title: "Arrival", src: "" },
+          { side: "8", title: "Reunion", src: "" },
+          { side: "9", title: "Euphoria", src: "" },
+          { side: "10", title: "Magma", src: "" },
+          { side: "11", title: "Planga", src: "" },
+          { side: "12", title: "Raw Audio Models", src: "" },
+          { side: "13", title: "One Step Closer to the Truth", src: "" },
+          { side: "14", title: "Predator in the Zoo", src: "" },
+          { side: "15", title: "Dreampunk", src: "" },
+          { side: "16", title: "Mars", src: "" },
+          { side: "17", title: "Take it or Leave it", src: "" },
+          { side: "18", title: "Plane to Lisboa", src: "" },
+          { side: "19", title: "Surface", src: "" },
+          { side: "20", title: "To the Edge", src: "" },
+        ]
+      },
+      {
+        title: "Legacy LP",
+        artist: "Thomas P. Heckmann",
+        desc: "Monnom Black presents” Legacy”, an introspective journey through the illustrious career of the legendary German electronic artist, Thomas P. Heckmann. This momentous release marks the first time Heckmann curates a comprehensive compilation, delving into all his various aliases and timeless tracks, including Knarz, AGE, Heckmann, Skydiver, Spectral Emotions, Purple Plejade, and the infamous DRAX, which commemorates its 30th anniversary this year. \"Legacy\" encompasses a total of 23 tracks, 17 slated across three slabs of vinyl with an additonal six digital bonuses, featuring the cream of Heckmann's underground hits, such as \"Himmel Und Hoelle,\" \"Tanzmaschine,\" \"Teufelswerk,\" and \"EBM1,\" alongside lesser-known gems like \"Chiswick Days\" and \"Parnophelia.\" Throughout his career, Heckmann has showcased his prowess across multiple shades of electronic genres. However, it is his contributions to Industrial, EBM-Techno, Acid, and Experimental that have propelled him to notoriety. In 1994, Heckmann's acid-infused masterpiece, \"Amphetamine\" as DRAX LTD. II, launched him into the global spotlight as a force to be reckoned with. Having released his latest studio album, \"Body Music,\" in 2018 on Monnom Black, Heckmann subsequently featured on The World of Monnom Black compilations. Now, he returns to celebrate his groundbreaking contributions to electronic music and enduring Legacy with this special release.",
+        label: "Monnom Black",
+        year: 2023,
+        catalog: "MONNOM034",
+        art: "images from me to you/displaywindow/a3240486097_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/legacy-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Himmel & Hoelle", src: "" },
+          { side: "2", title: "Realms", src: "" },
+          { side: "3", title: "EBM1", src: "" },
+          { side: "4", title: "Teufelswerk", src: "" },
+          { side: "5", title: "Dunkel", src: "" },
+          { side: "6", title: "Amphetamine", src: "" },
+          { side: "7", title: "Phosphene", src: "" },
+          { side: "8", title: "II-1", src: "" },
+          { side: "9", title: "Tanzmaschine", src: "" },
+          { side: "10", title: "Kind der Nacht", src: "" },
+          { side: "11", title: "Violent Stains", src: "" },
+          { side: "12", title: "Interior", src: "" },
+          { side: "13", title: "CPU 93 Moulder", src: "" },
+          { side: "14", title: "Virtual Plane", src: "" },
+          { side: "15", title: "Back Up", src: "" },
+          { side: "16", title: "Body Music EBM3", src: "" },
+          { side: "17", title: "Parnophelia", src: "" },
+          { side: "18", title: "Skydiver", src: "" },
+          { side: "19", title: "Spectral Emotions", src: "" },
+          { side: "20", title: "Art Mechanique", src: "" },
+          { side: "21", title: "Chiswick days", src: "" },
+          { side: "22", title: "Belzebub", src: "" },
+          { side: "23", title: "Doomsday", src: "" },
+        ]
+      },
+      {
+        title: "Digi Spa EP",
+        artist: "LDS",
+        desc: "LDS returns to Monnom Black and hits a career high with his new ep, an astonishing take on modern dub techno featuring 6 tracks of futuristic grooves. LDS is an artist that stands at the cutting edge of technology, influenced by artificial intelligence and digital innovation. The ep showcases his unique production aesthetic, complex sound design and nuanced details that place him a cut above the rest. AI was used to create the artwork for the release, merging together the digital and physical realms, moving ever closer to the singularity.",
+        label: "Monnom Black",
+        year: 2023,
+        catalog: "MONNOM033",
+        art: "images from me to you/displaywindow/a1405643370_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/digi-spa-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Texture Mapping (Avantgarde Radio Mix)", src: "" },
+          { side: "2", title: "Nord Dab", src: "" },
+          { side: "3", title: "GLO3", src: "" },
+          { side: "4", title: "Digi Spa", src: "" },
+          { side: "5", title: "Fuenf Formen", src: "" },
+          { side: "6", title: "Texture Mapping (Thema Mix)", src: "" },
+        ]
+      },
+      {
+        title: "Petra 02 (Dax J Remix) EP",
+        artist: "Christopher Just",
+        desc: "Electronic pioneer, Christopher Just’s initial music came out in 1993 under his own name and various pseudonyms, like “DJ One finger” and “ilsa Gold”. The “Petra” project was originally released in 1996 showcasing the ferocious sound of 90’s analog hardware. Over 25 years later Dax J presents his colossal remix of the relativity unknown and now unearthed gem that went under the radar for so many years. The B - side of the record comes with a signature Dax J deep percussive groove, “The Train”",
         label: "Monnom Black",
         year: 2022,
-        catalog: "MNNOM045",
-        art: "images from me to you/displaywindow/a3240486097_10.jpg",
-        links: { bandcamp: "#", beatport: "#", spotify: "#" },
+        catalog: "MONNOM032",
+        art: "images from me to you/displaywindow/a1082716305_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/petra-02-dax-j-remix-ep", beatport: "#", spotify: "#" },
         tracks: [
-          { side: "A1", title: "Soul Enforcer", src: "" },
-          { side: "A2", title: "Corrupted Signal", src: "" },
-          { side: "B1", title: "Binary Storm", src: "" }
+          { side: "1", title: "Petra 02 (Dax J Remix)", src: "" },
+          { side: "2", title: "The Train", src: "" },
         ]
       },
       {
-        title: "Chaos Come To Conquer",
+        title: "Generation Lost EP",
+        artist: "Ryuji Takeuchi",
+        desc: "Legendary Techno artist from Japan, Ryuji Takeuchi, releases his first EP on Monnom Black. Generation Lost EP represents a new evolved sound from Ryuji, inspired from his roots, laying down his signature grooves of percussive driving techno and the classic sound that he pioneered since the late 90’s and early 2000’s!\n\n\n\nArtwork photograph taken by Normski in LA, 1990",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM031",
+        art: "images from me to you/displaywindow/a3288770580_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/generation-lost-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Crevice", src: "" },
+          { side: "2", title: "Dignity", src: "" },
+          { side: "3", title: "Open Seam", src: "" },
+          { side: "4", title: "Enlightenment", src: "" },
+        ]
+      },
+      {
+        title: "Brixton EP",
+        artist: "Dax J",
+        desc: "Dax J presents a new EP of advanced percussive, acid techno & warehouse grooves. Brixton EP\n\n\n\nAll tracks written, produced and mixed by Dax J, 2022\n\n\n\nPicture shot by acclaimed photographer Masataka Ishida, in Brixton London, 1999",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM030",
+        art: "images from me to you/displaywindow/a3456703649_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/brixton-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Brixton", src: "" },
+          { side: "2", title: "Reshape The Future", src: "" },
+          { side: "3", title: "World Deception Alliance", src: "" },
+          { side: "4", title: "China White", src: "" },
+        ]
+      },
+      {
+        title: "Dead Eyes Society LP",
+        artist: "Umwelt",
+        desc: "Monnom Black presents Umwelt's new studio album “Dead Eyes Society”, a stunning piece of work and the culmination of 30 years of artistic refinement. Umwelt is a truly rare underground electronic artist in the world of Techno and is without doubt one of the most important and prolific French electronic producers of a generation. A techno activist since the 90’s boasting over 50 releases to date. Throughout his career he has crafted a pure analog, unmistakable, signature sound, mixing dark, cinematic melancholy with the electro-techno grit he is so renowned for. \n\n\n\nThe sound of the album is influenced by late 90’s and early 00’s techno contrasted with an avant-garde approach to recording and sound design. Throughout the album Umwelt lays down beautiful grooves and his space techno melodies in uncompromising fashion, blended with classic synthwork and run through his famous analog outboard chains. With “Dead Eyes Society” Umwelt has crafted his most powerful techno album to date and solidified himself as an exceptional artist and titanic figure of modern electronic music.\n\n\n\nReleased 22nd July on Double 12” Vinyl + Digital\n\n\n\nPicture by acclaimed photographer Cam Linh, her work has been featured across multiple Parisian exhibitions and has worked closely with Umwelt over the past years.",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM029",
+        art: "images from me to you/displaywindow/a3612426603_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/dead-eyes-society-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Generation One", src: "" },
+          { side: "2", title: "Captive Universe", src: "" },
+          { side: "3", title: "Dead Eyes Society", src: "" },
+          { side: "4", title: "Brightness Falls From The Air", src: "" },
+          { side: "5", title: "The Lost Dreamer", src: "" },
+          { side: "6", title: "Codebreaker", src: "" },
+          { side: "7", title: "Light Chaser", src: "" },
+          { side: "8", title: "Dark Star Renegade", src: "" },
+          { side: "9", title: "Conversation In The Dark Waters", src: "" },
+        ]
+      },
+      {
+        title: "Soul Enforcer LP",
+        artist: "Dax J",
+        desc: "19-track album Soul Enforcer LP, Monnom Black 028. Techno, Jungle, dub, acid, recorded from 2005 - 2022.",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM028",
+        art: "images from me to you/displaywindow/a1410557316_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/soul-enforcer-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Sunrise in Kyiv", src: "" },
+          { side: "2", title: "The Final Wavescape", src: "" },
+          { side: "3", title: "Deepest Border Lines", src: "" },
+          { side: "4", title: "Giza", src: "" },
+          { side: "5", title: "Troubles With Tina (unfiltered mix)", src: "" },
+          { side: "6", title: "Skyline At Night", src: "" },
+          { side: "7", title: "Stealth Mode", src: "" },
+          { side: "8", title: "Fills Munk", src: "" },
+          { side: "9", title: "Praying To The Porcelain God", src: "" },
+          { side: "10", title: "Walking Home From The Club On A Cold Winter Morning", src: "" },
+          { side: "11", title: "T3000", src: "" },
+          { side: "12", title: "Virgil's Pad (breakbeat mix)", src: "" },
+          { side: "13", title: "Summer In Tottenham (unreleased 2005)", src: "" },
+          { side: "14", title: "Passing Over", src: "" },
+          { side: "15", title: "The Director Of Chaos", src: "" },
+          { side: "16", title: "Ur Names Not Down Ur Not Coming In", src: "" },
+          { side: "17", title: "Demised (chill mix)", src: "" },
+          { side: "18", title: "Jungler '05", src: "" },
+          { side: "19", title: "Fin (live take edit mix)", src: "" },
+        ]
+      },
+      {
+        title: "Daytona EP",
+        artist: "Fractions",
+        desc: "Delivering their signature no-nonsense EBM infused techno, Fractions return to Monnom Black with their 2nd highly anticipated EP of uncompromised club music that crosses the boundaries of sonic analogue sound design with innovative results. The ep is the sublimation of experimental overtones and modular beats, to make for a diverse approach that challenges the existing order in electronic music. “Our Daytona EP is an evolution of our sound, thanks to a new hardware-centric production featuring various machines and a new modular rack” - Fractions Picture by acclaimed photographer Molly Macindoe taken from - Out of Order, a photobook documenting the free party movement of the 90's.",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM027",
+        art: "images from me to you/displaywindow/a4279162120_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/daytona-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Daytona", src: "" },
+          { side: "2", title: "Hater Squad", src: "" },
+          { side: "3", title: "Dead Air", src: "" },
+          { side: "4", title: "Sonder", src: "" },
+        ]
+      },
+      {
+        title: "Utopian Surrealism LP",
+        artist: "Dax J",
+        desc: "Dax J’s Utopian Surrealism observes our transition into a new dystopian era. It reflects the strain in distinguishing truth and reality from the ever-growing radicalised networks of global manipulation, whilst extreme polarised realities, AI, deception, and mass poverty stay hidden away as we accelerate into the next stage of evolution. Utopian Surrealism is Dax J’s 3rd studio album. Written during lockdown, Inspired by Yuval Noah Harari’s book Sapiens.",
         label: "Monnom Black",
         year: 2021,
-        catalog: "MNNOM038",
-        art: "images from me to you/displaywindow/a3288770580_10.jpg",
-        links: { bandcamp: "#", beatport: "#", spotify: "#" },
+        catalog: "MONNOM026",
+        art: "images from me to you/displaywindow/a3414222201_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/utopian-surrealism-lp", beatport: "#", spotify: "#" },
         tracks: [
-          { side: "A1", title: "Chaos Come To Conquer", src: "" },
-          { side: "A2", title: "Absolute Dominion", src: "" },
-          { side: "B1", title: "Retribution", src: "" }
+          { side: "1", title: "Universal Future Sound", src: "" },
+          { side: "2", title: "East London Back Alleys (Jungle Techno Mix)", src: "" },
+          { side: "3", title: "Opioiding (Fentanyl Mix)", src: "" },
+          { side: "4", title: "The Second Renaissance (Final Dystopia)", src: "" },
+          { side: "5", title: "Utopian Surrealism", src: "" },
+          { side: "6", title: "Anthropic Demise", src: "" },
+          { side: "7", title: "Industrial Cyber Technologies", src: "" },
+          { side: "8", title: "None The Wiser", src: "" },
+          { side: "9", title: "Simulated Reality (Terafactory AI Electronics)", src: "" },
+          { side: "10", title: "Sentient Glory", src: "" },
         ]
-      }
+      },
+      {
+        title: "Utopian Surrealism Album Sampler",
+        artist: "Dax J",
+        desc: "",
+        label: "Monnom Black",
+        year: 2021,
+        catalog: "MONNOM025",
+        art: "images from me to you/displaywindow/a3592528568_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/utopian-surrealism-album-sampler", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Universal Future Sound", src: "" },
+          { side: "2", title: "Simulated Reality (Terafactory AI Electronics)", src: "" },
+          { side: "3", title: "Utopian Surrealism", src: "" },
+        ]
+      },
+      {
+        title: "Unholy Empire",
+        artist: "Aahan",
+        desc: "Release date: 15th January 2021 Aahan releases his first EP on Monnom Black, the Toronto artist fuses 4 rough techno cuts of unrelenting pressure together with his signature percussive grooves. CONTACT EMAIL: hatemusic1@gmail.com",
+        label: "Monnom Black",
+        year: 2021,
+        catalog: "MONNOM024",
+        art: "images from me to you/displaywindow/a2412796709_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/unholy-empire-3", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Body Shop", src: "" },
+          { side: "2", title: "Are You Feeling Oppressed ft The Dag", src: "" },
+          { side: "3", title: "Understand And Heal", src: "" },
+          { side: "4", title: "Unholy Empire", src: "" },
+        ]
+      },
+      {
+        title: "Organic Computer Awareness",
+        artist: "LDS",
+        desc: "Known for his futuristic, dub techno sound, Stuttgart’s LDS releases his 1st full EP on Monnom Black to shine some light during these cold isolated times. The deep, innovative ambiences take influence from artificial intelligence, creating LDS’s unique and unconventional take on dub techno and the sound of the future. LDS brings forth his vision during an uncertain time for both nightlife and the world whilst humanity stands at the hinge of merging with machines. Hardwax - \"Excellently refreshing, inducing Dub Techno warp flight!\"",
+        label: "Monnom Black",
+        year: 2020,
+        catalog: "MONNOM023",
+        art: "images from me to you/displaywindow/a2700681520_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/organic-computer-awareness", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "The 0 To 1 Infinity", src: "" },
+          { side: "2", title: "Grain Rain", src: "" },
+          { side: "3", title: "Kgtrs", src: "" },
+          { side: "4", title: "Punk Coding", src: "" },
+          { side: "5", title: "Organic Computer Awareness", src: "" },
+          { side: "6", title: "The Extasy Of Constructing", src: "" },
+        ]
+      },
+      {
+        title: "End Of Opulence",
+        artist: "Dax J",
+        desc: "Dax J returns to his label Monnom Black, bringing with him four cuts of pulsating techno!",
+        label: "Monnom Black",
+        year: 2020,
+        catalog: "MONNOM022",
+        art: "images from me to you/displaywindow/a4264431482_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/end-of-opulence", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "End Of Opulence", src: "" },
+          { side: "2", title: "Pulse Wave", src: "" },
+          { side: "3", title: "Counter Culture", src: "" },
+          { side: "4", title: "Self Medication", src: "" },
+        ]
+      },
+      {
+        title: "NITE NRG",
+        artist: "Fractions",
+        desc: "Fractions return to Monnom Black with a full EP of sonic disturbances and ominous cuts. Their integral work on this project is the perfect sublimation of acid and techno.",
+        label: "Monnom Black",
+        year: 2020,
+        catalog: "MONNOM021",
+        art: "images from me to you/displaywindow/a1574826057_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/nite-nrg", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "NITE NRG", src: "" },
+          { side: "2", title: "Do You Believe", src: "" },
+          { side: "3", title: "All The Streets Are Silent", src: "" },
+          { side: "4", title: "Hive Mind", src: "" },
+        ]
+      },
+      {
+        title: "The World Of Monnom Black II",
+        artist: "Various Artists",
+        desc: "To celebrate its landmark 20th release, Monnom Black invites you to enter The World of Monnom Black II – a return trip to techno's most uncompromising landscape. The triple vinyl release features 14 hand-picked contributions from the label’s trusted collaborators alongside cutting-edge artists new to the roster; making this compilation one of the label’s most varied and innovative collections yet.",
+        label: "Monnom Black",
+        year: 2019,
+        catalog: "MONNOM020",
+        art: "images from me to you/displaywindow/a2701339670_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/the-world-of-monnom-black-ii", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Zero Ground", src: "" },
+          { side: "2", title: "Drive Me Up", src: "" },
+          { side: "3", title: "Hope Reminds Me Of Her", src: "" },
+          { side: "4", title: "Big Bad City (Dax J Mix)", src: "" },
+          { side: "5", title: "Atlantyda", src: "" },
+          { side: "6", title: "Algorithmic Reality", src: "" },
+          { side: "7", title: "Distant Voices", src: "" },
+          { side: "8", title: "God Knows You're A Cunt", src: "" },
+          { side: "9", title: "Holocene", src: "" },
+          { side: "10", title: "Zephyr", src: "" },
+          { side: "11", title: "Venting ft. The Dag", src: "" },
+          { side: "12", title: "Lorry", src: "" },
+          { side: "13", title: "Kind Der Nacht", src: "" },
+          { side: "14", title: "Devious Methods", src: "" },
+        ]
+      },
+      {
+        title: "King Of The Sewers EP",
+        artist: "Dax J & UVB",
+        desc: "To help celebrate the release of 'King Of The Sewers' EP on Monnom Black, we caught up with Berlin-based producers Dax J and UVB for a quick-fire interview in order to learn more about the intricacies of their studio collaboration and how the love of 135 BPM techno helped forge their friendship.",
+        label: "Monnom Black",
+        year: 2019,
+        catalog: "MONNOM019",
+        art: "images from me to you/displaywindow/a1790919903_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/king-of-the-sewers-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Murder Wave", src: "" },
+          { side: "2", title: "Enrico (Don't cry you can live)", src: "" },
+          { side: "3", title: "Killer & Clutch", src: "" },
+          { side: "4", title: "King Of The Sewers", src: "" },
+        ]
+      },
+      {
+        title: "Chaos Come To Conquer EP",
+        artist: "Dax J",
+        desc: "Dax J returns to Monnom Black with an ep of uncompromising warehouse tracks, drifting through acid, UK & jungle influences to create an iconic onslaught of ominous Techno cuts.",
+        label: "Monnom Black",
+        year: 2019,
+        catalog: "MONNOM018",
+        art: "images from me to you/displaywindow/a73328866_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/chaos-come-to-conquer-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Chaos Come To Conquer", src: "" },
+          { side: "2", title: "Tenshun", src: "" },
+          { side: "3", title: "Speedball", src: "" },
+          { side: "4", title: "The Drome (SE1)", src: "" },
+        ]
+      },
+      {
+        title: "The World Of Monnom Black",
+        artist: "Various Artists",
+        desc: "",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM017",
+        art: "images from me to you/displaywindow/a3587730533_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/the-world-of-monnom-black", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Someone I know", src: "" },
+          { side: "2", title: "Virtual Plane", src: "" },
+          { side: "3", title: "Strange Mind", src: "" },
+          { side: "4", title: "Opressor", src: "" },
+          { side: "5", title: "Gundam", src: "" },
+          { side: "6", title: "I Will Always Hate You", src: "" },
+          { side: "7", title: "Pleroma", src: "" },
+          { side: "8", title: "Midnight Vigil", src: "" },
+          { side: "9", title: "Rituals Of Tears", src: "" },
+          { side: "10", title: "Inter Dimensional Hardcore Business", src: "" },
+          { side: "11", title: "Dosis", src: "" },
+          { side: "12", title: "Liquid Zoo", src: "" },
+          { side: "13", title: "Factory 4", src: "" },
+          { side: "14", title: "Urban Meditation", src: "" },
+        ]
+      },
+      {
+        title: "Body Music Remixes",
+        artist: "Thomas P. Heckmann",
+        desc: "Thomas P. Heckmann's album Body Music on Monnom Black gets remixed with 4 acidic cuts from techno legends; CUB (Regis & Simon Shreeve), CJ Bolland, The Horrorist and label boss Dax J.",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM016",
+        art: "images from me to you/displaywindow/a1153893099_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/body-music-remixes", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Provide The Future (Dax J Remix)", src: "" },
+          { side: "2", title: "Acid Head (CUB Remix)", src: "" },
+          { side: "3", title: "Acid Head (CJ Bolland Bad Acid Remix)", src: "" },
+          { side: "4", title: "Departure (The Horrorist Remix)", src: "" },
+        ]
+      },
+      {
+        title: "Redemption EP",
+        artist: "Dax J",
+        desc: "Dax J returns to Monnom Black with a double EP of Techno and Acid weapons!",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM015",
+        art: "images from me to you/displaywindow/a249503936_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/redemption-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "No Redemption", src: "" },
+          { side: "2", title: "Sin And Salvation", src: "" },
+          { side: "3", title: "Offending Public Morality (Dax J Dub Mix)", src: "" },
+          { side: "4", title: "Two Foot Shallow", src: "" },
+          { side: "5", title: "Voltaire", src: "" },
+          { side: "6", title: "The Tyranny", src: "" },
+          { side: "7", title: "Condition The Masses", src: "" },
+          { side: "8", title: "Russian Blood Lines", src: "" },
+          { side: "9", title: "Acid Ascention (Dax J Club Mix)", src: "" },
+        ]
+      },
+      {
+        title: "Offending Public Morality LP",
+        artist: "Dax J",
+        desc: "Dax J’s success within the challenging environment of international DJing and music production has been considerable, yet he hasn’t chosen to passively bask in the comfort of his accomplishments. Instead, he has used his recent experiences to create sonic weapons to confront “public morality” with a themed album of the same name. The concept of “public morality” is one that can be used to help solidify the bonds that hold together society, but on the other hand, it can also provide the basis for acts of exclusion and scapegoating within that same society.\n\n\n\nTouching upon numerous “hot button” issues that could offend non-reflective, puritanical sensibilities (i.e. drug abuse, racism, prostitution, murder), Offending Public Morality sprawls out like a foreboding urban landscape and calls upon all kinds of sound elements that will be new to those already familiar with Dax J. Though he has been closely identified with the techno genre this new set makes knowing nods towards his influences in the UK jungle / drum ‘n bass scene, while also undertaking exercises in IDM, EBM, acid and other forms of uncategorizable intensity. From the introductory “Babylon Brutality”, which nails gritty film samples to a lush vocal elegy and authoritarian percussion, Dax J presents a story wherein creative, exploratory energy is constantly forced to contend with paranoiac, racist and exploitative tendencies. It’s a relentless record typified by dark undertones and raw, unfiltered energy.\n\n\n\nEqual portions of positive excitement and dread are present in the sequencer-powered, dialed-in rush of “Reclaim Our Lost Honor” or “Offending Public Morality” (whose Middle Eastern-flavored keys separate it from many likeminded journeys into Euro-coldness), while acid-dripping cuts like “Unrepentacostal” and the jungle cyborg stomp “Mustapha Mond” take a darker, chillier approach. There are plenty of seductive moments to keep the force of impact from being too overwhelming – especially Zanias’ guest vocal turn on “Waves of Isolation,” and the flaring brightness of “Feed The Pigeons” – but these moments of beauty tend to only highlight the importance of Dax J’s overall message.\n\n\n\nThat this message can be conveyed clearly with such a variety of different sound techniques is a real testament to Dax J’s skill as a producer, but also to his perceptiveness and his resilience in the face of adversity.\n\n\n\nOffending Public Morality draws up the lines of conflict in a way that’s vivid and loud as possible; using radical sounds to document the ongoing struggle between free expression and violent repression.",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM014",
+        art: "images from me to you/displaywindow/a1848851896_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/offending-public-morality-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Babylon Brutality", src: "" },
+          { side: "2", title: "The Art Of Murder", src: "" },
+          { side: "3", title: "Looking For Tina", src: "" },
+          { side: "4", title: "1001 Amen Nights", src: "" },
+          { side: "5", title: "Waves Of Isolation", src: "" },
+          { side: "6", title: "Reclaim Our Lost Honor", src: "" },
+          { side: "7", title: "Unrepentacostal", src: "" },
+          { side: "8", title: "Feed The Pigeons", src: "" },
+          { side: "9", title: "Offending Public Morality", src: "" },
+          { side: "10", title: "It's a Trap", src: "" },
+          { side: "11", title: "Mustapha Mond", src: "" },
+          { side: "12", title: "Kerb Crawling", src: "" },
+          { side: "13", title: "Acid Ascention", src: "" },
+          { side: "14", title: "Death Is Imminent", src: "" },
+        ]
+      },
+      {
+        title: "Body Music LP",
+        artist: "Thomas P. Heckmann",
+        desc: "Monnom Black is proud to present BODY MUSIC - the new album from legendary electronic Thomas P. Heckmann is a man who needs little introduction. The German producer has flexed his prowess across all shades of electronic music, but it’s his contributions to EBM-Techno, Acid, Industrial and Experimental that has earned him his notoriety, and it was in 1994 when he dropped an acid-tinged ‘Amphetamine’ as DRAX LTD. II that shot him into being recognised as a power to be reckoned with. For the production of BODY MUSIC, Heckmann has utilised 30 years worth of acquired knowledge to create a hard-hitting album which bears all the grit Heckmann is renowned for. Harmonising analogue and digital wares to create an utterly immersive album over the course of 14 tracks. Tracks such as Provide the Future, Bloody Vacant and Zeitmaschine are prime examples of how TPH can bring forth his charismatic productions into the contemporary techno climate, whilst sealing each track with his signature stamp. His vast knowledge of modular and analogue syntheses teamed with his ability to build tension proves optimal in BODY MUSIC’s storytelling. The album’s mission statement is simple: “Connecting the future with the past.” Tracks such as EBM3 start off where Thomas left off back in the early 2000s - sequels to EBM1 and EBM2. The LP will be presented over three slabs of vinyl, with the album covering significant ground in techno, EBM, acid and electro (and many chasms in between). BODY MUSIC is a prime example of why TPH has remained so in demand and relevant over the years - and now more than ever. Includes unlimited streaming of Body Music LP via the free Bandcamp app, plus high-quality download in MP3, FLAC and more.",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM013",
+        art: "images from me to you/displaywindow/a4218549728_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/body-music-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Provide The Future", src: "" },
+          { side: "2", title: "Parasomnia", src: "" },
+          { side: "3", title: "Zeitmaschine", src: "" },
+          { side: "4", title: "Body Music (EBM 3)", src: "" },
+          { side: "5", title: "Bodywrap", src: "" },
+          { side: "6", title: "Cabin Fever", src: "" },
+          { side: "7", title: "The Hand That Rocks", src: "" },
+          { side: "8", title: "Bloody Vacant", src: "" },
+          { side: "9", title: "No Saint", src: "" },
+          { side: "10", title: "Acid Head", src: "" },
+          { side: "11", title: "Hardbeatfunk", src: "" },
+          { side: "12", title: "Veitstanz", src: "" },
+          { side: "13", title: "Drowning", src: "" },
+          { side: "14", title: "Departure", src: "" },
+        ]
+      },
+      {
+        title: "Body Music Album Teaser",
+        artist: "Thomas P. Heckmann",
+        desc: "",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM012",
+        art: "images from me to you/displaywindow/a1161642819_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/body-music-album-teaser", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Zeitmaschine", src: "" },
+          { side: "2", title: "Provide the Future", src: "" },
+          { side: "3", title: "Bodywrap Dub", src: "" },
+        ]
+      },
+      {
+        title: "State of Control EP",
+        artist: "I Hate Models",
+        desc: "I Hate Models makes his debut on Monnom Black bringing his trademark sound and style, anthemic ebm, acid, rave, techno killers. Absolutely Essential!",
+        label: "Monnom Black",
+        year: 2017,
+        catalog: "MONNOM011",
+        art: "images from me to you/displaywindow/a3084015627_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/state-of-control-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "State Of Control", src: "" },
+          { side: "2", title: "She Said Fuck People I Have Drugs", src: "" },
+          { side: "3", title: "Emerald", src: "" },
+          { side: "4", title: "Last Kiss Before Death", src: "" },
+        ]
+      },
+      {
+        title: "LSD EP",
+        artist: "Remco Beekwilder",
+        desc: "Monnom Black debuts a brand new artist to the label for its esteemed Tenth release. Coming straight out of Holland is fast rising starlight, Remco Beekwilder! Here he arrives with his monumental LSD EP. Absolute Essential Floor Killer!",
+        label: "Monnom Black",
+        year: 2017,
+        catalog: "MONNOM010",
+        art: "images from me to you/displaywindow/a1420756438_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/lsd-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "LSD", src: "" },
+          { side: "2", title: "Concrete Jungle", src: "" },
+          { side: "3", title: "Rave Mood", src: "" },
+          { side: "4", title: "Human Mind", src: "" },
+        ]
+      },
+      {
+        title: "The Invisible Man EP",
+        artist: "Dax J",
+        desc: "",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM009",
+        art: "images from me to you/displaywindow/a58995424_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/the-invisible-man-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "The Wonk", src: "" },
+          { side: "2", title: "The Invisible Man", src: "" },
+          { side: "3", title: "Wir Leben Für Die Nacht", src: "" },
+          { side: "4", title: "The Bounce", src: "" },
+          { side: "5", title: "Surrender feat. Cat Yen", src: "" },
+        ]
+      },
+      {
+        title: "Highest Sense EP",
+        artist: "Stranger",
+        desc: "Monnom Black 008\n\n\n\nStranger - Highest Sense EP\n\n\n\nMonnom Black 008 comes from Stranger, one of Rotterdams fast rising talents. Known for his love of classic Techno, Stranger delivers 4 peak-time Rave Acidic cuts, ready to do the damage. Highly Recommended!",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM008",
+        art: "images from me to you/displaywindow/a3329437732_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/highest-sense-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Highest Sense", src: "" },
+          { side: "2", title: "Play Some Rave For Me", src: "" },
+          { side: "3", title: "Ommoord", src: "" },
+          { side: "4", title: "Doorklapgabber", src: "" },
+        ]
+      },
+      {
+        title: "Shades Of Black LP",
+        artist: "Dax J",
+        desc: "Monnom Black introduces Dax J’s 1st solo full length Techno album Shades of Black. Drawing inspiration from Acid, Jungle, Drum n Bass & UK Rave, combining a diverse fusion of tempos, moods and breakbeats. Essential and Highly Recommended!",
+        label: "Monnom Black",
+        year: 2015,
+        catalog: "MONNOM007",
+        art: "images from me to you/displaywindow/a669957456_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/shades-of-black-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Orlok's Symphony", src: "" },
+          { side: "2", title: "Beyond The Planets", src: "" },
+          { side: "3", title: "Renegades Of Conflict", src: "" },
+          { side: "4", title: "Devine Right", src: "" },
+          { side: "5", title: "In The Shadows", src: "" },
+          { side: "6", title: "Protect The Prophecy", src: "" },
+          { side: "7", title: "Requiem Souls", src: "" },
+          { side: "8", title: "Black Pegasus", src: "" },
+          { side: "9", title: "Sempa", src: "" },
+          { side: "10", title: "Afterlife", src: "" },
+        ]
+      },
+      {
+        title: "Mispress EP",
+        artist: "Binny",
+        desc: "Monnom Black welcomes Binny to the label. His Mispress EP consists of 4 peak-time bombs, in classic Binny style that he is known so well for. Inspired from Mills, Surgeon and old school 90’s techno with a modern day twist.",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM006",
+        art: "images from me to you/displaywindow/a4227370301_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/mispress-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Mispress", src: "" },
+          { side: "2", title: "Outline", src: "" },
+          { side: "3", title: "Quarantine", src: "" },
+          { side: "4", title: "Event Horizon", src: "" },
+        ]
+      },
+      {
+        title: "Imperial Propaganda EP",
+        artist: "Dax J",
+        desc: "Dax J delivers the 5th edition of Monnom Black. 4 raw, peak time techno slammers ready to shake the floor. Comes with additional limited bespoke art insert & sticker",
+        label: "Monnom Black",
+        year: 2015,
+        catalog: "MONNOM005",
+        art: "images from me to you/displaywindow/a65816871_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/imperial-propaganda-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Imperial Propaganda", src: "" },
+          { side: "2", title: "Closer To God", src: "" },
+          { side: "3", title: "The Future", src: "" },
+          { side: "4", title: "Twilight Zone", src: "" },
+        ]
+      },
+      {
+        title: "Vyper EP",
+        artist: "Emmanuel",
+        desc: "",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM004",
+        art: "images from me to you/displaywindow/a2166016869_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/vyper-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Vyper EP", src: "" },
+          { side: "2", title: "Mind Your Business", src: "" },
+          { side: "3", title: "One Million Enemies", src: "" },
+        ]
+      },
+      {
+        title: "Infinite Abyss EP",
+        artist: "Dax J",
+        desc: "The 3rd Release from Monnom Black sees 4 new original tracks from Dax J. Acidic, rave dance-floor weapons",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM003",
+        art: "images from me to you/displaywindow/a141418457_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/infinite-abyss-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Zion", src: "" },
+          { side: "2", title: "Infinite Abyss", src: "" },
+          { side: "3", title: "Distant Futures", src: "" },
+          { side: "4", title: "Inca Trail", src: "" },
+        ]
+      },
+      {
+        title: "Basement EP",
+        artist: "Kaelan",
+        desc: "",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM002",
+        art: "images from me to you/displaywindow/a3041096079_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/basement-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Mod 2", src: "" },
+          { side: "2", title: "Darkpole", src: "" },
+          { side: "3", title: "K1", src: "" },
+          { side: "4", title: "Mod 2 (NX1 Remix)", src: "" },
+        ]
+      },
+      {
+        title: "Dreamscape EP",
+        artist: "Dax J",
+        desc: "",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM001",
+        art: "images from me to you/displaywindow/a1442108399_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/dreamscape-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Dreamscape", src: "" },
+          { side: "2", title: "Planet X", src: "" },
+          { side: "3", title: "Planet X (Mark Broom Remix)", src: "" },
+          { side: "4", title: "Alpha Rhythm", src: "" },
+        ]
+      },
     ];
-
     // Derive SRCS from RELEASES art paths + remaining images for grid variety
-    const SRCS = RELEASES.map(function(r) { return encodeURI(r.art); }).concat([
-      'images%20from%20me%20to%20you/displaywindow/a0073328866_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a0691030606_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a1082716305_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a1286263440_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a1405643370_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a1410557316_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a1574826057_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a1790919903_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a2275957915_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a2412796709_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a2700681520_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a2701339670_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a3414222201_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a3456703649_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a3592528568_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a3612426603_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a4264431482_10.jpg',
-      'images%20from%20me%20to%20you/displaywindow/a4279162120_10.jpg'
-    ]);
+    const SRCS = RELEASES.map(function(r) { return encodeURI(r.art); });
 
     function releaseForSrc(src) {
       return RELEASES.find(function(r) { return encodeURI(r.art) === src; }) || null;
@@ -412,11 +1130,17 @@
       document.querySelectorAll('.sb-track').forEach(function(el) {
         var ri = parseInt(el.dataset.ri);
         var ti = parseInt(el.dataset.ti);
-        el.classList.toggle('active', ri === currentRelease && ti === currentTrack);
+        var isCurrent = ri === currentRelease && ti === currentTrack;
+        el.classList.toggle('active', isCurrent);
+        var icon = el.querySelector('.sb-play-icon');
+        if (icon) icon.textContent = (isCurrent && isPlaying) ? '\u25AE\u25AE' : '\u25B6';
       });
       if (modalOpen) {
         document.querySelectorAll('.modal-track').forEach(function(el, i) {
-          el.classList.toggle('active', modalReleaseIndex === currentRelease && i === currentTrack);
+          var isCurrent = modalReleaseIndex === currentRelease && i === currentTrack;
+          el.classList.toggle('active', isCurrent);
+          var icon = el.querySelector('.mt-play');
+          if (icon) icon.textContent = (isCurrent && isPlaying) ? '\u25AE\u25AE' : '\u25B6';
         });
       }
     }
@@ -453,6 +1177,7 @@
         isPlaying = false;
         document.getElementById('pb-play').textContent = '\u25B6';
       }
+      highlightActive();
     }
 
     // ── Modal ──
@@ -461,9 +1186,12 @@
       if (!rel) return;
       modalReleaseIndex = ri;
 
-      document.getElementById('modal-title').textContent = rel.title;
+      document.getElementById('modal-title').textContent = rel.artist + ' — ' + rel.title;
       document.getElementById('modal-meta').textContent = rel.label + ' / ' + rel.year;
       document.getElementById('modal-catalog').textContent = rel.catalog;
+      var descEl = document.getElementById('modal-desc');
+      descEl.textContent = rel.desc || '';
+      descEl.style.display = rel.desc ? 'block' : 'none';
       document.getElementById('modal-art-img').src = encodeURI(rel.art);
 
       var tl = document.getElementById('modal-tracklist');
@@ -475,14 +1203,25 @@
 
         var icon = document.createElement('span');
         icon.className = 'mt-play';
-        icon.textContent = '\u25B6';
+        icon.textContent = (currentRelease === ri && currentTrack === ti && isPlaying) ? '\u25AE\u25AE' : '\u25B6';
+        icon.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (currentRelease === ri && currentTrack === ti && isPlaying) {
+            togglePlay();
+          } else {
+            playTrack(ri, ti);
+          }
+        });
 
         var name = document.createElement('span');
         name.textContent = trk.side + '. ' + trk.title;
+        name.addEventListener('click', function(e) {
+          e.stopPropagation();
+          playTrack(ri, ti);
+        });
 
         row.appendChild(icon);
         row.appendChild(name);
-        row.addEventListener('click', function() { playTrack(ri, ti); });
         tl.appendChild(row);
       });
 
@@ -523,7 +1262,7 @@
 
         var title = document.createElement('div');
         title.className = 'sb-release-title';
-        title.textContent = rel.title;
+        title.textContent = rel.artist + ' — ' + rel.title;
         title.addEventListener('click', function() { openModal(ri); });
         div.appendChild(title);
 
@@ -536,13 +1275,24 @@
           var icon = document.createElement('span');
           icon.className = 'sb-play-icon';
           icon.textContent = '\u25B6';
+          icon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (currentRelease === ri && currentTrack === ti && isPlaying) {
+              togglePlay();
+            } else {
+              playTrack(ri, ti);
+            }
+          });
 
           var name = document.createElement('span');
           name.textContent = trk.side + '. ' + trk.title;
+          name.addEventListener('click', function(e) {
+            e.stopPropagation();
+            playTrack(ri, ti);
+          });
 
           row.appendChild(icon);
           row.appendChild(name);
-          row.addEventListener('click', function() { playTrack(ri, ti); });
           div.appendChild(row);
         });
 
@@ -686,6 +1436,7 @@
     const STIFFNESS = 0.5;   // fraction of gap closed per frame — 0.3 = stiff, 0.1 = soft
 
     window.addEventListener('wheel', function(e) {
+      if (e.target.closest('#sidebar')) return; // let sidebar scroll naturally
       e.preventDefault();
       targetX += e.deltaX;
       targetY += e.deltaY;
