@@ -312,6 +312,13 @@
   <div id="scene"></div>
   <p class="label">DAX J &nbsp;&mdash;&nbsp; Releases</p>
 
+  <div id="player-bar">
+    <button id="pb-play">&#9654;</button>
+    <div id="pb-name"></div>
+    <div id="pb-progress-wrap"><div id="pb-progress"></div></div>
+    <div id="pb-time">0:00 / 0:00</div>
+  </div>
+
   <script>
     const RELEASES = [
       {
@@ -787,13 +794,6 @@
     layoutTiles();
     requestAnimationFrame(rafLoop);
   </script>
-
-  <div id="player-bar">
-    <button id="pb-play">&#9654;</button>
-    <div id="pb-name"></div>
-    <div id="pb-progress-wrap"><div id="pb-progress"></div></div>
-    <div id="pb-time">0:00 / 0:00</div>
-  </div>
 
 </body>
 </html>
