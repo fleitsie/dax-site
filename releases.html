@@ -147,6 +147,143 @@
       flex-shrink: 0;
       font-size: 0.5rem;
     }
+
+    /* ── Modal ── */
+    #modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 200;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    #modal-overlay.open {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #modal-overlay.visible { opacity: 1; }
+
+    #modal-content {
+      display: flex;
+      gap: 4rem;
+      max-width: 1100px;
+      width: 90%;
+      align-items: center;
+    }
+
+    #modal-info { flex: 1; min-width: 0; }
+
+    #modal-art {
+      width: 420px; height: 420px;
+      flex-shrink: 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    }
+
+    #modal-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    #modal-title {
+      font-size: 1.4rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: #fff; margin-bottom: 0.4rem;
+    }
+
+    #modal-meta {
+      font-size: 0.58rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      margin-bottom: 0.3rem;
+    }
+
+    #modal-catalog {
+      font-size: 0.52rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: rgba(255,255,255,0.25);
+      margin-bottom: 1.6rem;
+    }
+
+    #modal-tracklist-label {
+      font-size: 0.48rem; letter-spacing: 0.24em;
+      text-transform: uppercase; color: rgba(255,255,255,0.2);
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-track {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.25rem 0; font-size: 0.58rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: rgba(255,255,255,0.55); cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .modal-track:hover { color: #fff; }
+    .modal-track.active { color: #3fe1b1; }
+    .modal-track .mt-play { font-size: 0.48rem; }
+
+    #modal-links { display: flex; gap: 0.8rem; margin-top: 1.6rem; }
+
+    #modal-links a {
+      font-size: 0.48rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.5);
+      text-decoration: none; border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.4rem 1rem; transition: color 0.15s, border-color 0.15s;
+    }
+
+    #modal-links a:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+
+    #modal-close {
+      position: fixed; bottom: 3rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.52rem; letter-spacing: 0.24em;
+      text-transform: uppercase; color: rgba(255,255,255,0.5);
+      background: none; border: 1px solid rgba(255,255,255,0.25);
+      padding: 0.6rem 2.4rem; cursor: pointer; z-index: 210;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    #modal-close:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+
+    /* ── Player Bar ── */
+    #player-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 48px; background: rgba(0,0,0,0.95);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      z-index: 100; display: none;
+      align-items: center; padding: 0 1.6rem; gap: 1rem;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    #player-bar.active { display: flex; }
+
+    #pb-play {
+      background: none; border: none; color: #fff;
+      font-size: 0.7rem; cursor: pointer; padding: 0.3rem; flex-shrink: 0;
+    }
+
+    #pb-name {
+      font-size: 0.52rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.7);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      min-width: 120px; max-width: 240px;
+    }
+
+    #pb-progress-wrap {
+      flex: 1; height: 3px; background: rgba(255,255,255,0.1);
+      cursor: pointer; position: relative; border-radius: 1.5px;
+    }
+
+    #pb-progress {
+      height: 100%; background: #3fe1b1; width: 0%;
+      border-radius: 1.5px; pointer-events: none;
+    }
+
+    #pb-time {
+      font-size: 0.48rem; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.35); flex-shrink: 0;
+      min-width: 90px; text-align: right;
+    }
   </style>
 </head>
 <body>
@@ -155,6 +292,21 @@
     <h2>Releases</h2>
     <div id="sidebar-list"></div>
   </aside>
+
+  <div id="modal-overlay">
+    <div id="modal-content">
+      <div id="modal-info">
+        <div id="modal-title"></div>
+        <div id="modal-meta"></div>
+        <div id="modal-catalog"></div>
+        <div id="modal-tracklist-label">Tracklist:</div>
+        <div id="modal-tracklist"></div>
+        <div id="modal-links"></div>
+      </div>
+      <div id="modal-art"><img id="modal-art-img" src="" alt=""></div>
+    </div>
+    <button id="modal-close">Close</button>
+  </div>
 
   <div id="scene"></div>
   <p class="label">DAX J &nbsp;&mdash;&nbsp; Releases</p>
@@ -229,9 +381,125 @@
       return RELEASES.find(function(r) { return encodeURI(r.art) === src; }) || null;
     }
 
-    // ── Stub functions (implemented in later tasks) ──
-    function openModal(releaseIndex) { console.log('open modal', releaseIndex); }
-    function playTrack(releaseIndex, trackIndex) { console.log('play', releaseIndex, trackIndex); }
+    // ── Audio Player ──
+    var audio = new Audio();
+    var currentRelease = -1;
+    var currentTrack = -1;
+    var isPlaying = false;
+    var modalOpen = false;
+    var modalReleaseIndex = -1;
+
+    function formatTime(s) {
+      if (isNaN(s)) return '0:00';
+      var m = Math.floor(s / 60);
+      var sec = Math.floor(s % 60);
+      return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function highlightActive() {
+      document.querySelectorAll('.sb-track').forEach(function(el) {
+        var ri = parseInt(el.dataset.ri);
+        var ti = parseInt(el.dataset.ti);
+        el.classList.toggle('active', ri === currentRelease && ti === currentTrack);
+      });
+      if (modalOpen) {
+        document.querySelectorAll('.modal-track').forEach(function(el, i) {
+          el.classList.toggle('active', modalReleaseIndex === currentRelease && i === currentTrack);
+        });
+      }
+    }
+
+    function playTrack(ri, ti) {
+      var rel = RELEASES[ri];
+      var trk = rel.tracks[ti];
+      if (!trk.src) {
+        console.warn('No audio source for', rel.title, trk.title);
+        return;
+      }
+
+      currentRelease = ri;
+      currentTrack = ti;
+
+      audio.src = trk.src;
+      audio.play();
+      isPlaying = true;
+
+      document.getElementById('player-bar').classList.add('active');
+      document.getElementById('pb-name').textContent = trk.side + '. ' + trk.title + '  \u2014  ' + rel.title;
+      document.getElementById('pb-play').textContent = '\u25AE\u25AE';
+      highlightActive();
+    }
+
+    function togglePlay() {
+      if (!audio.src) return;
+      if (audio.paused) {
+        audio.play();
+        isPlaying = true;
+        document.getElementById('pb-play').textContent = '\u25AE\u25AE';
+      } else {
+        audio.pause();
+        isPlaying = false;
+        document.getElementById('pb-play').textContent = '\u25B6';
+      }
+    }
+
+    // ── Modal ──
+    function openModal(ri) {
+      var rel = RELEASES[ri];
+      if (!rel) return;
+      modalReleaseIndex = ri;
+
+      document.getElementById('modal-title').textContent = rel.title;
+      document.getElementById('modal-meta').textContent = rel.label + ' / ' + rel.year;
+      document.getElementById('modal-catalog').textContent = rel.catalog;
+      document.getElementById('modal-art-img').src = encodeURI(rel.art);
+
+      var tl = document.getElementById('modal-tracklist');
+      tl.innerHTML = '';
+      rel.tracks.forEach(function(trk, ti) {
+        var row = document.createElement('div');
+        row.className = 'modal-track';
+        if (currentRelease === ri && currentTrack === ti) row.classList.add('active');
+
+        var icon = document.createElement('span');
+        icon.className = 'mt-play';
+        icon.textContent = '\u25B6';
+
+        var name = document.createElement('span');
+        name.textContent = trk.side + '. ' + trk.title;
+
+        row.appendChild(icon);
+        row.appendChild(name);
+        row.addEventListener('click', function() { playTrack(ri, ti); });
+        tl.appendChild(row);
+      });
+
+      var linksEl = document.getElementById('modal-links');
+      linksEl.innerHTML = '';
+      Object.keys(rel.links).forEach(function(key) {
+        if (rel.links[key] && rel.links[key] !== '#') {
+          var a = document.createElement('a');
+          a.href = rel.links[key];
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = key;
+          linksEl.appendChild(a);
+        }
+      });
+
+      var overlay = document.getElementById('modal-overlay');
+      overlay.classList.add('open');
+      overlay.offsetHeight; // trigger reflow
+      overlay.classList.add('visible');
+      modalOpen = true;
+    }
+
+    function closeModal() {
+      var overlay = document.getElementById('modal-overlay');
+      overlay.classList.remove('visible');
+      setTimeout(function() { overlay.classList.remove('open'); }, 300);
+      modalOpen = false;
+    }
 
     // ── Sidebar rendering ──
     function renderSidebar() {
@@ -464,11 +732,50 @@
       });
     });
 
+    // ── Player bar controls ──
+    document.getElementById('pb-play').addEventListener('click', togglePlay);
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modalOpen) closeModal();
+    });
+
+    audio.addEventListener('timeupdate', function() {
+      var pct = (audio.currentTime / audio.duration) * 100;
+      document.getElementById('pb-progress').style.width = pct + '%';
+      document.getElementById('pb-time').textContent =
+        formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+    });
+
+    document.getElementById('pb-progress-wrap').addEventListener('click', function(e) {
+      var rect = this.getBoundingClientRect();
+      var pct = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = pct * audio.duration;
+    });
+
+    audio.addEventListener('ended', function() {
+      var rel = RELEASES[currentRelease];
+      if (currentTrack < rel.tracks.length - 1) {
+        playTrack(currentRelease, currentTrack + 1);
+      } else if (currentRelease < RELEASES.length - 1) {
+        playTrack(currentRelease + 1, 0);
+      } else {
+        isPlaying = false;
+        document.getElementById('pb-play').textContent = '\u25B6';
+      }
+    });
+
     // ── Start ──
     renderSidebar();
     layoutTiles();
     requestAnimationFrame(rafLoop);
   </script>
+
+  <div id="player-bar">
+    <button id="pb-play">&#9654;</button>
+    <div id="pb-name"></div>
+    <div id="pb-progress-wrap"><div id="pb-progress"></div></div>
+    <div id="pb-time">0:00 / 0:00</div>
+  </div>
 
 </body>
 </html>
