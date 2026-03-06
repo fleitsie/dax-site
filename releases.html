@@ -177,7 +177,7 @@
       z-index: 200;
       display: none;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.4s ease;
       font-family: 'IBM Plex Mono', monospace;
     }
 
@@ -197,15 +197,52 @@
       align-items: center;
     }
 
-    #modal-info { flex: 1; min-width: 0; }
+    #modal-info {
+      flex: 1; min-width: 0;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s;
+    }
+
+    #modal-info.reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     #modal-art {
       width: 420px; height: 420px;
       flex-shrink: 0;
       box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      opacity: 0;
     }
 
+    #modal-art.reveal { opacity: 1; }
+
     #modal-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* Flying artwork clone */
+    #flying-art {
+      position: fixed;
+      z-index: 250;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      pointer-events: none;
+      will-change: transform, top, left, width, height;
+    }
+
+    #flying-art img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+
+    /* Tiles fade out when modal opening */
+    #scene.fading .tile { transition: opacity 0.35s ease; opacity: 0; }
+    .label.fading { transition: opacity 0.35s ease; opacity: 0 !important; }
+    #sidebar.fading { transition: opacity 0.35s ease; opacity: 0; }
+
+    /* Tiles fade back in when modal closing */
+    #scene.returning .tile { transition: opacity 0.35s ease 0.15s; opacity: 1; }
+    .label.returning { transition: opacity 0.35s ease 0.15s; }
+    #sidebar.returning { transition: opacity 0.35s ease 0.15s; }
 
     #modal-title {
       font-size: 1.4rem; font-weight: 500;
@@ -267,13 +304,19 @@
 
     #modal-close {
       position: fixed; bottom: 3rem; left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(12px);
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.52rem; letter-spacing: 0.24em;
       text-transform: uppercase; color: rgba(255,255,255,0.5);
       background: none; border: 1px solid rgba(255,255,255,0.25);
       padding: 0.6rem 2.4rem; cursor: pointer; z-index: 210;
-      transition: color 0.15s, border-color 0.15s;
+      opacity: 0;
+      transition: color 0.15s, border-color 0.15s, opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
+    }
+
+    #modal-close.reveal {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     #modal-close:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
@@ -1208,11 +1251,15 @@
     }
 
     // ── Modal ──
-    function openModal(ri) {
+    var lastClickedTile = null; // track which tile was clicked for reverse animation
+
+    function openModal(ri, clickedTileEl) {
       var rel = RELEASES[ri];
       if (!rel) return;
       modalReleaseIndex = ri;
+      lastClickedTile = clickedTileEl || null;
 
+      // Populate modal content
       document.getElementById('modal-title').textContent = rel.artist + ' — ' + rel.title;
       document.getElementById('modal-meta').textContent = rel.label + ' / ' + rel.year;
       document.getElementById('modal-catalog').textContent = rel.catalog;
@@ -1265,18 +1312,145 @@
         }
       });
 
+      // Reset reveal states
+      document.getElementById('modal-info').classList.remove('reveal');
+      document.getElementById('modal-art').classList.remove('reveal');
+      document.getElementById('modal-close').classList.remove('reveal');
+
       var overlay = document.getElementById('modal-overlay');
-      overlay.classList.add('open');
-      overlay.offsetHeight; // trigger reflow
-      overlay.classList.add('visible');
-      modalOpen = true;
+
+      if (clickedTileEl) {
+        // ── Animated open ──
+        var tileRect = clickedTileEl.getBoundingClientRect();
+
+        // Fade out tiles, sidebar, label
+        document.getElementById('scene').classList.add('fading');
+        document.querySelector('.label').classList.add('fading');
+        document.getElementById('sidebar').classList.add('fading');
+
+        // Create flying artwork
+        var flyer = document.createElement('div');
+        flyer.id = 'flying-art';
+        var flyImg = document.createElement('img');
+        flyImg.src = encodeURI(rel.art);
+        flyer.appendChild(flyImg);
+
+        // Start at tile position
+        flyer.style.top = tileRect.top + 'px';
+        flyer.style.left = tileRect.left + 'px';
+        flyer.style.width = tileRect.width + 'px';
+        flyer.style.height = tileRect.height + 'px';
+        document.body.appendChild(flyer);
+
+        // Show overlay bg (but content hidden)
+        overlay.classList.add('open');
+        overlay.offsetHeight;
+        overlay.classList.add('visible');
+        modalOpen = true;
+
+        // Calculate where modal-art will be
+        requestAnimationFrame(function() {
+          var artEl = document.getElementById('modal-art');
+          var artRect = artEl.getBoundingClientRect();
+
+          // Animate flyer to modal-art position
+          flyer.style.transition = 'top 0.5s cubic-bezier(0.16, 1, 0.3, 1), left 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1), height 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+          flyer.style.top = artRect.top + 'px';
+          flyer.style.left = artRect.left + 'px';
+          flyer.style.width = artRect.width + 'px';
+          flyer.style.height = artRect.height + 'px';
+
+          // After flight lands, reveal modal content and remove flyer
+          setTimeout(function() {
+            artEl.classList.add('reveal');
+            document.getElementById('modal-info').classList.add('reveal');
+            document.getElementById('modal-close').classList.add('reveal');
+            if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+          }, 480);
+        });
+
+      } else {
+        // ── Instant open (from sidebar) ──
+        overlay.classList.add('open');
+        overlay.offsetHeight;
+        overlay.classList.add('visible');
+        document.getElementById('modal-art').classList.add('reveal');
+        document.getElementById('modal-info').classList.add('reveal');
+        document.getElementById('modal-close').classList.add('reveal');
+        modalOpen = true;
+      }
     }
 
     function closeModal() {
       var overlay = document.getElementById('modal-overlay');
-      overlay.classList.remove('visible');
-      setTimeout(function() { overlay.classList.remove('open'); }, 300);
+      var artEl = document.getElementById('modal-art');
+      var infoEl = document.getElementById('modal-info');
+
+      // Fade out modal info and close button first
+      infoEl.classList.remove('reveal');
+      document.getElementById('modal-close').classList.remove('reveal');
+
+      if (lastClickedTile) {
+        // ── Animated close ──
+        var tileRect = lastClickedTile.getBoundingClientRect();
+        var artRect = artEl.getBoundingClientRect();
+
+        // Create flyer at modal-art position
+        var flyer = document.createElement('div');
+        flyer.id = 'flying-art';
+        var flyImg = document.createElement('img');
+        flyImg.src = document.getElementById('modal-art-img').src;
+        flyer.appendChild(flyImg);
+        flyer.style.top = artRect.top + 'px';
+        flyer.style.left = artRect.left + 'px';
+        flyer.style.width = artRect.width + 'px';
+        flyer.style.height = artRect.height + 'px';
+        document.body.appendChild(flyer);
+
+        // Hide modal art
+        artEl.classList.remove('reveal');
+
+        // Fade out overlay bg
+        overlay.classList.remove('visible');
+
+        // Bring tiles back
+        var sc = document.getElementById('scene');
+        var lb = document.querySelector('.label');
+        var sb = document.getElementById('sidebar');
+        sc.classList.remove('fading');
+        lb.classList.remove('fading');
+        sb.classList.remove('fading');
+        sc.classList.add('returning');
+        lb.classList.add('returning');
+        sb.classList.add('returning');
+
+        // Animate flyer back to tile
+        requestAnimationFrame(function() {
+          flyer.style.transition = 'top 0.45s cubic-bezier(0.16, 1, 0.3, 1), left 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1), height 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease 0.2s';
+          flyer.style.top = tileRect.top + 'px';
+          flyer.style.left = tileRect.left + 'px';
+          flyer.style.width = tileRect.width + 'px';
+          flyer.style.height = tileRect.height + 'px';
+          flyer.style.opacity = '0';
+        });
+
+        setTimeout(function() {
+          overlay.classList.remove('open');
+          if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+          sc.classList.remove('returning');
+          lb.classList.remove('returning');
+          sb.classList.remove('returning');
+        }, 500);
+
+      } else {
+        // ── Instant close ──
+        artEl.classList.remove('reveal');
+        overlay.classList.remove('visible');
+        setTimeout(function() { overlay.classList.remove('open'); }, 400);
+      }
+
       modalOpen = false;
+      lastClickedTile = null;
     }
 
     // ── Sidebar rendering ──
@@ -1397,7 +1571,7 @@
             var dy = e.clientY - downY;
             if (Math.abs(dx) < 5 && Math.abs(dy) < 5) {
               var rel = releaseForSrc(tile.curSrc);
-              if (rel) openModal(RELEASES.indexOf(rel));
+              if (rel) openModal(RELEASES.indexOf(rel), tile.el);
             }
           });
         })(tiles[tiles.length - 1]);
