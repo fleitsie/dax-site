@@ -28,7 +28,7 @@
 
     .label {
       position: fixed;
-      bottom: 2.2rem; left: 2.8rem;
+      bottom: 2.2rem; left: calc(240px + 2.8rem);
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.52rem;
       letter-spacing: 0.32em;
@@ -39,7 +39,9 @@
 
     #scene {
       position: relative;
-      width: 100vw; height: 100vh;
+      left: 240px;
+      width: calc(100vw - 240px);
+      height: 100vh;
       overflow: hidden;
     }
 
@@ -83,9 +85,76 @@
       z-index: 2;
       transition: opacity 0.06s linear;
     }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 240px;
+      height: 100vh;
+      background: rgba(0,0,0,0.92);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      z-index: 80;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1.6rem 1rem 1rem;
+      font-family: 'IBM Plex Mono', monospace;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.12) transparent;
+    }
+
+    #sidebar h2 {
+      font-size: 0.52rem;
+      font-weight: 400;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 1.2rem;
+    }
+
+    .sb-release { margin-bottom: 1rem; }
+
+    .sb-release-title {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      cursor: pointer;
+      padding: 0.2rem 0;
+      transition: color 0.15s;
+    }
+
+    .sb-release-title:hover { color: #3fe1b1; }
+
+    .sb-track {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.15rem 0 0.15rem 0.4rem;
+      cursor: pointer;
+      transition: color 0.15s;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.52rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .sb-track:hover { color: rgba(255,255,255,0.8); }
+    .sb-track.active { color: #3fe1b1; }
+
+    .sb-play-icon {
+      flex-shrink: 0;
+      font-size: 0.5rem;
+    }
   </style>
 </head>
 <body>
+
+  <aside id="sidebar">
+    <h2>Releases</h2>
+    <div id="sidebar-list"></div>
+  </aside>
 
   <div id="scene"></div>
   <p class="label">DAX J &nbsp;&mdash;&nbsp; Releases</p>
@@ -160,6 +229,47 @@
       return RELEASES.find(function(r) { return encodeURI(r.art) === src; }) || null;
     }
 
+    // ── Stub functions (implemented in later tasks) ──
+    function openModal(releaseIndex) { console.log('open modal', releaseIndex); }
+    function playTrack(releaseIndex, trackIndex) { console.log('play', releaseIndex, trackIndex); }
+
+    // ── Sidebar rendering ──
+    function renderSidebar() {
+      var list = document.getElementById('sidebar-list');
+      list.innerHTML = '';
+      RELEASES.forEach(function(rel, ri) {
+        var div = document.createElement('div');
+        div.className = 'sb-release';
+
+        var title = document.createElement('div');
+        title.className = 'sb-release-title';
+        title.textContent = rel.title;
+        title.addEventListener('click', function() { openModal(ri); });
+        div.appendChild(title);
+
+        rel.tracks.forEach(function(trk, ti) {
+          var row = document.createElement('div');
+          row.className = 'sb-track';
+          row.dataset.ri = ri;
+          row.dataset.ti = ti;
+
+          var icon = document.createElement('span');
+          icon.className = 'sb-play-icon';
+          icon.textContent = '\u25B6';
+
+          var name = document.createElement('span');
+          name.textContent = trk.side + '. ' + trk.title;
+
+          row.appendChild(icon);
+          row.appendChild(name);
+          row.addEventListener('click', function() { playTrack(ri, ti); });
+          div.appendChild(row);
+        });
+
+        list.appendChild(div);
+      });
+    }
+
     // ── Layout constants ──
     const SZ     = 338;   // image size (px, square)
     const H_GAP  = 130;   // horizontal gap between images
@@ -172,7 +282,8 @@
     const STAGGER = [0, STEP_X * 0.5, STEP_X * 0.25];
 
     // Pool: enough tiles to cover viewport + 1 buffer on each side
-    const VW = window.innerWidth;
+    const SIDEBAR_W = 240;
+    const VW = window.innerWidth - SIDEBAR_W;
     const VH = window.innerHeight;
 
     const POOL_COLS = Math.ceil(VW  / STEP_X) + 3;   // visible + 2 buffer cols
@@ -354,6 +465,7 @@
     });
 
     // ── Start ──
+    renderSidebar();
     layoutTiles();
     requestAnimationFrame(rafLoop);
   </script>
