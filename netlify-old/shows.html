@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DAX J — Shows</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #C4BFB8;
+      --text: #1a1a1a;
+      --text-muted: #5a5550;
+      --tab-active: #1a1a1a;
+      --tab-inactive: #8a847d;
+      --border: #a8a29c;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--tab-inactive);
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text);
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 40px 40px 24px;
+    }
+    .page-header h1 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    /* ── YEAR TABS ── */
+    .year-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      padding: 0 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .year-tab {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--tab-inactive);
+      padding: 14px 20px 12px;
+      position: relative;
+      transition: color 0.15s;
+    }
+    .year-tab:hover {
+      color: var(--text);
+    }
+    .year-tab.active {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .year-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--text);
+    }
+
+    /* ── SHOWS GRID ── */
+    .shows-section {
+      padding: 40px 40px 80px;
+    }
+    .shows-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .show-item {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .show-date {
+      color: var(--tab-inactive);
+      display: inline;
+      margin-right: 6px;
+    }
+    .show-info {
+      display: inline;
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--tab-inactive);
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 900px) {
+      .shows-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .site-nav, .page-header, .year-tabs, .shows-section, .site-footer { padding-left: 20px; padding-right: 20px; }
+      .shows-grid { grid-template-columns: 1fr; }
+      .year-tab { padding: 12px 12px 10px; font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class='nav-logo' href='/'>DAX J</a>
+  <ul class="nav-links">
+    <li><a href='/'>Home</a></li>
+    <li><a class='active' href='/shows'>Shows</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <h1>Shows</h1>
+</div>
+
+<div class="year-tabs" id="yearTabs"></div>
+
+<div class="shows-section">
+  <div class="shows-grid" id="showsGrid"></div>
+</div>
+
+<footer class="site-footer">
+  <span>Dax J</span>
+  <span>daxj.world</span>
+</footer>
+
+<script>
+const shows = {
+  "2026": [
+    "14/08 Anderlecht, XRDS 2026",
+    "12/08 Rabat, Glitch Festival",
+    "29/07 Amsterdam, Dekmantel",
+    "10/07 Hilvarenbeek, Awakenings",
+    "27/06 Medellin, Dreaming Festival",
+    "07/06 Amsterdam, 909 Festival",
+    "05/06 A Coruña, Wake up Festival",
+    "23/05 Detroit, Movement Festival",
+    "14/05 New York, Wire Festival",
+    "02/05 São Paulo, Time Warp Brasil",
+    "25/04 Barcelona, Input",
+    "24/04 Sarajevo, Amfiteatar Dom Mladih",
+    "18/04 Istanbul, Flux",
+    "10/04 Rotterdam, Perron",
+    "03/04 Santiago, Respira Festival",
+    "01/04 Madrid, Mondo",
+    "20/03 Paris, RAW X Monnom Black",
+    "14/03 Munich, Blitz",
+    "13/03 Glasgow, Sub Club",
+    "06/03 Rome, Neon",
+    "28/02 Berlin, Berghain",
+    "27/02 Porto, Gare",
+    "21/02 Brussels, C12"
+  ],
+  "2025": [
+    "31/12 Lisbon, Neopop & Fuse NYE",
+    "28/12 Amsterdam, Bret",
+    "27/12 Utrecht, WAS",
+    "19/12 Cologne, Fi",
+    "13/12 Madrid, Laster Club",
+    "12/12 Nantes, Macadam",
+    "06/12 Dortmund, Oma Doris",
+    "29/11 Seville, Elysium",
+    "28/11 London, Fold",
+    "22/11 Barcelona, Artcore",
+    "21/11 Zagreb, Boogaloo",
+    "15/11 Budapest, Bonusz",
+    "14/11 Geneva, Le Zoo",
+    "08/11 New York, Basement",
+    "07/11 Phoenix, Obsidian",
+    "01/11 Los Angeles, Escape",
+    "31/10 San Francisco, Factory93",
+    "25/10 Amsterdam, Into The Woods ADE",
+    "25/10 Amsterdam, Dockyard",
+    "24/10 Paris, FVTVR",
+    "18/10 Stuttgart, Lehmann",
+    "17/10 Montpellier, Montpellier Techno",
+    "11/10 Athens, CoMA x Smut",
+    "10/10 Vilnius, Elastica",
+    "04/10 Brussels, Fuse",
+    "03/10 Dublin, Block",
+    "20/09 Taipei, Pawnshop",
+    "19/09 Seoul, Faust",
+    "13/09 Hanoi, Unmute",
+    "12/09 Singapore, MDLR",
+    "11/09 Kuala Lumpur, KYO",
+    "06/09 Lyon, Le Sucre",
+    "30/08 Łódź, Freedom Parade",
+    "29/08 Paris, Essaim",
+    "23/08 Sao Paulo, Photon x Gate",
+    "22/08 Santiago, Dame",
+    "21/08 Buenos Aires, Under Club x Amerika",
+    "17/08 Berlin, Berghain",
+    "15/08 Rabat, Glitch Festival",
+    "09/08 Deventer, Het Systeem",
+    "08/08 Viana do Castelo, Neopop Festival",
+    "03/08 Helsinki, Ääniwalli",
+    "26/07 London, fabric",
+    "26/07 London, Junction 2",
+    "25/07 Manchester, The White Hotel",
+    "20/07 Hamburg, Habitat Festival",
+    "19/07 Munich, Blitz",
+    "18/07 Tisno, Terminal V",
+    "17/07 Tisno, Terminal V",
+    "16/07 Brussels, Dour Festival",
+    "12/07 Madrid, Fabrik",
+    "11/07 Ibiza, Hï",
+    "05/07 Utrecht, By The Creek",
+    "04/07 Belgrade, Club Kult",
+    "28/06 Strasbourg, KALT",
+    "21/06 Gräfenhainichen, HIVE Festival",
+    "20/06 Turri, Dancity Summer Festival",
+    "14/06 Hanover, Waves Open Air",
+    "13/06 Rome, Manitu",
+    "08/06 Amsterdam, 909 Festival",
+    "07/06 The Hague, The Crave Festival",
+    "06/06 Newcastle, World Headquarters",
+    "26/05 Detroit, Leland City Club",
+    "24/05 Nuremberg, Pulsar",
+    "17/05 Kyiv, K41 / Standard Deviation",
+    "10/05 Amsterdam, De Binnenplaats",
+    "09/05 Glasgow, Sub Club",
+    "03/05 Granada, Blackworks",
+    "27/04 Berlin, Berghain",
+    "25/04 Mallorca, Selva Club",
+    "20/04 Edinburgh, Terminal V",
+    "19/04 Amsterdam, DGTL",
+    "17/04 Saarbrücken, Sektor Heimat",
+    "16/04 Madrid, Mondo",
+    "12/04 Grenoble, La Belle Electrique",
+    "11/04 Paris, Mia Mao",
+    "05/04 Naples, Duel Club",
+    "04/04 Basel, Elysi",
+    "22/03 Barcelona, Human",
+    "21/03 Tbilisi, Bassiani",
+    "15/03 Osaka, Circus",
+    "14/03 Tokyo, Circus",
+    "02/03 Catania, Afrobar",
+    "28/02 Porto, Gare",
+    "22/02 Amsterdam, Raum",
+    "21/02 Oslo, Jaeger",
+    "15/02 New York, Basement",
+    "14/02 Chicago, Smart Bar",
+    "08/02 Montreal, OCTOV",
+    "07/02 Toronto, Format",
+    "01/02 Turin, Q35",
+    "31/01 Utrecht, Basis",
+    "01/01 Munich, Blitz"
+  ],
+  "2024": [
+    "31/12 Rotterdam, Perron",
+    "31/12 Amsterdam, Free Your Mind",
+    "28/12 Goa, Circus Festival",
+    "27/12 Mumbai, Antisocial",
+    "21/12 Thessaloniki, Principle Club",
+    "20/12 Dublin, Wigwam",
+    "14/12 Los Angeles, Monnom Black Warehouse",
+    "13/12 Phoenix, Monnom Black Techno Snobs",
+    "12/12 Las Vegas, Elation",
+    "07/12 Lisbon, Photon",
+    "06/12 Bordeaux, iBoat",
+    "01/12 Paris, Essaim",
+    "30/11 Nijmegen, Herfstdrift",
+    "30/11 Münster, Fusion",
+    "29/11 Warsaw, Smolna",
+    "23/11 Madrid, Laster Club",
+    "16/11 St. Etienne, Positive Education Festival",
+    "16/11 Bristol, Prospect",
+    "09/11 Athens, Blend",
+    "08/11 Rennes, 1988 Live Club",
+    "03/11 Medellin, Ritvales",
+    "02/11 CDMX, Common Sense",
+    "01/11 Juarez, Hardpop",
+    "26/10 Dortmund, Tresor West",
+    "25/10 Gdansk, Crackhouse",
+    "19/10 Amsterdam, Into The Woods ADE",
+    "19/10 Amsterdam, Dockyard",
+    "19/10 Amsterdam, Intercell Bajes",
+    "18/10 Mannheim, MS Connexion",
+    "18/10 Frankfurt, Tanzhaus West",
+    "12/10 Bogotá, Doom",
+    "11/10 Manizales, Station Group",
+    "10/10 Quito, El Semillero",
+    "08/10 Valencia, Barraca",
+    "06/10 Berlin, Berghain",
+    "05/10 Groningen, Paradigm",
+    "04/10 Copenhagen, Hangaren",
+    "28/09 Glasgow, PLTFRM",
+    "27/09 Cologne, Fi",
+    "21/09 Beijing, Groundless Factory",
+    "20/09 Shanghai, Aby'ss",
+    "19/09 Singapore, Tuff Club",
+    "17/09 Seoul, Faust",
+    "15/09 Dundalk, Fuinneamh Festival",
+    "14/09 Amsterdam, Lofi",
+    "13/09 Ljubljana, Hardbeats",
+    "07/09 Brest, Astropolis",
+    "31/08 Lyon, Woodstower",
+    "30/08 Zurich, Hive",
+    "24/08 Rotterdam, Audio Obscura Festival",
+    "22/08 Novalja, Sonus Festival",
+    "17/08 Berlin, Rave The Planet",
+    "15/08 Gallipoli, Parco Gondar x Futura",
+    "10/08 Barcelona, Brunch In The Park",
+    "09/08 Viana do Castelo, Neopop Festival",
+    "07/08 Szczecin, Szczecin Philharmonic",
+    "04/08 Manchester, Teletech Festival",
+    "27/07 Nuremberg, Open Beatz Festival",
+    "20/07 Freiburg, See You Festival",
+    "13/07 Essen, Stone Techno Festival",
+    "07/07 Turin, Kappa Futur",
+    "07/07 Turin, Azimut Club",
+    "06/07 Hilvarenbeek, Awakenings Festival",
+    "03/07 Ostrava, Beats For Love",
+    "29/06 Madrid, Fabrik",
+    "28/06 London, Fold",
+    "22/06 Igar, Daad Gathering",
+    "21/06 Vienna, Grelle Forelle",
+    "15/06 Paris, Mutant",
+    "14/06 Ibiza, Space",
+    "08/06 Wrocław, Ciało",
+    "06/06 Berlin, Säule",
+    "31/05 Lausanne, D! Club",
+    "25/05 Groenekan, Soenda",
+    "24/05 Istanbul, VW Arena",
+    "18/05 Miami, Domicile",
+    "17/05 New York, Wire Festival",
+    "05/05 Santiago, DGTL SCL",
+    "03/05 Puerto Montt, XRave",
+    "30/04 Buenos Aires, Under Club",
+    "28/04 Lyon, Le Sucre",
+    "27/04 London, fabric",
+    "26/04 Amsterdam, Levenslang",
+    "20/04 Athens, Coma XL",
+    "19/04 Stuttgart, Fridas Pier",
+    "14/04 Edinburgh, Terminal V",
+    "13/04 Munich, Blitz",
+    "12/04 Vilnius, Kablys",
+    "05/04 Mannheim, Time Warp",
+    "31/03 Berlin, Berghain",
+    "30/03 Amsterdam, Awakenings",
+    "30/03 London, Drumsheds",
+    "29/03 Murcia, Matadero 2º Anniversary",
+    "28/03 Madrid, Mondo",
+    "17/03 Slane, Otherside",
+    "15/03 Tbilisi, Bassiani",
+    "09/03 Paris, Seth",
+    "09/03 Cologne, Unreal",
+    "01/03 Porto, Gare",
+    "29/02 Lisbon, Riktus"
+  ],
+  "2023": [
+    "31/12 Rotterdam, Ahoy",
+    "31/12 Amsterdam, Ziggodome",
+    "29/12 Warsaw, Smolna",
+    "22/12 Frankfurt, Tanzhaus West",
+    "17/12 Berlin, Berghain",
+    "16/12 Wurzburg, Airport",
+    "09/12 Amsterdam, De School",
+    "08/12 Dalma",
+    "07/12 Graz, Dom im Berg",
+    "05/12 Madrid, Fabrik",
+    "02/12 Freiburg, Hans Bunte",
+    "01/12 Cologne, Tag X",
+    "25/11 Strasbourg, KALT",
+    "24/11 Geneva, Audio",
+    "18/11 Munich, Blitz",
+    "17/11 Lyon, Petit Salon",
+    "11/11 Poznan, Tama",
+    "10/11 Hamburg, Pal",
+    "04/11 London, Fold",
+    "03/11 Paris, T7",
+    "28/10 Glasgow, Pressure",
+    "27/10 Belgrade, Hangar",
+    "21/10 Amsterdam, DGTL ADE",
+    "21/10 Amsterdam, Dockyard",
+    "20/10 Nuremberg, Pulsar",
+    "14/10 Catania, With Love",
+    "13/10 Dublin, Index",
+    "08/10 Los Angeles, Boat Party",
+    "07/10 Los Angeles, Warehouse",
+    "06/10 San Francisco, F8",
+    "30/09 Neuchâtel, Case à Chocs",
+    "29/09 Zurich, Hive",
+    "23/09 Paris, KM25",
+    "22/09 Vilnius, Elastica",
+    "16/09 Torremolinos, Studio Club",
+    "15/09 Berlin, RSO",
+    "10/09 Lisbon, Brunch",
+    "09/09 Amsterdam, Lofi",
+    "08/09 Copenhagen, Hangaren",
+    "03/09 Chicago, ARC Music Festival",
+    "27/08 Manchester, Hidden",
+    "26/08 Riccione, Cocorico",
+    "25/08 Cologne, Nibirii Festival",
+    "22/08 Novalja, Sonus Festival",
+    "19/08 Hattingen, Henrichshütte",
+    "12/08 Viana do Castelo, Neopop Festival",
+    "11/08 Trencin, Grape Festival",
+    "06/08 Frankfurt, Stadt Land Bass",
+    "05/08 Munich, Blitz",
+    "04/08 Ibiza, Amnesia",
+    "29/07 Fraga, Monegros Desert Festival",
+    "22/07 London, Junction 2",
+    "22/07 London, E1",
+    "15/07 Basel, Adroit",
+    "14/07 Gdansk, Crackhouse",
+    "09/07 Paris, Peacock Society",
+    "08/07 Hilvarenbeek, Awakenings Festival",
+    "30/06 Warsaw, Duel",
+    "23/06 Valencia, WAX",
+    "17/06 Offenburg, Kamehameha Festival",
+    "16/06 Tallinn, Hall",
+    "15/06 Barcelona, Human",
+    "09/06 Ankara, Sonance Festival",
+    "07/06 Istanbul, RX",
+    "04/06 Amsterdam, Amsterdam Open Air",
+    "03/06 Augsburg, Gaswerk",
+    "02/06 Toulouse, Arena Club",
+    "29/05 Detroit, City Club",
+    "27/05 Malaga, Abstract Collective",
+    "26/05 Lighthouse Festival",
+    "20/05 Utrecht, Soenda Festival",
+    "17/05 Vienna, Exil",
+    "13/05 Ljubljana, Hardbeats",
+    "12/05 Nantes, Warehouse 44",
+    "07/05 Cardiff, District",
+    "06/05 Thessaloniki, Sonic Arena",
+    "05/05 Tbilisi, Bassiani",
+    "29/04 Berlin, Berghain",
+    "28/04 Prague, Roxy",
+    "22/04 Madrid, Fabrik",
+    "15/04 Budapest, Hyperspace",
+    "14/04 Dublin, Index",
+    "10/04 Naples, Enigma",
+    "09/04 Amsterdam, Awakenings",
+    "08/04 Athens, Coma XL",
+    "06/04 Fraga, Florida 135",
+    "01/04 Mannheim, Timewarp",
+    "26/03 Pereira, Avalon Club",
+    "25/03 Cali, Baum",
+    "24/03 Quito, Bassick",
+    "23/03 Bogota, Stereo Picnic",
+    "18/03 Essen, Mischanlage",
+    "12/03 Melbourne, Pitch Festival",
+    "04/03 Hanover, PAN",
+    "03/03 Karlsruhe, Gotec Club"
+  ],
+  "2022": [
+    "31/12 Rome, Cielo Terra & City Lab",
+    "30/12 Glasgow, SWG3",
+    "30/12 Glasgow, The Hydro",
+    "26/12 Belfast, Telegraph Building",
+    "22/12 Nuremburg, Die Rakete",
+    "17/12 Hasselt, Extrema Indoor",
+    "16/12 Rotterdam, Rotterdam Rave",
+    "10/12 Munich, Blitz",
+    "09/12 Warsaw, Smolna",
+    "05/12 Barcelona, Hex",
+    "03/12 London, E1",
+    "02/12 Belgrade, Hangar",
+    "26/11 Dortmund, Junkyard",
+    "25/11 Bristol, Motion",
+    "19/11 Utrecht, Soenda Indoor Festival",
+    "18/11 Florence, Optical",
+    "12/11 New York, Basement",
+    "11/11 Miami, Domicile",
+    "06/11 Mumbai, Todi Mill Alley",
+    "05/11 Bangalore, Gylt Bangalore",
+    "04/11 India, India tour",
+    "04/11 Kolkata, India",
+    "31/10 Toledo, Music Park",
+    "29/10 Mannheim, Timewarp",
+    "28/10 Munich, Kesselhaus",
+    "22/10 Amsterdam, DGTL ADE",
+    "21/10 Amsterdam, Audio Obscura",
+    "15/10 London, fabric Birthday",
+    "14/10 Vienna, Flex",
+    "11/10 Madrid, Fabrik",
+    "08/10 Manchester, Warehouse Project",
+    "07/10 Zagreb, Boogaloo",
+    "06/10 Berlin, Boiler Room",
+    "02/10 Wurzburg, Airport",
+    "02/10 Stuttgart, Lehmann",
+    "01/10 Istanbul, Maslka 42",
+    "30/09 Gent, Kompass",
+    "25/09 San Diego, CRSSD",
+    "23/09 San Francisco, Monarch",
+    "17/09 Berlin, Berghain",
+    "16/09 Sheffield, Førge",
+    "12/09 Dhermi, The Bunker ION Festival",
+    "12/09 Dhermi, The Sub Base ION Festival",
+    "10/09 Dhermi, Main Stage ION Festival",
+    "10/09 Dhermi, ION Festival",
+    "09/09 Amersfoort, Into The Woods",
+    "07/09 Carouge, Motel Campo",
+    "02/09 Basel, Nordstern",
+    "28/08 London, Junction 2 @ Tobacco Dock",
+    "28/08 London, fabric",
+    "27/08 Paris, Possession",
+    "26/08 Lausanne, D! Club",
+    "25/08 Ibiza, Afterlife",
+    "23/08 Novalja, Sonus Festival",
+    "22/08 Novalja, Sonus Boat Party",
+    "21/08 Bad Aibling, Echelon Festival",
+    "20/08 Edinburgh, Liquid Rooms",
+    "17/08 Ibiza, DC10",
+    "15/08 Malta, Glitch Festival",
+    "14/08 Madrid, Mondo",
+    "13/08 Pula, Fort Bourguignon",
+    "12/08 Viana do Castelo, Neopop Festival",
+    "10/08 Ibiza, DC10",
+    "07/08 Ibiza, Amnesia",
+    "06/08 Manchester, Teletech Festival",
+    "05/08 Kastellaun, Nature One",
+    "31/07 Amsterdam, Bret",
+    "31/07 Hilvarenbeek, Awakenings Festival",
+    "29/07 Boom, Tomorrowland",
+    "24/07 Ibiza, Amnesia",
+    "15/07 Dour, Dour Festival",
+    "14/07 Ibiza, Afterlife",
+    "10/07 Essen, Stone Festival",
+    "08/07 Novi Sad, Exit Festival",
+    "02/07 Athens, CoMA Warehouse",
+    "25/06 Karlsruhe, Hasardeur Festival",
+    "23/06 Coruña, PELICANO",
+    "18/06 Navan, Higher Vision Festival",
+    "17/06 Tbilisi, Bassiani",
+    "16/06 Barcelona, Off-Sonar",
+    "15/06 Poznan, Possession x Tama",
+    "11/06 Munich, Blitz",
+    "09/06 Lisbon, Neopop pres.",
+    "05/06 Memmingerberg, Ikarus Festival",
+    "01/06 Bologna, Link",
+    "30/05 Detroit, Movement Festival",
+    "27/05 Budapest, Arzenal",
+    "25/05 Lyon, Transbordeur",
+    "21/05 New York, Knockdown Center",
+    "20/05 Bogota, Baum Festival",
+    "14/05 Brussels, Fuse",
+    "13/05 Toulouse, Possession",
+    "07/05 Medellin, One Carnival",
+    "07/05 Medellin, Baum Park",
+    "06/05 Manizales, Hangar Nuclear",
+    "30/04 Dortmund, Mayday 2021",
+    "29/04 Hamburg, PAL",
+    "27/04 Enschede, DE REACTIE",
+    "27/04 Amsterdam, Oranjebloesem",
+    "23/04 Nuremberg, Z Bau",
+    "22/04 Offenbach am Main, Robert Johnson",
+    "18/04 Naples, Boema.Circus.Club",
+    "17/04 Amsterdam, Awakenings Festival",
+    "16/04 Edinburgh, Terminal V",
+    "15/04 Cesena, Meet Compact Club",
+    "10/04 Cordoba, Terra Furia",
+    "09/04 Sao Paulo, DGTL",
+    "08/04 Asunción, Plur",
+    "07/04 Santiago, Dame",
+    "06/04 Buenos Aires, Under Club",
+    "02/04 L.A., Reform afterparty",
+    "02/04 L.A., Reform",
+    "26/03 Cologne, Kiesgrube",
+    "25/03 Zurich, Hive",
+    "19/03 Madrid, Fabrik",
+    "18/03 Lille, Magazine Club",
+    "13/03 Rotterdam, Rotterdam Rave",
+    "12/03 Nijmegen, Doornroosje",
+    "11/03 Porto, Gare",
+    "05/03 Wroclaw, Cialo",
+    "04/03 Vilnius, Elastica",
+    "27/02 London, Unfold",
+    "26/02 London, Printworks",
+    "25/02 Dublin, Index",
+    "18/02 Avignon, District Club"
+  ],
+  "2021": [
+    "31/12 Belgrade, Drugstore",
+    "23/12 Noci, Foro Boario",
+    "18/12 London, E1",
+    "11/12 Istanbul, Zorlu",
+    "10/12 Izmir, Hangoutcure",
+    "07/12 Catania, Phase 2",
+    "03/12 Manchester, Hidden",
+    "20/11 Munich, Blitz",
+    "19/11 Edinburgh, Bongo Club",
+    "13/11 Freiburg, Hans Bunte Areal",
+    "12/11 Gent, Kompass",
+    "10/11 Katowice, Mayday",
+    "06/11 Berlin, Berghain",
+    "31/10 Cologne, Artheater",
+    "29/10 Nantes, Warehouse",
+    "23/10 Paris, Possession",
+    "22/10 Toulouse, Le Bikini",
+    "16/10 Amsterdam, Audio Obscura",
+    "15/10 Basel, Elysia",
+    "09/10 Bratislava, Wax",
+    "08/10 Budapest, Akvarium Club",
+    "25/09 Leeds, Mint Festival",
+    "24/09 Marseille, Utopia 2021",
+    "05/09 Glasgow, SWG3",
+    "05/09 Glasgow, Riverside Festival",
+    "03/09 Munich, Forsthaus",
+    "03/09 Frankfurt, WCD Pool Sessions",
+    "29/08 London, Tobacco Dock",
+    "28/08 Brussels, Tour & Taxis",
+    "27/08 Liverpool, Creamfields",
+    "21/08 Edinburgh, Liquid Room",
+    "07/08 London, Fabric",
+    "06/08 Tbilisi, Ciskari Garden",
+    "01/08 Manchester, Projekts Skate Park",
+    "30/07 Warsaw, Smolna",
+    "23/07 London, Fold",
+    "17/07 Essen, Zollverein",
+    "08/07 Novi Sad, Exit Festival",
+    "05/06 Zagreb, Jarun Lake Open Air",
+    "04/06 Kiev, Veselka",
+    "29/05 Sofia, Yalta"
+  ],
+  "2020": [
+    "02/10 Zurich, Hive",
+    "20/09 Brussels, Plein Air by Fuse",
+    "15/08 Pula, Fort Bourguignon",
+    "14/08 Taranto, Sound Department",
+    "13/08 Caserta, Botaniko",
+    "14/03 London, E1",
+    "07/03 San Diego, CRSSD After Dark",
+    "07/03 San Diego, CRSSD Festival",
+    "06/03 Miami, Hideout",
+    "29/02 Paris, Possession",
+    "28/02 Sheffield, Hope Works",
+    "12/01 Bangalore, DGTL",
+    "01/01 Glasgow, Maximum Pressure",
+    "01/01 Edinburgh, Pulse"
+  ],
+  "2019": [
+    "31/12 Agrigento, UNS",
+    "30/12 Maastricht, Complex",
+    "28/12 Munich, Blitz",
+    "27/12 Vienna, Grelle Forelle",
+    "20/12 Rotterdam, Rotterdam Rave",
+    "15/12 Lisbon, LXM Festival",
+    "14/12 Nijmegen, Doornroosje",
+    "13/12 Barcelona, The Loft",
+    "07/12 Opole, Unframed",
+    "07/12 Opole, Unframed",
+    "06/12 Salford, The White Hotel",
+    "30/11 Essen, Mischanlage",
+    "29/11 Amsterdam, Reaktor",
+    "23/11 Madrid, DGTL",
+    "22/11 Basel, Viertel Klub",
+    "16/11 Antwerp, Sportpaleis",
+    "15/11 Sofia, Fabrica 126",
+    "09/11 Porto, Gare",
+    "08/11 Newcastle, Digital",
+    "02/11 Stuttgart, Lehmann",
+    "01/11 Lyon, Tapage Nocturne",
+    "31/10 Rome, Spazio 900",
+    "26/10 Lille, Magazine Club",
+    "25/10 Zurich, Hive",
+    "19/10 Amsterdam, Dockyard Festival",
+    "18/10 Amsterdam, Reaktor",
+    "16/10 Amsterdam, Awakenings",
+    "11/10 Tokyo, Vision",
+    "10/10 Singapore, Headquarters",
+    "08/10 Seoul, Faust",
+    "05/10 London, FOLD",
+    "04/10 Paris, Pulse Festival",
+    "02/10 Ludwigshafen, Loft Club",
+    "29/09 Berlin, Berghain",
+    "28/09 Dublin, Boxed Off",
+    "27/09 Moscow, Monasterio",
+    "22/09 Bristol, Tokyo World 2019",
+    "21/09 Dusseldorf, Awakenings & Time Warp present Connect",
+    "20/09 Nuremberg, Die Rakete",
+    "14/09 LA, Exchange",
+    "13/09 San Francisco, Robot Ears",
+    "12/09 Chicago, Spybar",
+    "07/09 Utrecht, WAS",
+    "06/09 Montpellier, Le Dieze Warehouse",
+    "01/09 Barcelona, Brunch In The Park",
+    "31/08 Milan, Social Music City Festival",
+    "31/08 Milan, Amnesia",
+    "25/08 Anaklia, Echowaves",
+    "24/08 Catania, Phase 2 Festival",
+    "21/08 Lake Balaton, B My Lake Festival",
+    "20/08 Pag, Sonus Festival",
+    "17/08 Rotterdam, Rotterdam Rave Festival",
+    "17/08 Rotterdam, Rotterdam Rave Afterparty",
+    "14/08 Strasbourg, Studio Saglio",
+    "11/08 Zwevegem, Voltage Festival",
+    "10/08 Taranto, Sound Department",
+    "09/08 Viana do Castelo, Neopop Festival",
+    "03/08 Munich, Blitz",
+    "02/08 Uzes, Les Electros d'Uzès",
+    "31/07 Basel, Borderline",
+    "27/07 Fraga, Florida 135",
+    "20/07 Barcelona, Sonar Festival",
+    "20/07 Amsterdam, Welcome To The Future Festival",
+    "19/07 Boom, Tomorrowland",
+    "13/07 St Petersburg, GAMMA Festival",
+    "07/07 Novi Sad, Exit Festival",
+    "05/07 Lyon, Evasion Festival",
+    "30/06 Amsterdam, Awakenings Festival",
+    "29/06 Brussels, Fuse",
+    "29/06 Amsterdam, Awakenings Festival",
+    "23/06 Pereira, Avalon Club",
+    "22/06 Bogota, Baum",
+    "21/06 Mexico City, Ex Fabrica De Harina",
+    "19/06 Sao Paulo, Tantsa",
+    "18/06 Santiago, Blondie",
+    "16/06 Buenos Aires, Under Club",
+    "15/06 Asunción, Nhimu Teatro Aéreo",
+    "14/06 Montevideo, Stereo Club",
+    "09/06 Dortmund, Junkyard",
+    "09/06 Dortmund, Pollerwiesen Festival",
+    "08/06 London, fabric",
+    "08/06 London, Junction 2",
+    "01/06 Florence, Open Mind Festival",
+    "31/05 Dundee, Reading Rooms",
+    "25/05 Rennes, Made Festival",
+    "24/05 Liverpool, 24 Kitchen Street",
+    "18/05 Freiburg, Hans Bunte Areal",
+    "18/05 Mannheim, Hafenfestival",
+    "11/05 Rome, Spazio 900",
+    "10/05 Helsinki, Ääniwalli",
+    "03/05 Tbilisi, Bassiani",
+    "27/04 New York, Elsewhere",
+    "26/04 Montreal, Stereo",
+    "25/04 Washington DC, Flash",
+    "21/04 Gent, Kompass",
+    "21/04 Amsterdam, DGTL",
+    "20/04 Paris, Possession",
+    "17/04 Madrid, Mondo",
+    "14/04 Munich, MMA",
+    "13/04 Geneva, Le Zoo",
+    "12/04 Hamburg, Uebel & Gefährlich",
+    "06/04 Berlin, Berghain",
+    "05/04 Sopot, Sfinks700",
+    "30/03 Malta, Liquid Club",
+    "30/03 London, Printworks",
+    "29/03 Glasgow, Sub Club",
+    "24/03 Athens, Monasthraki Centre",
+    "23/03 Brussels, C12",
+    "22/03 Poznan, Tama Klub",
+    "16/03 Bordeaux, Warehouse : L'entrepot",
+    "15/03 Vilnius, Kablys",
+    "14/03 Budapest, Akvarium",
+    "09/03 Warsaw, Smolna",
+    "08/03 Basel, Nordstern",
+    "02/03 Le Mans, Oasis",
+    "01/03 Belfast, The Limelight",
+    "28/02 Lisbon, Lux Fragil",
+    "15/02 Australia, Dax J Australia Tour 2019",
+    "02/02 Antwerp, Ampere",
+    "02/02 Eindhoven, Awakenings",
+    "01/02 Edinburgh, La Belle Angele"
+  ],
+  "2018": [
+    "31/12 Brussels, FCKNYE",
+    "31/12 Amsterdam, Reaktor",
+    "30/12 Berlin, Berghain",
+    "29/12 Nancy, L'Envers Club",
+    "28/12 Nuremburg, Die Rakete",
+    "25/12 Naples, Golden Gate",
+    "22/12 Bergamo, Bolgia",
+    "21/12 Vigo, Trax Club",
+    "15/12 Munich, Blitz Music Club",
+    "14/12 Tilburg, 013",
+    "09/12 London, Phonox",
+    "08/12 Budapest, Bónusz Electronic Music Festival",
+    "07/12 Manchester, Gorilla",
+    "06/12 Barcelona, Razzmatazz",
+    "01/12 Freiburg, Hans-Bunte-Areal",
+    "30/11 Porto, Gare",
+    "24/11 Essen, Studio",
+    "23/11 Dublin, District 8",
+    "17/11 Madrid, Fabrik",
+    "16/11 Belgrade, No Sleep Festival",
+    "10/11 Florence, Woodstock",
+    "09/11 Waterford, RePublik",
+    "03/11 Vienna, Nordbahnhalle",
+    "02/11 Nantes, Warehouse 44",
+    "31/10 Fraga, F135",
+    "27/10 Glasgow, Maximum Pressure",
+    "21/10 Amsterdam, Awakenings x Klockworks present Photon",
+    "20/10 London, fabric",
+    "20/10 Amsterdam, Dockyard Festival",
+    "14/10 Cali, Club Mission",
+    "13/10 Villavieja, Festival Tatacoa",
+    "12/10 Medellin, Mute",
+    "11/10 Buenos Aires, Under Club",
+    "06/10 Cologne, Artheater",
+    "05/10 Katowice, P23",
+    "29/09 Gent, Kompass",
+    "28/09 Munich, Muffat",
+    "22/09 Grenoble, La Belle Electrique",
+    "21/09 Newcastle, Digital",
+    "15/09 Stuttgart, Lehmann Club",
+    "14/09 Rennes, 1988 LIVE Club",
+    "08/09 Luxembourg, Lenox",
+    "07/09 Lille, Magazine Club",
+    "01/09 Montenegro, Sea Dance Festival",
+    "25/08 Catania, With Love",
+    "18/08 Rotterdam, Rotterdam Rave Festival",
+    "17/08 Asturias, Aquasella Festival",
+    "15/08 Malta, Glitch Festival",
+    "11/08 Viana do Castelo, Neopop Festival",
+    "10/08 Barcelona, DGTL",
+    "04/08 Monte San Biagio, Atomica Festival",
+    "04/08 Berlin, Berghain",
+    "03/08 Kastellaun, Nature One",
+    "27/07 Nova Gorica, Eco Festival",
+    "21/07 Amsterdam, Shelter",
+    "21/07 Amsterdam, Welcome To The Future Festival",
+    "15/07 Dour, Dour Festival",
+    "14/07 Taranto, Sound Department",
+    "08/07 Helsinki, Ääniwalli",
+    "07/07 Brest, Astropolis",
+    "06/07 Toulouse, Downtown Factory",
+    "01/07 Amsterdam, Awakenings Festival",
+    "30/06 Madrid, Neopop",
+    "29/06 Lausanne, D! Club",
+    "23/06 Waterford, Konnect Festival",
+    "22/06 Twierdza Modlin, Instytut Festival",
+    "16/06 Duisburg, Landschaftspark Duisburg Nord",
+    "16/06 Frankfurt, Tanzhaus West",
+    "15/06 Barcelona, The Loft",
+    "10/06 Berlin, Berghain",
+    "09/06 Turin, Bunker",
+    "08/06 Memmingerberg, Ikarus Festival",
+    "02/06 Arnhem, Free Your Mind Festival",
+    "01/06 Győr, DumDum",
+    "27/05 Mullingar, Life Festival",
+    "26/05 Glasgow, Riverside Festival Afterparty",
+    "26/05 Glasgow, Riverside Festival",
+    "19/05 Paris, Possession",
+    "19/05 Houthalen-Helchteren, Extrema Outdoor",
+    "18/05 Leipzig, IFZ",
+    "05/05 Sao Paulo, DGTL",
+    "30/04 Rimini, Music Inside Festival",
+    "28/04 New York, Great Hall at Avant Gardner",
+    "27/04 L.A., (dis)order",
+    "21/04 Chicago, Nightsweat",
+    "20/04 Montreal, Stereo",
+    "14/04 London, Village Underground",
+    "13/04 Manchester, Hidden",
+    "12/04 Linz, Boiler Room",
+    "08/04 Cologne, PollerWiesen",
+    "07/04 Granada, Industrial Copera",
+    "06/04 Milan, Dude Club",
+    "05/04 Sofia, Conjure",
+    "01/04 Amsterdam, DGTL",
+    "31/03 Basel, Absolut Techno",
+    "30/03 Lyon, Reperkusound Festival",
+    "29/03 Vigo, Discoteca Queen",
+    "24/03 Brussels, Fuse",
+    "23/03 Graz, Postgarage",
+    "17/03 Rotterdam, Rotterdam Rave",
+    "14/03 Budapest, Club Corvin",
+    "10/03 Verona, Shame",
+    "09/03 Athens, Six D.O.G.S.",
+    "03/03 Newcastle, Cosmic Balroom",
+    "02/03 Amsterdam, Unpolished",
+    "24/02 Sydney, Civic Underground",
+    "23/02 Australia, Dax J Australia Tour",
+    "23/02 Melbourne, Babylon Festival",
+    "11/02 Pune, Vh1 Supersonic",
+    "27/01 Nijmegen, Doornroosje",
+    "20/01 Sopot, Sfinks700",
+    "19/01 Warsaw, Smolna",
+    "14/01 Berlin, Berghain",
+    "13/01 Barcelona, The Loft",
+    "12/01 Belfast, The Limelight",
+    "06/01 Stuttart, Lehmann",
+    "05/01 Thessaloniki, Block 33",
+    "01/01 Amsterdam, Awakenings"
+  ],
+  "2017": [
+    "31/12 Maastrict, Claydrum",
+    "31/12 Gent, Kozzmozz",
+    "30/12 Agrigento, UNS",
+    "29/12 Heidelberg, Halle02",
+    "28/12 Oslo, Jaeger",
+    "25/12 Florence, Mind Club",
+    "23/12 Taranto, Sound Department",
+    "16/12 Lisbon, Ministerium",
+    "15/12 Porto, Gare",
+    "09/12 Nancy, L'envers",
+    "08/12 Toulouse, Le Bikini",
+    "05/12 Toledo, Family Club",
+    "02/12 Rome, Spazio 900",
+    "26/11 Berlin, Berghain",
+    "25/11 Munich, Rote Sonne",
+    "24/11 Vienna, Grelle Forelle",
+    "23/11 Galway, Refuge",
+    "18/11 Bologna, Link",
+    "17/11 Tbilisi, Bassiani",
+    "11/11 Belgrade, Hard Code Project",
+    "10/11 Katowice, Mayday",
+    "08/11 Paris, Rex Club",
+    "04/11 Nice, Kwartz",
+    "03/11 Essen, Studio Club",
+    "31/10 Derry, Jika Jika",
+    "30/10 Münster, Fusion Club",
+    "29/10 Wicklow, Day Of The Dead Festival",
+    "28/10 Liverpool, 24 Kitchen Street",
+    "27/10 Beirut, B018",
+    "22/10 Amsterdam, Awakenings",
+    "21/10 Montpellier, Le Dieze",
+    "20/10 Munich, THE BLOCK",
+    "14/10 Bordeaux, BT 59",
+    "13/10 Cork, Cyprus Avenue",
+    "08/10 Valencia, Barraca",
+    "07/10 Lyon, Tapage Nocturne",
+    "06/10 Hasselt, Forty Five",
+    "30/09 Sheffield, Hope Works",
+    "29/09 Rotterdam, Factory 010",
+    "23/09 Karlsruhe, Gotec Club",
+    "22/09 Wuppertal, Butan",
+    "16/09 Dublin, District 8",
+    "15/09 Dundee, Headway",
+    "09/09 Geneva, Galva 004",
+    "08/09 Malta, Glitch Festival",
+    "05/09 Sofia, Conjure",
+    "01/09 Stuttgart, Lehmann Club",
+    "27/08 Berlin, Berghain",
+    "26/08 Edinburgh, The Mash House",
+    "25/08 Gijon, Frikiparty",
+    "19/08 Los Angeles, Droid",
+    "18/08 San Francisco, Monarch",
+    "12/08 New York, Output",
+    "11/08 Glasgow, Sub Club",
+    "10/08 Solna, Out Of The Factory",
+    "06/08 Amsterdam, Dekmantel",
+    "05/08 Porto, Neopop Festival",
+    "04/08 Kastellaun, Nature One Festival",
+    "29/07 Płock, Audioriver",
+    "28/07 Helsinki, Ääniwalli",
+    "22/07 Paliano, TimeLess Art & Music Festival",
+    "18/07 Ibiza, Privilege",
+    "15/07 Lignano Sabbiadoro, Kursaal Club",
+    "14/07 Zakynthos, Friendly Co Boat Party",
+    "13/07 Dour, Dour Festival",
+    "07/07 Novi Sad, Exit Festival",
+    "01/07 Cabriès, Spartacus Club",
+    "24/06 Amsterdam, Awakenings Festival",
+    "23/06 Frankfurt, Tanzhaus West",
+    "18/06 Ciudad Real, Amazing Summer Festival",
+    "17/06 Madrid, Fabrik",
+    "16/06 Lyon, Club Transbo",
+    "04/06 Dortmund, PollerWiesen Festival",
+    "03/06 Arnhem, Free Your Mind Festival",
+    "01/06 Catania, With Love",
+    "29/05 Shanghai, Intro Festival",
+    "27/05 Rome, Spazio 900",
+    "20/05 Milan, Dude Club",
+    "13/05 Avellino, Ultrabeat",
+    "12/05 Munich, MMA",
+    "06/05 Budapest, Technokunst",
+    "05/05 Kassel, Club ARM",
+    "04/05 Maastrict, Claydrum",
+    "29/04 Taranto, Sound Department",
+    "28/04 Belfast, Lumen",
+    "27/04 Amsterdam, Nassau Festival",
+    "22/04 Buenos Aires, Under Club",
+    "21/04 Buenos Aires, Under Club",
+    "17/04 Berlin, Berghain",
+    "15/04 Gent, Kozzmozz",
+    "13/04 Toledo, Family Club",
+    "01/04 Grenada, WOW Club",
+    "31/03 Hammamet, Orbit Festival",
+    "25/03 Glasgow, Warehouse",
+    "25/03 Glasgow, Glue Factory",
+    "18/03 Ludwigshafen, Loft Club",
+    "17/03 Madrid, Stardust",
+    "16/03 Barcelona, Club4",
+    "11/03 Porto, Gare",
+    "10/03 Lille, Magazine Club",
+    "04/03 Utrecht, Soenda Indoor",
+    "04/03 Rotterdam, Rotterdam Rave",
+    "03/03 Kotor, Maximus Club",
+    "25/02 Stuttgart, Lehmann Club",
+    "24/02 Manchester, Hidden",
+    "18/02 Melbourne, Gasometer Hotel",
+    "17/02 Sydney, Zoo Project",
+    "11/02 Toronto, Apollo Warehouse",
+    "10/02 Montreal, La Bacchanale",
+    "04/02 Nice, Kwartz Club",
+    "03/02 Dublin, Hangar",
+    "02/02 Limerick, Subtech",
+    "28/01 Eindhoven, Awakenings",
+    "27/01 Tel Aviv, Beit Maariv",
+    "13/01 Tblisi, Bassiani",
+    "07/01 Rome, Spazio900",
+    "06/01 Paris, La Machine du Moulin Rouge",
+    "01/01 Waterford, Republik",
+    "01/01 London, Jaded"
+  ],
+  "2016": [
+    "31/12 Nijmegen, Doornroosje",
+    "31/12 Brussels, FCKNYE",
+    "30/12 Amsterdam, NDSM-Wharf",
+    "26/12 Cardiff, Jacobs Basement",
+    "17/12 Caldogno, Hyper",
+    "16/12 Munich, MMA",
+    "11/12 Messina, Mind The Gap",
+    "10/12 Terracina, Ribbon Club",
+    "09/12 Gent, Decadance",
+    "03/12 Cologne, Artheater",
+    "26/11 Basel, Borderline",
+    "25/11 Rotterdam, Transistor",
+    "20/11 Berlin, Berghain",
+    "19/11 Madrid, Fabrik",
+    "18/11 Lyon, Ninkasi Kao",
+    "12/11 Stockholm, ФОМО",
+    "11/11 Cork, Cyprus Avenue",
+    "05/11 Utrecht, Soenda Indoor",
+    "04/11 Hamburg, PAL",
+    "31/10 Marseille, Docks Des Suds",
+    "29/10 Medellin, Antioquia",
+    "28/10 Bogota, Vagabond",
+    "23/10 Amsterdam, Awakenings",
+    "20/10 Amsterdam, Amsterdam Studios",
+    "15/10 Genoa, Mantra Club",
+    "14/10 Edinburgh, Mash House",
+    "01/10 Rathoat, Boxed Off Festival",
+    "01/10 Dublin, Hangar",
+    "30/09 Kortrijk, Reflex XL Festival",
+    "24/09 Turin, Genau",
+    "17/09 Tilburg, Draaimolen Festival",
+    "10/09 Montpellier, le Dieze",
+    "09/09 Milan, Dude Club",
+    "03/09 Paris, Inox Park",
+    "02/09 Nantes, LC Club",
+    "28/08 Berlin, Berghain",
+    "27/08 Łódź, Domoffon Festival",
+    "20/08 Siracusa, Cava Underground",
+    "13/08 The Hague, The Crave Festival",
+    "12/08 Groningen, Paradigm Festival",
+    "05/08 Barcelona, Razzmatazz",
+    "30/07 Pula, Fort Bourguignon",
+    "24/07 Gent, Klankfest",
+    "23/07 Naples, Mutate",
+    "16/07 Viterbo, Nature Beat",
+    "13/07 Paris, Peacock Society Festival",
+    "09/07 Ottersum, Klooster Festival",
+    "02/07 Taranto, Sound Department",
+    "01/07 Sofia, HippieLandia",
+    "25/06 Amsterdam, Awakenings Festival",
+    "25/06 Amsterdam, Paradiso",
+    "24/06 Nice, Kubick",
+    "18/06 Stuttgart, Romy S",
+    "16/06 Barcelona, Bloc",
+    "11/06 Vienna, Grelle Forelle",
+    "10/06 Krakow, Szpitalna 1",
+    "04/06 Lyon, Le Petit Salon",
+    "03/06 Blackpool, Resonate",
+    "25/05 Munich, Bullitt Club",
+    "21/05 Nijmegen, Doornroosje",
+    "20/05 Moscow, Monasterio Night",
+    "14/05 Buenos Aires, Under Club",
+    "07/05 La Chaux-de-Fonds, Bikini Test",
+    "06/05 Biel/Bienne, Coupole",
+    "01/05 Molfetta, Sunshine Festival",
+    "30/04 Terracina, Mutazione",
+    "29/04 Glasgow, Sub Club",
+    "27/04 Amsterdam, Nassau Festival",
+    "24/04 Berlin, Berghain",
+    "16/04 Oxford, The Cellar",
+    "15/04 Bordeaux, Block Club",
+    "09/04 Paris, ØFF",
+    "08/04 Clermont Ferrand, 1O1 Club",
+    "07/04 Paris, Glazart",
+    "02/04 Aachen, Transition",
+    "31/03 Limerick, The Library",
+    "26/03 San Gwaan, Liquid Club",
+    "25/03 Newcastle, MTC",
+    "24/03 Strasbourg, Studio Saglio",
+    "19/03 Rotterdam, Transport",
+    "18/03 Brest, Suite Club",
+    "13/03 Hamburg, Power Tower",
+    "12/03 Thessaloniki, Be Uncensored",
+    "11/03 Rennes, La Crèmerie",
+    "05/03 Tbilisi, Elektrowerk",
+    "27/02 Milan, MX Lab",
+    "26/02 Leeds, Mint Club",
+    "19/02 Dublin, Hangar",
+    "18/02 Utrecht, Basis",
+    "06/02 Bologna, Zona Roveri Club",
+    "05/02 Paris, Gibus",
+    "30/01 Geneva, Hall 22",
+    "29/01 Manchester, The Whiskey Jar",
+    "22/01 Rome, Container",
+    "17/01 Patras, Cube",
+    "15/01 Athens, Six D.O.G.S.",
+    "02/01 Munich, Rote Sonne",
+    "01/01 Amsterdam, Reaktor"
+  ],
+  "2015": [
+    "19/12 Verona, Alterego",
+    "18/12 Brussels, Fuse",
+    "17/12 Lyon, DV1",
+    "12/12 Copenhagen, KB18",
+    "11/12 Toulouse, La Dynamo",
+    "05/12 Napoli, Duel Beat",
+    "21/11 Utrecht, Poema",
+    "10/11 Gent, Decadance",
+    "07/11 Berlin, Berghain",
+    "24/10 Paris, Drom",
+    "19/09 Taranto, Sound Department",
+    "18/09 Nuremburg, Haus 33",
+    "12/09 Taipei, Innervve",
+    "05/09 Nantes, Altercafe",
+    "22/08 Rotterdam, Tegenstroom Festival",
+    "22/08 Rotterdam, Tegenstroom Afterparty",
+    "01/08 Belgrade, Svermirska Kafana",
+    "25/07 Trani, White XXX",
+    "24/07 Gothenburg, Über Open Air",
+    "11/07 Berlin, Berghain",
+    "20/06 Pula, Slurp! Festival",
+    "19/06 Lille, Ozzy Fest 2015",
+    "16/05 Wroclaw, Das Lokal",
+    "24/04 Lyon, DV1 Club",
+    "13/02 Vilnius, Hooked On",
+    "30/01 Berlin, Griessmuehle",
+    "31/12 Pula, Seasplash platforma #8",
+    "31/12 Zagreb, Sirup Club",
+    "13/12 Saarbrucken, Ubar",
+    "22/11 Paris, Batofar",
+    "21/11 Marseille, Le Baby",
+    "17/10 Paisley, The Club",
+    "08/06 London, Cafe 1001",
+    "07/06 Aachen, Transition - Musikbunker",
+    "09/05 London, Crucifix Lane",
+    "28/03 Avellino, Komponent"
+  ]
+};
+
+const years = Object.keys(shows).sort((a, b) => b - a);
+
+function renderTabs() {
+  const container = document.getElementById('yearTabs');
+  years.forEach((year, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'year-tab' + (i === 0 ? ' active' : '');
+    btn.textContent = year;
+    btn.dataset.year = year;
+    btn.addEventListener('click', () => selectYear(year));
+    container.appendChild(btn);
+  });
+}
+
+function selectYear(year) {
+  document.querySelectorAll('.year-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.year === year);
+  });
+  renderShows(year);
+}
+
+function renderShows(year) {
+  const grid = document.getElementById('showsGrid');
+  const list = shows[year] || [];
+
+  grid.innerHTML = list.map(show => {
+    const spaceIdx = show.indexOf(' ');
+    const date = show.substring(0, spaceIdx);
+    const rest = show.substring(spaceIdx + 1);
+    return `<div class="show-item"><span class="show-date">${date}</span><span class="show-info">${rest}</span></div>`;
+  }).join('');
+}
+
+renderTabs();
+renderShows(years[0]);
+</script>
+</body>
+</html>

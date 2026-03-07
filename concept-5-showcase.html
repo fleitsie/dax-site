@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAX J — Concept 5: Scrolling Showcase</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: #000;
+      color: #fff;
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-y: scroll;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: 26px;
+      padding: 19px 32px;
+      z-index: 300;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.9);
+    }
+    nav a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: #39ff14; }
+    nav a.active { color: #fff; }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* Hero */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-name {
+      font-size: 80px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .hero-sub {
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 8px;
+      margin-bottom: 30px;
+    }
+
+    /* Featured release */
+    .featured {
+      padding: 80px 0;
+    }
+
+    .featured-inner {
+      display: flex;
+      gap: 50px;
+      align-items: flex-start;
+    }
+
+    .featured-art {
+      width: 380px; height: 380px;
+      flex-shrink: 0;
+    }
+    .featured-art img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      filter: saturate(0.7) contrast(1.1);
+    }
+
+    .featured-info { flex: 1; padding-top: 10px; }
+
+    .featured-artist {
+      font-size: 10px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: rgba(255,255,255,0.4);
+      margin-bottom: 6px;
+    }
+    .featured-title {
+      font-size: 22px; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .featured-catalog {
+      font-size: 10px; letter-spacing: 0.16em;
+      text-transform: uppercase; color: rgba(255,255,255,0.2);
+      margin-bottom: 24px;
+    }
+
+    .feat-track {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 0; font-size: 12px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5); cursor: pointer;
+      transition: color 0.15s;
+    }
+    .feat-track:hover { color: #39ff14; }
+    .feat-track.active { color: #39ff14; }
+    .feat-track-play { font-size: 10px; }
+
+    .featured-buy {
+      display: inline-block; margin-top: 24px;
+      font-size: 11px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: #39ff14;
+      text-decoration: none; border: 1px solid #39ff14;
+      padding: 10px 28px; transition: background 0.2s, color 0.2s;
+    }
+    .featured-buy:hover { background: #39ff14; color: #000; }
+
+    /* Listen Blocks — stacked frequency bars */
+    .listen-section {
+      padding: 60px 0 80px;
+    }
+
+    .listen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 3px;
+    }
+
+    .listen-block {
+      position: relative;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.04);
+      padding: 20px 18px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      overflow: hidden;
+    }
+
+    .listen-block::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 0%;
+      background: rgba(57, 255, 20, 0.06);
+      transition: height 0.4s ease;
+    }
+
+    .listen-block:hover {
+      border-color: rgba(57, 255, 20, 0.2);
+      background: rgba(57, 255, 20, 0.03);
+    }
+
+    .listen-block:hover::before {
+      height: 100%;
+    }
+
+    .listen-block.active {
+      border-color: #39ff14;
+      background: rgba(57, 255, 20, 0.05);
+    }
+
+    .listen-block.active::before {
+      height: 100%;
+      background: rgba(57, 255, 20, 0.08);
+      animation: pulse-bar 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse-bar {
+      0% { height: 30%; }
+      100% { height: 100%; }
+    }
+
+    .lb-play {
+      font-size: 18px;
+      color: rgba(255,255,255,0.2);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+      transition: color 0.2s;
+    }
+
+    .listen-block:hover .lb-play { color: #39ff14; }
+    .listen-block.active .lb-play { color: #39ff14; }
+
+    .lb-title {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .lb-artist {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      position: relative;
+      z-index: 1;
+    }
+
+    .lb-catalog {
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.12);
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Bandsintown */
+    .bit-section {
+      padding: 0 0 60px;
+    }
+
+    .shows-list {
+      list-style: none;
+    }
+
+    .show-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .show-date {
+      color: rgba(255,255,255,0.4);
+      flex-shrink: 0;
+      width: 70px;
+    }
+
+    .show-info {
+      flex: 1;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .show-venue {
+      color: rgba(255,255,255,0.35);
+    }
+
+    .show-tickets {
+      flex-shrink: 0;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #39ff14;
+      text-decoration: none;
+      border: 1px solid rgba(57,255,20,0.3);
+      padding: 5px 14px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .show-tickets:hover {
+      background: rgba(57,255,20,0.08);
+      border-color: #39ff14;
+    }
+
+    .shows-loading {
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      padding: 20px 0;
+    }
+
+    /* Subscribe */
+    .subscribe-section {
+      padding: 40px 0 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .subscribe-section label {
+      font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+    }
+    .subscribe-section input[type="email"] {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; padding: 7px 14px;
+      width: 240px; outline: none;
+      transition: border-color 0.15s;
+    }
+    .subscribe-section input:focus { border-color: #39ff14; }
+    .subscribe-section button {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.5);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; padding: 7px 20px;
+      cursor: pointer; transition: color 0.15s, border-color 0.15s;
+    }
+    .subscribe-section button:hover { color: #39ff14; border-color: #39ff14; }
+
+    /* Player bar */
+    .player-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 48px; background: rgba(0,0,0,0.95);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      z-index: 300; display: none;
+      align-items: center; padding: 0 32px; gap: 12px;
+    }
+    .player-bar.active { display: flex; }
+    .pb-btn {
+      background: none; border: none; color: #fff;
+      font-size: 14px; cursor: pointer;
+    }
+    .pb-name {
+      font-size: 11px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: rgba(255,255,255,0.6);
+    }
+    .pb-wrap {
+      flex: 1; height: 3px; background: rgba(255,255,255,0.1);
+      cursor: pointer; border-radius: 1.5px;
+    }
+    .pb-fill {
+      height: 100%; background: #39ff14; width: 0%;
+      border-radius: 1.5px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="active">Home</a>
+    <a href="shows.html">Shows</a>
+    <a href="releases.html">MNNM BLK</a>
+  </nav>
+
+  <div class="page">
+    <div class="hero">
+      <div class="hero-name">DAX J</div>
+      <div class="hero-sub">Monnom Black</div>
+    </div>
+
+    <div class="featured">
+      <div class="section-label">Featured Release</div>
+      <div class="featured-inner">
+        <div class="featured-art">
+          <img src="images%20from%20me%20to%20you/displaywindow/illusions-of-power.jpg" alt="">
+        </div>
+        <div class="featured-info">
+          <div class="featured-artist">Dax J</div>
+          <div class="featured-title">Reign of Terror</div>
+          <div class="featured-catalog">MONNOMX02</div>
+          <div id="featTracks"></div>
+          <a class="featured-buy" href="https://monnomblack.bandcamp.com/album/reign-of-terror" target="_blank" rel="noopener">Buy on Bandcamp</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="listen-section">
+      <div class="section-label">Listen</div>
+      <div class="listen-grid" id="listenGrid"></div>
+    </div>
+
+    <div class="bit-section">
+      <div class="section-label">Upcoming Shows</div>
+      <div class="shows-list" id="showsList">
+        <div class="shows-loading">Loading shows...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="subscribe-section">
+      <label>Stay updated</label>
+      <input type="email" placeholder="your@email.com">
+      <button>Subscribe</button>
+    </div>
+  </div>
+
+  <div class="player-bar" id="playerBar">
+    <button class="pb-btn" id="pbBtn">&#9654;</button>
+    <span class="pb-name" id="pbName"></span>
+    <div class="pb-wrap" id="pbWrap">
+      <div class="pb-fill" id="pbFill"></div>
+    </div>
+  </div>
+
+  <audio id="audio"></audio>
+
+  <script>
+    var popCtx = null;
+    function playPop() {
+      if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = popCtx.createOscillator();
+      var gain = popCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(900, popCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, popCtx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.03, popCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, popCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(popCtx.destination);
+      osc.start(popCtx.currentTime);
+      osc.stop(popCtx.currentTime + 0.08);
+    }
+
+    var audio = document.getElementById('audio');
+    var isPlaying = false;
+    var currentBlockIdx = -1;
+    var currentFeatIdx = -1;
+
+    // Featured tracks
+    var featTracks = [
+      { name: "Reign Of Terror", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-01-reign-of-terror.mp3" },
+      { name: "Harry The Hatchet", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-02-harry-the-hatchet.mp3" },
+      { name: "Cartagena Square", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-03-cartagena-square.mp3" },
+      { name: "Zulu Nation", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-04-zulu-nation.mp3" },
+      { name: "The Quest", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-05-the-quest.mp3" },
+      { name: "Breaking Visions", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-06-breaking-visions.mp3" },
+    ];
+
+    var ftEl = document.getElementById('featTracks');
+    featTracks.forEach(function(t, i) {
+      var row = document.createElement('div');
+      row.className = 'feat-track';
+      row.innerHTML = '<span class="feat-track-play">&#9654;</span> ' + (i + 1) + '. ' + t.name;
+      row.addEventListener('mouseenter', playPop);
+      row.addEventListener('click', function() {
+        if (currentFeatIdx === i && isPlaying) {
+          audio.pause(); isPlaying = false;
+          row.querySelector('.feat-track-play').textContent = '\u25B6';
+          document.getElementById('pbBtn').textContent = '\u25B6';
+        } else {
+          clearAllActive();
+          audio.src = t.src; audio.play();
+          isPlaying = true; currentFeatIdx = i; currentBlockIdx = -1;
+          row.classList.add('active');
+          row.querySelector('.feat-track-play').textContent = '\u25AE\u25AE';
+          document.getElementById('pbName').textContent = t.name;
+          document.getElementById('pbBtn').textContent = '\u25AE\u25AE';
+          document.getElementById('playerBar').classList.add('active');
+        }
+      });
+      ftEl.appendChild(row);
+    });
+
+    // Listen blocks — one per release with a lead track
+    var listenBlocks = [
+      { title: "Functions", artist: "Dax J", catalog: "MONNOM037", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-01-functions.mp3" },
+      { title: "Royal Flush", artist: "Dax J", catalog: "MONNOM036", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-01-royal-flush.mp3" },
+      { title: "Quantum Leap", artist: "LPV", catalog: "MONNOM039", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-01-quantum-leap.mp3" },
+      { title: "Beyond The Visible Spectrum", artist: "Dax J", catalog: "MONNOM038", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom038-01-beyond-the-visible-spectrum.mp3" },
+      { title: "Silhouetten der Nacht", artist: "Various", catalog: "MONNOM035", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-01-silhouetten-der-nacht.mp3" },
+      { title: "Dominion", artist: "Dax J", catalog: "MONNOM037", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-02-dominion.mp3" },
+      { title: "Liberation Techniques", artist: "Dax J", catalog: "MONNOM036", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-02-liberation-techniques.mp3" },
+      { title: "Orbital", artist: "Dax J", catalog: "MONNOM037", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-03-orbital.mp3" },
+      { title: "Holographic Existence", artist: "Dax J", catalog: "MONNOM038", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom038-02-holographic-existence.mp3" },
+      { title: "Broken Tape", artist: "LPV", catalog: "MONNOM039", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-04-broken-tape.mp3" },
+    ];
+
+    function clearAllActive() {
+      document.querySelectorAll('.feat-track').forEach(function(r) {
+        r.classList.remove('active');
+        r.querySelector('.feat-track-play').textContent = '\u25B6';
+      });
+      document.querySelectorAll('.listen-block').forEach(function(b) {
+        b.classList.remove('active');
+      });
+    }
+
+    var listenGrid = document.getElementById('listenGrid');
+    listenBlocks.forEach(function(b, i) {
+      var block = document.createElement('div');
+      block.className = 'listen-block';
+      block.innerHTML = '<div class="lb-play">&#9654;</div>' +
+        '<div class="lb-title">' + b.title + '</div>' +
+        '<div class="lb-artist">' + b.artist + '</div>' +
+        '<div class="lb-catalog">' + b.catalog + '</div>';
+
+      block.addEventListener('mouseenter', playPop);
+      block.addEventListener('click', function() {
+        if (currentBlockIdx === i && isPlaying) {
+          audio.pause(); isPlaying = false;
+          block.querySelector('.lb-play').textContent = '\u25B6';
+          document.getElementById('pbBtn').textContent = '\u25B6';
+        } else {
+          clearAllActive();
+          document.querySelectorAll('.listen-block').forEach(function(bb) {
+            bb.querySelector('.lb-play').textContent = '\u25B6';
+          });
+          audio.src = b.src; audio.play();
+          isPlaying = true; currentBlockIdx = i; currentFeatIdx = -1;
+          block.classList.add('active');
+          block.querySelector('.lb-play').textContent = '\u25AE\u25AE';
+          document.getElementById('pbName').textContent = b.artist + ' \u2014 ' + b.title;
+          document.getElementById('pbBtn').textContent = '\u25AE\u25AE';
+          document.getElementById('playerBar').classList.add('active');
+        }
+      });
+      listenGrid.appendChild(block);
+    });
+
+    // Player bar
+    document.getElementById('pbBtn').addEventListener('click', function() {
+      if (isPlaying) { audio.pause(); isPlaying = false; this.textContent = '\u25B6'; }
+      else { audio.play(); isPlaying = true; this.textContent = '\u25AE\u25AE'; }
+    });
+
+    audio.addEventListener('timeupdate', function() {
+      document.getElementById('pbFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
+    });
+
+    document.getElementById('pbWrap').addEventListener('click', function(e) {
+      var rect = this.getBoundingClientRect();
+      audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        if (currentBlockIdx >= 0 || currentFeatIdx >= 0) {
+          if (isPlaying) { audio.pause(); isPlaying = false; document.getElementById('pbBtn').textContent = '\u25B6'; }
+          else { audio.play(); isPlaying = true; document.getElementById('pbBtn').textContent = '\u25AE\u25AE'; }
+        }
+      }
+    });
+
+    document.querySelectorAll('nav a, .featured-buy, .subscribe-section button').forEach(function(el) {
+      el.addEventListener('mouseenter', playPop);
+    });
+
+    function cleanVenue(name) {
+      return (name || '').replace(/\s+\d{4}\s*$/, '').trim();
+    }
+
+    // Fetch shows from Bandsintown API
+    fetch('https://rest.bandsintown.com/artists/id_1054709/events?app_id=24227d96e107168700635bb384feee25')
+      .then(function(r) { return r.json(); })
+      .then(function(events) {
+        var el = document.getElementById('showsList');
+        if (!events.length) { el.innerHTML = '<div class="shows-loading">No upcoming shows</div>'; return; }
+        el.innerHTML = '';
+        events.forEach(function(ev) {
+          var d = new Date(ev.datetime);
+          var dd = String(d.getDate()).padStart(2, '0');
+          var mm = String(d.getMonth() + 1).padStart(2, '0');
+          var city = ev.venue.city;
+          var venue = cleanVenue(ev.venue.name);
+          var ticketUrl = (ev.offers && ev.offers.length) ? ev.offers[0].url : ev.url;
+          var row = document.createElement('div');
+          row.className = 'show-row';
+          var venueHtml = venue ? ', <span class="show-venue">' + venue + '</span>' : '';
+          row.innerHTML = '<span class="show-date">' + dd + '/' + mm + '</span>' +
+            '<span class="show-info">' + city + venueHtml + '</span>' +
+            '<a class="show-tickets" href="' + ticketUrl + '" target="_blank" rel="noopener">Tickets</a>';
+          row.querySelector('.show-tickets').addEventListener('mouseenter', playPop);
+          el.appendChild(row);
+        });
+      })
+      .catch(function() {
+        document.getElementById('showsList').innerHTML = '<div class="shows-loading">Could not load shows</div>';
+      });
+  </script>
+</body>
+</html>

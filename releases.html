@@ -97,7 +97,7 @@
       padding: 19px 32px;
       z-index: 300;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 8.5px;
+      font-size: 14px;
       font-weight: 400;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -108,7 +108,7 @@
       text-decoration: none;
       transition: color 0.15s;
     }
-    nav a:hover { color: #fff; }
+    nav a:hover { color: #39ff14; }
     nav a.active { color: #fff; }
 
     /* ── Sidebar ── */
@@ -119,7 +119,7 @@
       height: calc(100vh - 2.4rem);
       background: rgba(0,0,0,0.92);
       border-right: 1px solid rgba(255,255,255,0.06);
-      z-index: 80;
+      z-index: 210;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 1.6rem 1rem 1rem;
@@ -150,7 +150,8 @@
       transition: color 0.15s;
     }
 
-    .sb-release-title:hover { color: #3fe1b1; }
+    .sb-release-title:hover { color: #39ff14; }
+    .sb-release-title:active { color: #39ff14; }
 
     .sb-track {
       display: flex;
@@ -160,17 +161,17 @@
       cursor: pointer;
       transition: color 0.15s;
       color: rgba(255,255,255,0.4);
-      font-size: 0.52rem;
+      font-size: 11.5px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .sb-track:hover { color: rgba(255,255,255,0.8); }
-    .sb-track.active { color: #3fe1b1; }
+    .sb-track.active { color: #39ff14; }
 
     .sb-play-icon {
       flex-shrink: 0;
-      font-size: 0.5rem;
+      font-size: 12px;
     }
 
     /* ── Modal ── */
@@ -256,6 +257,8 @@
     }
     .label.fading { transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1); opacity: 0 !important; }
     #sidebar.fading { transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1); opacity: 0; }
+    #sidebar.dimmed { opacity: 0.35; transition: opacity 0.4s ease; }
+    #sidebar.dimmed:hover { opacity: 1; }
 
     /* Phase reverse: Tiles pop back into grid */
     .tile.gathering {
@@ -310,8 +313,8 @@
       transition: color 0.15s;
     }
 
-    .modal-track:hover { color: #fff; }
-    .modal-track.active { color: #3fe1b1; }
+    .modal-track:hover { color: #39ff14; }
+    .modal-track.active { color: #39ff14; }
     .modal-track .mt-play { font-size: 0.48rem; }
 
     #modal-links { display: flex; gap: 0.8rem; margin-top: 1.6rem; }
@@ -323,7 +326,7 @@
       padding: 0.4rem 1rem; transition: color 0.15s, border-color 0.15s;
     }
 
-    #modal-links a:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+    #modal-links a:hover { color: #39ff14; border-color: #39ff14; }
 
     #modal-close {
       position: fixed; bottom: 3rem; left: 50%;
@@ -342,14 +345,14 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    #modal-close:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+    #modal-close:hover { color: #39ff14; border-color: #39ff14; }
 
     /* ── Player Bar ── */
     #player-bar {
       position: fixed; bottom: 0; left: 0; right: 0;
       height: 48px; background: rgba(0,0,0,0.95);
       border-top: 1px solid rgba(255,255,255,0.06);
-      z-index: 100; display: none;
+      z-index: 300; display: none;
       align-items: center; padding: 0 1.6rem; gap: 1rem;
       font-family: 'IBM Plex Mono', monospace;
     }
@@ -374,7 +377,7 @@
     }
 
     #pb-progress {
-      height: 100%; background: #3fe1b1; width: 0%;
+      height: 100%; background: #39ff14; width: 0%;
       border-radius: 1.5px; pointer-events: none;
     }
 
@@ -389,7 +392,7 @@
 
   <nav>
     <a href="index.html">Home</a>
-    <a href="shows.html">Past Shows</a>
+    <a href="shows.html">Shows</a>
     <a href="releases.html" class="active">MNNM BLK</a>
   </nav>
 
@@ -432,16 +435,16 @@
         desc: "A classic Dax J ep gets its Monnom Black debut, originally released in 2016 on Electric Deluxe. Vinyl coming soon",
         label: "Monnom Black",
         year: 2025,
-        catalog: "MONNOM040",
-        art: "images from me to you/displaywindow/a2295175411_10.jpg",
+        catalog: "MONNOMX02",
+        art: "images from me to you/displaywindow/illusions-of-power.jpg",
         links: { bandcamp: "https://monnomblack.bandcamp.com/album/reign-of-terror", beatport: "#", spotify: "#" },
         tracks: [
-          { side: "1", title: "Reign Of Terror", src: "" },
-          { side: "2", title: "Harry The Hatchet", src: "" },
-          { side: "3", title: "Cartagena Square", src: "" },
-          { side: "4", title: "Zulu Nation", src: "" },
-          { side: "5", title: "The Quest", src: "" },
-          { side: "6", title: "Breaking Visions", src: "" },
+          { side: "1", title: "Reign Of Terror", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-01-reign-of-terror.mp3" },
+          { side: "2", title: "Harry The Hatchet", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-02-harry-the-hatchet.mp3" },
+          { side: "3", title: "Cartagena Square", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-03-cartagena-square.mp3" },
+          { side: "4", title: "Zulu Nation", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-04-zulu-nation.mp3" },
+          { side: "5", title: "The Quest", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-05-the-quest.mp3" },
+          { side: "6", title: "Breaking Visions", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-06-breaking-visions.mp3" },
         ]
       },
       {
@@ -1314,9 +1317,14 @@
         name.textContent = trk.side + '. ' + trk.title;
         name.addEventListener('click', function(e) {
           e.stopPropagation();
-          playTrack(ri, ti);
+          if (currentRelease === ri && currentTrack === ti && isPlaying) {
+            togglePlay();
+          } else {
+            playTrack(ri, ti);
+          }
         });
 
+        row.addEventListener('mouseenter', playPop);
         row.appendChild(icon);
         row.appendChild(name);
         tl.appendChild(row);
@@ -1331,6 +1339,7 @@
           a.target = '_blank';
           a.rel = 'noopener';
           a.textContent = key;
+          a.addEventListener('mouseenter', playPop);
           linksEl.appendChild(a);
         }
       });
@@ -1371,9 +1380,9 @@
           t._scatterTY = (dy / dist) * push;
         });
 
-        // Fade sidebar, label
+        // Fade label, dim sidebar
         document.querySelector('.label').classList.add('fading');
-        document.getElementById('sidebar').classList.add('fading');
+        document.getElementById('sidebar').classList.add('dimmed');
 
         // ── Phase 1: The beat — 1 second pause, tiles feel alive ──
         // Slight lift upward (breathing in)
@@ -1471,6 +1480,7 @@
 
       } else {
         // ── Instant open (from sidebar) ──
+        document.getElementById('sidebar').classList.add('dimmed');
         overlay.classList.add('open');
         overlay.offsetHeight;
         overlay.classList.add('visible');
@@ -1608,6 +1618,7 @@
                   // Bring back sidebar, label
                   lb.classList.remove('fading');
                   sb.classList.remove('fading');
+                  sb.classList.remove('dimmed');
                   lb.classList.add('returning');
                   sb.classList.add('returning');
 
@@ -1625,6 +1636,7 @@
         // ── Instant close ──
         artEl.classList.remove('reveal');
         overlay.classList.remove('visible');
+        document.getElementById('sidebar').classList.remove('dimmed');
         layoutPaused = false;
         setTimeout(function() { overlay.classList.remove('open'); }, 400);
       }
@@ -1634,6 +1646,9 @@
     }
 
     // ── Scroll-to-release from sidebar ──
+    var pendingOpenRI = -1;
+    var pendingOpenCheck = null;
+
     function scrollToRelease(ri) {
       var targetSrc = encodeURI(RELEASES[ri].art);
       var N = SRCS.length;
@@ -1668,9 +1683,54 @@
       var destX = bestC * STEP_X + sg + offsetX - VW / 2 + SZ / 2;
       var destY = bestR * STEP_Y + offsetY - VH / 2 + SZ / 2;
 
-      // Set scroll target — the lerp loop will chase it
+      // Set scroll target — use slow stiffness for smooth glide
       targetX = destX;
       targetY = destY;
+      currentStiffness = STIFFNESS_SLOW;
+      pendingOpenRI = ri;
+
+      // Poll until scroll arrives, then auto-open
+      if (pendingOpenCheck) cancelAnimationFrame(pendingOpenCheck);
+      function checkArrival() {
+        if (Math.abs(targetX - scrollX) < 3 && Math.abs(targetY - scrollY) < 3) {
+          // Find the centered tile
+          var tiles = document.querySelectorAll('.tile');
+          var closestTile = null;
+          var closestDist = Infinity;
+          var cx = VW / 2 + 240;
+          var cy = VH / 2;
+          tiles.forEach(function(t) {
+            var img = t.querySelector('img');
+            if (img && img.src.indexOf(targetSrc.replace(/ /g, '%20')) !== -1) {
+              var rect = t.getBoundingClientRect();
+              var dist = Math.abs(rect.left + rect.width/2 - cx) + Math.abs(rect.top + rect.height/2 - cy);
+              if (dist < closestDist) { closestDist = dist; closestTile = t; }
+            }
+          });
+          pendingOpenRI = -1;
+          openModal(ri, closestTile);
+          return;
+        }
+        pendingOpenCheck = requestAnimationFrame(checkArrival);
+      }
+      pendingOpenCheck = requestAnimationFrame(checkArrival);
+    }
+
+    // ── Subtle pop sound on hover ──
+    var popCtx = null;
+    function playPop() {
+      if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = popCtx.createOscillator();
+      var gain = popCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(900, popCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, popCtx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.03, popCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, popCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(popCtx.destination);
+      osc.start(popCtx.currentTime);
+      osc.stop(popCtx.currentTime + 0.08);
     }
 
     // ── Sidebar rendering ──
@@ -1685,6 +1745,7 @@
         title.className = 'sb-release-title';
         title.textContent = rel.artist + ' — ' + rel.title;
         title.addEventListener('click', function() { scrollToRelease(ri); });
+        title.addEventListener('mouseenter', playPop);
         div.appendChild(title);
 
         rel.tracks.forEach(function(trk, ti) {
@@ -1709,9 +1770,14 @@
           name.textContent = trk.side + '. ' + trk.title;
           name.addEventListener('click', function(e) {
             e.stopPropagation();
-            playTrack(ri, ti);
+            if (currentRelease === ri && currentTrack === ti && isPlaying) {
+              togglePlay();
+            } else {
+              playTrack(ri, ti);
+            }
           });
 
+          row.addEventListener('mouseenter', playPop);
           row.appendChild(icon);
           row.appendChild(name);
           div.appendChild(row);
@@ -1777,9 +1843,8 @@
         el.appendChild(inner);
         scene.appendChild(el);
 
-        // Random depth per tile: dramatic range to test the effect
-        const depth = 0.5 + Math.random() * 0.6;
-        tiles.push({ el, inner, img, gloss, logC: pc - 1, logR: pr - 1, curSrc: '', depth });
+        // Deterministic depth per grid position for consistent sizing across refreshes
+        tiles.push({ el, inner, img, gloss, logC: pc - 1, logR: pr - 1, curSrc: '' });
 
         // Click vs drag detection
         (function(tile) {
@@ -1802,6 +1867,12 @@
 
     // ── Helpers ──
     function posMod(n, m) { return ((n % m) + m) % m; }
+
+    // Deterministic depth from grid position — consistent across refreshes
+    function depthFor(logC, logR) {
+      var h = Math.abs(((logC * 2654435761) ^ (logR * 2246822519)) | 0);
+      return 0.75 + (h % 1000) / 1000 * 0.35; // range 0.75–1.1
+    }
 
     function imgFor(logC, logR) {
       // Distribute 21 images: use two coprime-ish multipliers
@@ -1848,10 +1919,12 @@
         const dy = (tileCY - centerY) / centerY;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
+        // Deterministic depth for this grid position
+        const depth = depthFor(t.logC, t.logR);
         // Globe curve: how much to shrink based on distance from center
-        const globeFalloff = dist * dist * dist * 0.2;
+        const globeFalloff = dist * dist * dist * 0.15;
         // "Closer" tiles (high depth) resist the shrink, "far" tiles shrink more
-        const finalScale = Math.max(0.4, t.depth * (1 - globeFalloff * (1.5 - t.depth)));
+        const finalScale = Math.max(0.65, depth * (1 - globeFalloff * (1.5 - depth)));
 
         t.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + finalScale.toFixed(4) + ')';
 
@@ -1871,6 +1944,8 @@
     // so the OS trackpad momentum is the only inertia (no double-floating).
     let targetX = 0, targetY = 0;
     const STIFFNESS = 0.5;   // fraction of gap closed per frame — 0.3 = stiff, 0.1 = soft
+    const STIFFNESS_SLOW = 0.04; // slower scroll for sidebar clicks
+    var currentStiffness = STIFFNESS;
 
     window.addEventListener('wheel', function(e) {
       if (e.target.closest('#sidebar')) return; // let sidebar scroll naturally
@@ -1885,8 +1960,12 @@
 
     function rafLoop() {
       if (!layoutPaused) {
-        scrollX += (targetX - scrollX) * STIFFNESS;
-        scrollY += (targetY - scrollY) * STIFFNESS;
+        scrollX += (targetX - scrollX) * currentStiffness;
+        scrollY += (targetY - scrollY) * currentStiffness;
+        // Restore normal stiffness once close enough
+        if (currentStiffness !== STIFFNESS && Math.abs(targetX - scrollX) < 2 && Math.abs(targetY - scrollY) < 2) {
+          currentStiffness = STIFFNESS;
+        }
         layoutTiles();
       }
       requestAnimationFrame(rafLoop);
@@ -1956,8 +2035,13 @@
     // ── Player bar controls ──
     document.getElementById('pb-play').addEventListener('click', togglePlay);
     document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-close').addEventListener('mouseenter', playPop);
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && modalOpen) closeModal();
+      if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        if (currentRelease >= 0) togglePlay();
+      }
     });
 
     audio.addEventListener('timeupdate', function() {
@@ -1989,6 +2073,7 @@
     renderSidebar();
     layoutTiles();
     requestAnimationFrame(rafLoop);
+    document.querySelectorAll('nav a').forEach(function(a) { a.addEventListener('mouseenter', playPop); });
   </script>
 
 </body>

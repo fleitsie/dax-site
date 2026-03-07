@@ -14,7 +14,7 @@
       background: #000;
       color: #fff;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 13px;
+      font-size: 15.1px;
       line-height: 1.5;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
@@ -22,27 +22,29 @@
     }
 
     .page {
-      max-width: 900px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 3rem 2.5rem 8rem;
     }
 
     /* ── Header ── */
     .site-header {
-      font-size: 0.72rem;
+      font-size: 0.8rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.38);
       margin-bottom: 0.25rem;
+      margin-left: -10%;
     }
 
     .page-title {
-      font-size: 1.05rem;
+      font-size: 1.2rem;
       font-weight: 500;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #fff;
       margin-bottom: 2.5rem;
+      margin-left: -10%;
     }
 
     .cursor {
@@ -64,22 +66,25 @@
     .year-tabs {
       display: flex;
       flex-wrap: wrap;
-      gap: 0;
-      margin-bottom: 1.5rem;
+      justify-content: flex-start;
+      gap: 0.55rem;
+      margin-bottom: 2.5rem;
       border-bottom: 1px solid rgba(255,255,255,0.1);
       padding-bottom: 0;
+      margin-left: -10%;
+      margin-right: -10%;
     }
 
     .year-tab {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
+      font-size: 0.9rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.25);
       background: none;
       border: none;
       cursor: pointer;
-      padding: 0.45rem 0.8rem;
+      padding: 0.45rem 0.4rem;
       transition: color 0.1s;
       position: relative;
     }
@@ -93,22 +98,24 @@
       opacity: 0;
     }
 
-    .year-tab:hover { color: rgba(255,255,255,0.6); }
-    .year-tab.active { color: #fff; }
+    .year-tab:hover { color: #39ff14; }
+    .year-tab.active { color: #39ff14; }
     .year-tab.active::after { opacity: 1; }
 
     /* ── Show list ── */
     .shows-list {
       column-count: 4;
-      column-gap: 2.5rem;
+      column-gap: 3.5rem;
+      margin-left: -10%;
+      margin-right: -10%;
     }
 
     .show-item {
-      font-size: 0.72rem;
+      font-size: 0.82rem;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #fff;
-      padding: 0.28rem 0.4rem;
+      padding: 0.38rem 0.4rem;
       margin: 0 -0.4rem;
       cursor: default;
       break-inside: avoid;
@@ -124,7 +131,7 @@
       position: absolute;
       left: 0; top: 0;
       width: 0; height: 100%;
-      background: #3fe1b1;
+      background: #39ff14;
       z-index: -1;
       transition: width 0.3s ease-out;
     }
@@ -151,21 +158,21 @@
     /* Style 6: Split-flap departure board */
     .shows-list[data-style="6"] .show-item {
       overflow: visible;
-      padding: 0.4rem 0.4rem;
+      padding: 0.45rem 0.4rem;
       line-height: 1;
     }
     .shows-list[data-style="6"] .flap-cell {
       display: inline-block;
       position: relative;
       width: 0.65em;
-      height: 1.4em;
+      height: 1.3em;
       text-align: center;
       background: #181818;
       border-radius: 2px;
       margin: 0 0.5px;
       vertical-align: middle;
       overflow: hidden;
-      font-size: 0.72rem;
+      font-size: 0.82rem;
       color: #e8e8e8;
     }
     .shows-list[data-style="6"] .flap-cell.space {
@@ -228,7 +235,7 @@
     .shows-list[data-style="6"] .flap-cell .fflip.fflip-top span { top: 0; }
     .shows-list[data-style="6"] .flap-cell .fflip.fflip-bot span { bottom: 0; }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
       .shows-list { column-count: 3; }
     }
     @media (max-width: 600px) {
@@ -244,7 +251,7 @@
       padding: 19px 32px;
       z-index: 300;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 8.5px;
+      font-size: 14px;
       font-weight: 400;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -254,17 +261,17 @@
       text-decoration: none;
       transition: color 0.15s;
     }
-    nav a:hover { color: #fff; }
+    nav a:hover { color: #39ff14; }
     nav a.active { color: #fff; }
   </style>
 </head>
 <body>
   <nav>
     <a href="index.html">Home</a>
-    <a href="shows.html" class="active">Past Shows</a>
+    <a href="shows.html" class="active">Shows</a>
     <a href="releases.html">MNNM BLK</a>
   </nav>
-  <div class="page" style="padding-top: 4rem;">
+  <div class="page" style="padding-top: 5rem;">
     <p class="site-header">DAX J</p>
     <h1 class="page-title">SHOWS<span class="cursor"></span></h1>
     <div class="year-tabs" id="yearTabs"></div>
@@ -1620,8 +1627,36 @@
       });
     }
 
+    // ── Pop sound ──
+    var popCtx = null;
+    function playPop() {
+      if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = popCtx.createOscillator();
+      var gain = popCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(900, popCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, popCtx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.03, popCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, popCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(popCtx.destination);
+      osc.start(popCtx.currentTime);
+      osc.stop(popCtx.currentTime + 0.08);
+    }
+
     renderTabs();
     renderShows(years[0]);
+
+    // Attach pop to nav, year tabs, show items
+    document.querySelectorAll('nav a, .year-tab').forEach(function(el) { el.addEventListener('mouseenter', playPop); });
+    // Re-attach to show items after each render
+    var origRenderShows = renderShows;
+    renderShows = function(year) {
+      origRenderShows(year);
+      document.querySelectorAll('.show-item').forEach(function(el) { el.addEventListener('mouseenter', playPop); });
+    };
+    // Trigger once for initial render
+    document.querySelectorAll('.show-item').forEach(function(el) { el.addEventListener('mouseenter', playPop); });
   </script>
 </body>
 </html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAX J — Concept 4: Single Focus</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: #000;
+      color: #fff;
+      font-family: 'IBM Plex Mono', monospace;
+      width: 100%;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: 26px;
+      padding: 19px 32px;
+      z-index: 300;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+    nav a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: #39ff14; }
+    nav a.active { color: #fff; }
+
+    /* Background artwork */
+    .bg-art {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .bg-art img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      filter: saturate(0.3) contrast(1.1) brightness(0.25);
+      opacity: 0;
+      transition: opacity 2.5s ease;
+    }
+
+    .bg-art img.active { opacity: 1; }
+
+    /* Dark overlay */
+    .bg-art::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%);
+      z-index: 1;
+    }
+
+    /* Center content */
+    .center {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .logo-text {
+      font-size: 64px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 60px;
+      color: #fff;
+    }
+
+    .center-label {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      margin-bottom: 4px;
+    }
+
+    .center-line {
+      margin-bottom: 14px;
+    }
+
+    .center-line a {
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.15s;
+      cursor: pointer;
+    }
+    .center-line a:hover { color: #39ff14; }
+
+    /* Release title that fades with artwork */
+    .release-title {
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      transition: opacity 0.5s ease;
+      cursor: pointer;
+    }
+    .release-title:hover { color: #39ff14; }
+
+    /* Subscribe */
+    .signup {
+      margin-top: 50px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .signup label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .signup input[type="email"] {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      padding: 7px 14px;
+      width: 240px;
+      outline: none;
+      text-align: center;
+      transition: border-color 0.15s;
+    }
+    .signup input:focus { border-color: #39ff14; }
+
+    .signup button {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.5);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 7px 20px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .signup button:hover { color: #39ff14; border-color: #39ff14; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="active">Home</a>
+    <a href="shows.html">Shows</a>
+    <a href="releases.html">MNNM BLK</a>
+  </nav>
+
+  <div class="bg-art" id="bgArt"></div>
+
+  <div class="center">
+    <div class="logo-text">DAX J</div>
+
+    <div class="center-line">
+      <span class="release-title" id="releaseTitle"></span>
+    </div>
+
+    <div class="signup">
+      <label>Stay updated</label>
+      <input type="email" placeholder="your@email.com">
+      <button>Subscribe</button>
+    </div>
+  </div>
+
+  <script>
+    var popCtx = null;
+    function playPop() {
+      if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = popCtx.createOscillator();
+      var gain = popCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(900, popCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, popCtx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.03, popCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, popCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(popCtx.destination);
+      osc.start(popCtx.currentTime);
+      osc.stop(popCtx.currentTime + 0.08);
+    }
+
+    var releases = [
+      { title: "Reign of Terror", art: "images%20from%20me%20to%20you/displaywindow/illusions-of-power.jpg" },
+      { title: "Quantum Leap EP", art: "images%20from%20me%20to%20you/displaywindow/a1876063433_10.jpg" },
+      { title: "Beyond The Visible Spectrum", art: "images%20from%20me%20to%20you/displaywindow/a1702394469_10.jpg" },
+      { title: "Mechanized EP", art: "images%20from%20me%20to%20you/displaywindow/a2791266284_10.jpg" },
+      { title: "War Is Peace, Freedom Is Slavery, Ignorance Is Strength", art: "images%20from%20me%20to%20you/displaywindow/a2275957915_10.jpg" },
+      { title: "The World Of Monnom Black III", art: "images%20from%20me%20to%20you/displaywindow/a1286263440_10.jpg" },
+      { title: "Utopian Surrealism", art: "images%20from%20me%20to%20you/displaywindow/a1405643370_10.jpg" },
+      { title: "Shades of Black", art: "images%20from%20me%20to%20you/displaywindow/a3240486097_10.jpg" },
+      { title: "Offending Public Morality", art: "images%20from%20me%20to%20you/displaywindow/a1082716305_10.jpg" },
+      { title: "Year Of The Rat", art: "images%20from%20me%20to%20you/displaywindow/a3288770580_10.jpg" },
+      { title: "Illusions Of Power", art: "images%20from%20me%20to%20you/displaywindow/a3456703649_10.jpg" },
+      { title: "Culture Clash EP", art: "images%20from%20me%20to%20you/displaywindow/a3612426603_10.jpg" },
+    ];
+
+    var bgArt = document.getElementById('bgArt');
+    var titleEl = document.getElementById('releaseTitle');
+    var currentBg = 0;
+
+    // Create all background images
+    releases.forEach(function(r, i) {
+      var img = document.createElement('img');
+      img.src = r.art;
+      if (i === 0) img.classList.add('active');
+      bgArt.appendChild(img);
+    });
+
+    // Set initial title
+    titleEl.textContent = releases[0].title;
+
+    // Click on title goes to releases page
+    titleEl.addEventListener('click', function() {
+      window.location.href = 'releases.html';
+    });
+    titleEl.addEventListener('mouseenter', playPop);
+
+    function nextRelease() {
+      // Fade out title
+      titleEl.style.opacity = '0';
+
+      setTimeout(function() {
+        // Switch artwork
+        var imgs = bgArt.querySelectorAll('img');
+        imgs[currentBg].classList.remove('active');
+        currentBg = (currentBg + 1) % releases.length;
+        imgs[currentBg].classList.add('active');
+
+        // Update and fade in title
+        titleEl.textContent = releases[currentBg].title;
+        titleEl.style.opacity = '1';
+      }, 500);
+    }
+
+    // Auto-rotate every 5 seconds
+    setInterval(nextRelease, 5000);
+
+    document.querySelectorAll('nav a, .signup button').forEach(function(el) {
+      el.addEventListener('mouseenter', playPop);
+    });
+  </script>
+</body>
+</html>

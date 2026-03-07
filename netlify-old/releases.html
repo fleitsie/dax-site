@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAX J — Releases</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #000;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* soft vignette at edges */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, transparent 28%, rgba(0,0,0,0.65) 100%);
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .label {
+      position: fixed;
+      bottom: 2.2rem; left: 2.8rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.15);
+      z-index: 60;
+    }
+
+    #scene {
+      position: relative;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+    }
+
+    /* each tile is absolutely positioned */
+    .tile {
+      position: absolute;
+      width: 0; height: 0; /* set by JS */
+    }
+
+    /* inner receives 3D tilt */
+    .tile-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      overflow: hidden;
+      will-change: transform;
+      transition: transform 0.06s linear, box-shadow 0.06s linear;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+    }
+
+    /* subtle inner vignette on each image */
+    .tile-inner::after {
+      content: '';
+      position: absolute; inset: 0;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.35);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .tile-inner img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .tile-gloss {
+      position: absolute; inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 0.06s linear;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="scene"></div>
+  <p class="label">DAX J &nbsp;&mdash;&nbsp; Releases</p>
+
+  <script>
+    const SRCS = [
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a0073328866_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a0691030606_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a1082716305_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a1286263440_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a1405643370_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a1410557316_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a1574826057_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a1790919903_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a2275957915_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a2412796709_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a2700681520_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a2701339670_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a2791266284_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a3240486097_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a3288770580_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a3414222201_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a3456703649_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a3592528568_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a3612426603_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a4264431482_10.jpg',
+      'images%20from%20me%20to%20you/for%20wearetoobusy%20layout%20idea/a4279162120_10.jpg'
+    ];
+
+    // ── Layout constants ──
+    const SZ     = 338;   // image size (px, square)
+    const H_GAP  = 130;   // horizontal gap between images
+    const V_GAP  = 120;   // vertical gap between rows
+    const STEP_X = SZ + H_GAP;   // 390
+    const STEP_Y = SZ + V_GAP;   // 380
+
+    // Row stagger: alternate rows are offset by half a step
+    // row mod 3: 0 → 0, 1 → STEP_X/2, 2 → STEP_X/4
+    const STAGGER = [0, STEP_X * 0.5, STEP_X * 0.25];
+
+    // Pool: enough tiles to cover viewport + 1 buffer on each side
+    const VW = window.innerWidth;
+    const VH = window.innerHeight;
+
+    const POOL_COLS = Math.ceil(VW  / STEP_X) + 3;   // visible + 2 buffer cols
+    const POOL_ROWS = Math.ceil(VH  / STEP_Y) + 3;   // visible + 2 buffer rows
+    // Make POOL_ROWS a multiple of 3 so row stagger stays consistent after Y-wrap
+    const PR = POOL_ROWS + ((3 - (POOL_ROWS % 3)) % 3);
+
+    // We start tiles so the grid is centred, with a –1 buffer on each side
+    // offsetX/Y: how far the logical origin has shifted from the viewport origin
+    let offsetX = -(SZ + H_GAP) + (VW - (POOL_COLS - 2) * STEP_X) / 2;
+    let offsetY = -(SZ + V_GAP) + (VH - (PR        - 2) * STEP_Y) / 2;
+
+    // Correct: start at a scroll offset that centres the grid
+    // We track a continuous scroll position:
+    let scrollX = 0;
+    let scrollY = 0;
+
+    const scene = document.getElementById('scene');
+    const tiles  = [];
+
+    // ── Create tile pool ──
+    for (let pr = 0; pr < PR; pr++) {
+      for (let pc = 0; pc < POOL_COLS; pc++) {
+        const el    = document.createElement('div');
+        el.className = 'tile';
+        el.style.width  = SZ + 'px';
+        el.style.height = SZ + 'px';
+
+        const inner = document.createElement('div');
+        inner.className = 'tile-inner';
+
+        const img   = document.createElement('img');
+        img.alt = '';
+
+        const gloss = document.createElement('div');
+        gloss.className = 'tile-gloss';
+
+        inner.appendChild(img);
+        inner.appendChild(gloss);
+        el.appendChild(inner);
+        scene.appendChild(el);
+
+        tiles.push({ el, inner, img, gloss, logC: pc - 1, logR: pr - 1, curSrc: '' });
+      }
+    }
+
+    // ── Helpers ──
+    function posMod(n, m) { return ((n % m) + m) % m; }
+
+    function imgFor(logC, logR) {
+      // Distribute 21 images: use two coprime-ish multipliers
+      return SRCS[posMod(logC * 5 + logR * 8, SRCS.length)];
+    }
+
+    function staggerFor(logR) {
+      return STAGGER[posMod(logR, 3)];
+    }
+
+    // ── Layout update ──
+    function layoutTiles() {
+      for (const t of tiles) {
+        const sg = staggerFor(t.logR);
+        let x = t.logC * STEP_X + sg - scrollX + offsetX;
+        let y = t.logR * STEP_Y      - scrollY + offsetY;
+
+        // Horizontal wrap
+        const periodX = POOL_COLS * STEP_X;
+        if (x < -STEP_X * 1.6) {
+          t.logC += POOL_COLS;
+          x += periodX;
+        } else if (x > VW + STEP_X * 0.6) {
+          t.logC -= POOL_COLS;
+          x -= periodX;
+        }
+
+        // Vertical wrap (PR is multiple of 3 so stagger stays consistent)
+        const periodY = PR * STEP_Y;
+        if (y < -STEP_Y * 1.6) {
+          t.logR += PR;
+          y += periodY;
+        } else if (y > VH + STEP_Y * 0.6) {
+          t.logR -= PR;
+          y -= periodY;
+        }
+
+        t.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+
+        // Swap image only when it changes (avoids flicker)
+        const src = imgFor(t.logC, t.logR);
+        if (t.curSrc !== src) {
+          t.img.src = src;
+          t.curSrc  = src;
+        }
+      }
+    }
+
+    // ── Scroll-driven pan ──
+    // targetX/Y accumulate wheel deltas; scrollX/Y lerp toward them each frame
+    let targetX = 0, targetY = 0;
+
+    window.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      targetX += e.deltaX;
+      targetY += e.deltaY;
+    }, { passive: false });
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function rafLoop() {
+      scrollX = lerp(scrollX, targetX, 0.11);
+      scrollY = lerp(scrollY, targetY, 0.11);
+      layoutTiles();
+      requestAnimationFrame(rafLoop);
+    }
+
+    // ── Per-tile 3D hover tilt ──
+    tiles.forEach(function(t) {
+      let tRX = 0, tRY = 0, cRX = 0, cRY = 0, tTZ = 0, cTZ = 0;
+      let hoverRaf = null;
+
+      function tiltTick() {
+        cRX = lerp(cRX, tRX, 0.15);
+        cRY = lerp(cRY, tRY, 0.15);
+        cTZ = lerp(cTZ, tTZ, 0.15);
+
+        t.inner.style.transform =
+          'perspective(640px)' +
+          ' rotateX(' + cRX.toFixed(3) + 'deg)' +
+          ' rotateY(' + cRY.toFixed(3) + 'deg)' +
+          ' translateZ(' + cTZ.toFixed(2) + 'px)' +
+          ' scale(1.03)';
+
+        const sx = (-cRY / 20) * 24;
+        const sy = ( cRX / 20) * 24;
+        t.inner.style.boxShadow =
+          sx + 'px ' + sy + 'px 36px rgba(0,0,0,0.9),' +
+          '0 20px 55px rgba(0,0,0,0.65)';
+
+        const done =
+          Math.abs(cRX - tRX) < 0.02 &&
+          Math.abs(cRY - tRY) < 0.02 &&
+          Math.abs(cTZ - tTZ) < 0.1;
+        hoverRaf = done ? null : requestAnimationFrame(tiltTick);
+      }
+
+      t.el.addEventListener('mouseenter', function() {
+        tTZ = 14;
+        if (!hoverRaf) hoverRaf = requestAnimationFrame(tiltTick);
+      });
+
+      t.el.addEventListener('mousemove', function(e) {
+        const r = t.el.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+
+        tRX = -y * 20;
+        tRY =  x * 20;
+
+        // gloss follows cursor
+        const gx = (50 + x * 88).toFixed(1);
+        const gy = (50 + y * 88).toFixed(1);
+        t.gloss.style.background =
+          'radial-gradient(circle at ' + gx + '% ' + gy + '%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.03) 45%, transparent 65%)';
+        t.gloss.style.opacity = '1';
+
+        if (!hoverRaf) hoverRaf = requestAnimationFrame(tiltTick);
+      });
+
+      t.el.addEventListener('mouseleave', function() {
+        tRX = 0; tRY = 0; tTZ = 0;
+        t.gloss.style.opacity = '0';
+        t.inner.style.boxShadow = '0 8px 40px rgba(0,0,0,0.55)';
+        if (!hoverRaf) hoverRaf = requestAnimationFrame(tiltTick);
+      });
+    });
+
+    // ── Start ──
+    layoutTiles();
+    requestAnimationFrame(rafLoop);
+  </script>
+
+</body>
+</html>

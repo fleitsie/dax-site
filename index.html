@@ -23,7 +23,7 @@
       padding: 19px 32px;
       z-index: 300;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 8.5px;
+      font-size: 14px;
       font-weight: 400;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -33,15 +33,33 @@
       text-decoration: none;
       transition: color 0.15s;
     }
-    nav a:hover { color: #fff; }
+    nav a:hover { color: #39ff14; }
     nav a.active { color: #fff; }
   </style>
 </head>
 <body>
   <nav>
     <a href="index.html" class="active">Home</a>
-    <a href="shows.html">Past Shows</a>
+    <a href="shows.html">Shows</a>
     <a href="releases.html">MNNM BLK</a>
   </nav>
+  <script>
+    var popCtx = null;
+    function playPop() {
+      if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = popCtx.createOscillator();
+      var gain = popCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(900, popCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(400, popCtx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.03, popCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, popCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(popCtx.destination);
+      osc.start(popCtx.currentTime);
+      osc.stop(popCtx.currentTime + 0.08);
+    }
+    document.querySelectorAll('nav a').forEach(function(a) { a.addEventListener('mouseenter', playPop); });
+  </script>
 </body>
 </html>
