@@ -7,14 +7,68 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="player.css">
   <style>
+    :root {
+      --bg: #000;
+      --bg-alpha95: rgba(0,0,0,0.95);
+      --bg-alpha92: rgba(0,0,0,0.92);
+      --text: #fff;
+      --text-a85: rgba(255,255,255,0.85);
+      --text-a70: rgba(255,255,255,0.7);
+      --text-a55: rgba(255,255,255,0.55);
+      --text-a50: rgba(255,255,255,0.5);
+      --text-a45: rgba(255,255,255,0.45);
+      --text-a40: rgba(255,255,255,0.4);
+      --text-a35: rgba(255,255,255,0.35);
+      --text-a25: rgba(255,255,255,0.25);
+      --text-a20: rgba(255,255,255,0.2);
+      --text-a15: rgba(255,255,255,0.15);
+      --text-a12: rgba(255,255,255,0.12);
+      --text-a10: rgba(255,255,255,0.1);
+      --text-a08: rgba(255,255,255,0.08);
+      --text-a06: rgba(255,255,255,0.06);
+      --accent: #39ff14;
+      --accent-a30: rgba(57,255,20,0.3);
+      --shadow: rgba(0,0,0,0.55);
+      --shadow-heavy: rgba(0,0,0,0.8);
+      --vignette-inner: rgba(0,0,0,0.6);
+    }
+
+    html.light {
+      --bg: #B5B0A7;
+      --bg-alpha95: rgba(181,176,167,0.95);
+      --bg-alpha92: rgba(181,176,167,0.92);
+      --text: #1a1916;
+      --text-a85: rgba(26,25,22,0.85);
+      --text-a70: rgba(26,25,22,0.7);
+      --text-a55: rgba(26,25,22,0.55);
+      --text-a50: rgba(26,25,22,0.5);
+      --text-a45: rgba(26,25,22,0.45);
+      --text-a40: rgba(26,25,22,0.4);
+      --text-a35: rgba(26,25,22,0.35);
+      --text-a25: rgba(26,25,22,0.25);
+      --text-a20: rgba(26,25,22,0.2);
+      --text-a15: rgba(26,25,22,0.15);
+      --text-a12: rgba(26,25,22,0.12);
+      --text-a10: rgba(26,25,22,0.1);
+      --text-a08: rgba(26,25,22,0.08);
+      --text-a06: rgba(26,25,22,0.1);
+      --accent: #39ff14;
+      --accent-a30: rgba(57,255,20,0.3);
+      --shadow: rgba(26,25,22,0.15);
+      --shadow-heavy: rgba(26,25,22,0.25);
+      --vignette-inner: none;
+    }
+
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     html, body {
       width: 100%; height: 100%;
       overflow: hidden;
-      background: #000;
+      background: var(--bg);
       -webkit-font-smoothing: antialiased;
+      transition: background 0.5s ease;
     }
 
     /* vignette — offset to account for sidebar, vignette offset for sidebar */
@@ -23,7 +77,7 @@
       position: fixed;
       top: 0; bottom: 0;
       left: 240px; right: 0;
-      background: radial-gradient(circle at center, transparent 0%, transparent 41%, #000 100%);
+      background: radial-gradient(circle at center, transparent 0%, transparent 41%, var(--bg) 100%);
       pointer-events: none;
       z-index: 50;
     }
@@ -35,7 +89,7 @@
       font-size: 0.52rem;
       letter-spacing: 0.32em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.15);
+      color: var(--text-a15);
       z-index: 60;
     }
 
@@ -61,14 +115,14 @@
       overflow: hidden;
       will-change: transform;
       transition: transform 0.06s linear, box-shadow 0.06s linear;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+      box-shadow: 0 8px 40px var(--shadow);
     }
 
     /* cinematic inner vignette on each image */
     .tile-inner::after {
       content: '';
       position: absolute; inset: 0;
-      box-shadow: inset 0 0 70px rgba(0,0,0,0.6);
+      box-shadow: inset 0 0 70px var(--vignette-inner);
       pointer-events: none;
       z-index: 3;
     }
@@ -101,15 +155,16 @@
       font-weight: 400;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      background: rgba(0,0,0,0.95);
+      background: var(--bg-alpha95);
+      transition: background 0.5s ease;
     }
     nav a {
-      color: rgba(255,255,255,0.5);
+      color: var(--text-a50);
       text-decoration: none;
       transition: color 0.15s;
     }
-    nav a:hover { color: #39ff14; }
-    nav a.active { color: #fff; }
+    nav a:hover { color: var(--accent); }
+    nav a.active { color: var(--text); }
 
     /* ── Sidebar ── */
     #sidebar {
@@ -117,15 +172,16 @@
       top: 2.4rem; left: 0;
       width: 240px;
       height: calc(100vh - 2.4rem);
-      background: rgba(0,0,0,0.92);
-      border-right: 1px solid rgba(255,255,255,0.06);
+      background: var(--bg-alpha92);
+      border-right: 1px solid var(--text-a06);
       z-index: 210;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 1.6rem 1rem 1rem;
       font-family: 'IBM Plex Mono', monospace;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.12) transparent;
+      scrollbar-color: var(--text-a12) transparent;
+      transition: background 0.5s ease;
     }
 
     #sidebar h2 {
@@ -133,9 +189,26 @@
       font-weight: 400;
       letter-spacing: 0.32em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.25);
-      margin-bottom: 1.2rem;
+      color: var(--text-a25);
+      margin-bottom: 0.8rem;
     }
+
+    #sb-search-wrap { margin-bottom: 0.8rem; }
+    #sb-search {
+      width: 100%;
+      background: var(--text-a06);
+      border: 1px solid var(--text-a06);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.6rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #sb-search::placeholder { color: var(--text-a25); }
+    #sb-search:focus { border-color: var(--accent); }
 
     .sb-release { margin-bottom: 1rem; }
 
@@ -144,14 +217,14 @@
       font-weight: 500;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.85);
+      color: var(--text-a85);
       cursor: pointer;
       padding: 0.2rem 0;
       transition: color 0.15s;
     }
 
-    .sb-release-title:hover { color: #39ff14; }
-    .sb-release-title:active { color: #39ff14; }
+    .sb-release-title:hover { color: var(--accent); }
+    .sb-release-title:active { color: var(--accent); }
 
     .sb-track {
       display: flex;
@@ -160,14 +233,14 @@
       padding: 0.15rem 0 0.15rem 0.4rem;
       cursor: pointer;
       transition: color 0.15s;
-      color: rgba(255,255,255,0.4);
+      color: var(--text-a40);
       font-size: 11.5px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
-    .sb-track:hover { color: rgba(255,255,255,0.8); }
-    .sb-track.active { color: #39ff14; }
+    .sb-track:hover { color: var(--text-a85); }
+    .sb-track.active { color: var(--accent); }
 
     .sb-play-icon {
       flex-shrink: 0;
@@ -177,71 +250,174 @@
     /* ── Modal ── */
     #modal-overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.95);
-      z-index: 200;
+      z-index: 150;
       display: none;
       opacity: 0;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.5s ease;
       font-family: 'IBM Plex Mono', monospace;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
 
-    #modal-overlay.open {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
+    #modal-overlay.open { display: block; }
     #modal-overlay.visible { opacity: 1; }
 
-    #modal-content {
-      display: flex;
-      gap: 4rem;
-      max-width: 1100px;
-      width: 90%;
-      align-items: center;
+    /* Full-bleed art background */
+    #modal-banner {
+      position: fixed; inset: 0; z-index: 0;
+    }
+    #modal-banner img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
+      transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    #modal-banner::after {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(0,0,0,0.65);
     }
 
-    #modal-info {
-      flex: 1; min-width: 0;
+    /* Scroll wrapper for content */
+    #modal-scroll {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; justify-content: center;
+      padding: 60px 20px;
+    }
+
+    /* Frosted glass panel */
+    #modal-content {
+      width: 100%; max-width: 700px;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 48px 40px;
       opacity: 0;
       transform: translateY(40px);
-      transition: opacity 1.8s cubic-bezier(0.19, 1, 0.22, 1), transform 1.8s cubic-bezier(0.19, 1, 0.22, 1);
+      transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1), transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
     }
-
-    #modal-info.reveal {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #modal-art {
-      width: 420px; height: 420px;
-      flex-shrink: 0;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-      opacity: 0;
-    }
-
-    #modal-art.reveal { opacity: 1; }
-
-    #modal-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    #modal-content.reveal { opacity: 1; transform: translateY(0); }
 
     /* Flying artwork clone */
     #flying-art {
-      position: fixed;
-      z-index: 250;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      position: fixed; z-index: 160;
       pointer-events: none;
       will-change: transform, top, left, width, height;
-      transform-style: preserve-3d;
-      backface-visibility: visible;
+      overflow: hidden;
     }
-
     #flying-art img {
       width: 100%; height: 100%;
       object-fit: cover; display: block;
-      backface-visibility: visible;
     }
 
-    /* Phase 1: Tiles lift up slightly (the "breathe in") */
+    /* Two-column grid */
+    #modal-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    #modal-title {
+      font-size: 20px; font-weight: 500;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      line-height: 1.3; color: #fff; margin-bottom: 6px;
+    }
+
+    #modal-artist {
+      font-size: 13px; font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    #modal-meta {
+      display: flex; flex-wrap: wrap; gap: 14px;
+      font-size: 11px; font-weight: 300;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    #modal-desc {
+      font-size: 12px; font-weight: 300;
+      line-height: 1.75; color: rgba(255,255,255,0.65);
+      margin-bottom: 28px;
+      white-space: pre-line;
+    }
+
+    #modal-links { display: flex; gap: 10px; }
+    #modal-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); text-decoration: none;
+      padding: 9px 16px; border: 1px solid var(--accent);
+      transition: background 0.2s, color 0.2s;
+    }
+    #modal-links a:hover { background: var(--accent); color: #000; }
+
+    #modal-tracklist-label {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-bottom: 16px;
+    }
+
+    #modal-tracklist { list-style: none; }
+
+    .modal-track {
+      display: flex; align-items: baseline; gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer; transition: color 0.2s; color: #fff;
+    }
+    .modal-track:first-child { border-top: 1px solid rgba(255,255,255,0.05); }
+    .modal-track:hover { color: var(--accent); }
+    .modal-track.active { color: var(--accent); }
+    .modal-track .mt-num {
+      font-size: 11px; font-weight: 400;
+      color: rgba(255,255,255,0.35); min-width: 24px;
+      transition: opacity 0.2s;
+    }
+    .modal-track:hover .mt-num { color: var(--accent); }
+    .modal-track .mt-play { display: none; }
+    .modal-track .mt-title {
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 0.02em;
+    }
+
+    #modal-close-row {
+      margin-top: 40px; padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    #modal-close {
+      display: block; width: 100%;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.4);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 14px; cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    #modal-close:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    #modal-close-x {
+      position: fixed; top: 60px; right: 24px; z-index: 155;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff; font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.3s ease;
+      opacity: 0;
+    }
+    #modal-close-x.reveal { opacity: 1; }
+    #modal-close-x:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Phase 1: Tiles lift up slightly (the "breathe in") */
     .tile.lifting {
       transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1) !important;
     }
@@ -257,8 +433,7 @@
     }
     .label.fading { transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1); opacity: 0 !important; }
     #sidebar.fading { transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1); opacity: 0; }
-    #sidebar.dimmed { opacity: 0.35; transition: opacity 0.4s ease; }
-    #sidebar.dimmed:hover { opacity: 1; }
+    #sidebar.dimmed { transition: opacity 0.4s ease; }
 
     /* Phase reverse: Tiles pop back into grid */
     .tile.gathering {
@@ -270,121 +445,79 @@
     .label.returning { transition: opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1) 0.15s; }
     #sidebar.returning { transition: opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1) 0.15s; }
 
-    #modal-title {
-      font-size: 1.4rem; font-weight: 500;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: #fff; margin-bottom: 0.4rem;
+    /* Theme toggle */
+    .theme-toggle {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer;
     }
-
-    #modal-meta {
-      font-size: 0.58rem; letter-spacing: 0.16em;
-      text-transform: uppercase; color: rgba(255,255,255,0.35);
-      margin-bottom: 0.3rem;
-    }
-
-    #modal-catalog {
-      font-size: 0.52rem; letter-spacing: 0.16em;
-      text-transform: uppercase; color: rgba(255,255,255,0.25);
-      margin-bottom: 1.6rem;
-    }
-
-    #modal-desc {
-      font-size: 0.52rem; line-height: 1.6;
-      letter-spacing: 0.04em;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 1.4rem;
-      max-height: 6rem;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.12) transparent;
-    }
-
-    #modal-tracklist-label {
-      font-size: 0.48rem; letter-spacing: 0.24em;
-      text-transform: uppercase; color: rgba(255,255,255,0.2);
-      margin-bottom: 0.5rem;
-    }
-
-    .modal-track {
-      display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.25rem 0; font-size: 0.58rem;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: rgba(255,255,255,0.55); cursor: pointer;
+    .theme-toggle-label {
+      font-size: 0.48rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-a35);
       transition: color 0.15s;
     }
-
-    .modal-track:hover { color: #39ff14; }
-    .modal-track.active { color: #39ff14; }
-    .modal-track .mt-play { font-size: 0.48rem; }
-
-    #modal-links { display: flex; gap: 0.8rem; margin-top: 1.6rem; }
-
-    #modal-links a {
-      font-size: 0.48rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: rgba(255,255,255,0.5);
-      text-decoration: none; border: 1px solid rgba(255,255,255,0.2);
-      padding: 0.4rem 1rem; transition: color 0.15s, border-color 0.15s;
+    .theme-toggle:hover .theme-toggle-label { color: var(--text-a70); }
+    .theme-toggle-track {
+      width: 32px; height: 16px;
+      background: var(--text-a10);
+      border-radius: 8px;
+      position: relative;
+      transition: background 0.3s ease;
     }
-
-    #modal-links a:hover { color: #39ff14; border-color: #39ff14; }
-
-    #modal-close {
-      position: fixed; bottom: 3rem; left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.52rem; letter-spacing: 0.24em;
-      text-transform: uppercase; color: rgba(255,255,255,0.5);
-      background: none; border: 1px solid rgba(255,255,255,0.25);
-      padding: 0.6rem 2.4rem; cursor: pointer; z-index: 210;
-      opacity: 0;
-      transition: color 0.15s, border-color 0.15s, opacity 1.8s cubic-bezier(0.19, 1, 0.22, 1) 0.9s, transform 1.8s cubic-bezier(0.19, 1, 0.22, 1) 0.9s;
+    .theme-toggle-thumb {
+      width: 12px; height: 12px;
+      background: var(--text-a50);
+      border-radius: 50%;
+      position: absolute;
+      top: 2px; left: 2px;
+      transition: left 0.3s ease, background 0.3s ease;
     }
+    html.light .theme-toggle-thumb { left: 18px; }
+    html.light .theme-toggle-track { background: var(--text-a25); }
 
-    #modal-close.reveal {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
+    /* Sound toggle */
+    .sound-toggle {
+      display: flex; align-items: center;
+      cursor: pointer;
+      color: var(--text-a35);
+      transition: color 0.2s;
+      margin-left: 12px;
     }
+    .sound-toggle:hover { color: var(--text-a70); }
+    .sound-toggle svg { width: 14px; height: 14px; }
+    .sound-toggle .sound-dot { transition: opacity 0.3s; }
+    .sound-toggle.off { color: var(--text-a15); }
+    .sound-toggle.off .sound-dot { opacity: 0; }
 
-    #modal-close:hover { color: #39ff14; border-color: #39ff14; }
-
-    /* ── Player Bar ── */
-    #player-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: 48px; background: rgba(0,0,0,0.95);
-      border-top: 1px solid rgba(255,255,255,0.06);
-      z-index: 300; display: none;
-      align-items: center; padding: 0 1.6rem; gap: 1rem;
-      font-family: 'IBM Plex Mono', monospace;
+    /* Light mode: warm scene */
+    html.light #scene { background: var(--bg); }
+    html.light body::after {
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(181,176,167,0.6) 100%);
     }
-
-    #player-bar.active { display: flex; }
-
-    #pb-play {
-      background: none; border: none; color: #fff;
-      font-size: 0.7rem; cursor: pointer; padding: 0.3rem; flex-shrink: 0;
+    html.light .tile-inner {
+      border-radius: 3px;
+      box-shadow: 0 6px 24px rgba(26,25,22,0.15);
     }
-
-    #pb-name {
-      font-size: 0.52rem; letter-spacing: 0.1em;
-      text-transform: uppercase; color: rgba(255,255,255,0.7);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      min-width: 120px; max-width: 240px;
+    html.light .tile-inner:hover {
+      box-shadow: 0 12px 36px rgba(26,25,22,0.25);
     }
-
-    #pb-progress-wrap {
-      flex: 1; height: 3px; background: rgba(255,255,255,0.1);
-      cursor: pointer; position: relative; border-radius: 1.5px;
+    html.light .tile-inner::after {
+      box-shadow: none;
     }
-
-    #pb-progress {
-      height: 100%; background: #39ff14; width: 0%;
-      border-radius: 1.5px; pointer-events: none;
+    html.light .tile-inner img {
+      filter: saturate(0.85) contrast(1.05) brightness(1);
     }
-
-    #pb-time {
-      font-size: 0.48rem; letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.35); flex-shrink: 0;
-      min-width: 90px; text-align: right;
+    html.light #sidebar {
+      background: rgba(181,176,167,0.5);
+      border-right: 1px solid rgba(26,25,22,0.06);
+      scrollbar-color: rgba(26,25,22,0.15) transparent;
+    }
+    @media (max-width: 800px) {
+      nav { font-size: 13px; padding: 14px 20px; gap: 18px; }
+      #sidebar { display: none; }
+      #scene { left: 0; width: 100vw; }
     }
   </style>
 </head>
@@ -394,41 +527,58 @@
     <a href="index.html">Home</a>
     <a href="shows.html">Shows</a>
     <a href="releases.html" class="active">MNNM BLK</a>
+    <div class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
+      <div class="theme-toggle-track"><div class="theme-toggle-thumb"></div></div>
+    </div>
+    <div class="sound-toggle" id="soundToggle" title="Toggle UI sounds">
+      <svg viewBox="0 0 16 16" fill="currentColor" stroke="none">
+        <circle cx="8" cy="8" r="2"/>
+        <circle class="sound-dot" cx="3" cy="4" r="1"/>
+        <circle class="sound-dot" cx="13" cy="4" r="1"/>
+        <circle class="sound-dot" cx="3" cy="12" r="1"/>
+        <circle class="sound-dot" cx="13" cy="12" r="1"/>
+        <circle class="sound-dot" cx="8" cy="1.5" r="0.8"/>
+        <circle class="sound-dot" cx="8" cy="14.5" r="0.8"/>
+        <circle class="sound-dot" cx="1.5" cy="8" r="0.8"/>
+        <circle class="sound-dot" cx="14.5" cy="8" r="0.8"/>
+      </svg>
+    </div>
   </nav>
 
   <aside id="sidebar">
     <h2>Releases</h2>
+    <div id="sb-search-wrap"><input id="sb-search" type="text" placeholder="Search..." autocomplete="off" spellcheck="false"></div>
     <div id="sidebar-list"></div>
   </aside>
 
   <div id="modal-overlay">
-    <div id="modal-content">
-      <div id="modal-info">
-        <div id="modal-title"></div>
-        <div id="modal-meta"></div>
-        <div id="modal-catalog"></div>
-        <div id="modal-desc"></div>
-        <div id="modal-tracklist-label">Tracklist:</div>
-        <div id="modal-tracklist"></div>
-        <div id="modal-links"></div>
+    <button id="modal-close-x">&times;</button>
+    <div id="modal-banner"><img id="modal-art-img" src="" alt=""></div>
+    <div id="modal-scroll">
+      <div id="modal-content">
+        <div id="modal-columns">
+          <div id="modal-col-left">
+            <div id="modal-title"></div>
+            <div id="modal-artist"></div>
+            <div id="modal-meta"></div>
+            <div id="modal-desc"></div>
+            <div id="modal-links"></div>
+          </div>
+          <div id="modal-col-right">
+            <div id="modal-tracklist-label">Tracklist</div>
+            <div id="modal-tracklist"></div>
+          </div>
+        </div>
+        <div id="modal-close-row"><button id="modal-close">Close</button></div>
       </div>
-      <div id="modal-art"><img id="modal-art-img" src="" alt=""></div>
     </div>
-    <button id="modal-close">Close</button>
   </div>
 
   <div id="scene"></div>
   <p class="label">DAX J &nbsp;&mdash;&nbsp; Releases</p>
 
-  <div id="player-bar">
-    <button id="pb-play">&#9654;</button>
-    <div id="pb-name"></div>
-    <div id="pb-progress-wrap"><div id="pb-progress"></div></div>
-    <div id="pb-time">0:00 / 0:00</div>
-  </div>
-
   <script>
-    const RELEASES = [
+    var RELEASES = [
       {
         title: "Reign of Terror",
         artist: "Dax J",
@@ -1201,26 +1351,18 @@
       },
     ];
     // Derive SRCS from RELEASES art paths + remaining images for grid variety
-    const SRCS = RELEASES.map(function(r) { return encodeURI(r.art); });
+    var SRCS = RELEASES.map(function(r) { return encodeURI(r.art); });
 
     function releaseForSrc(src) {
       return RELEASES.find(function(r) { return encodeURI(r.art) === src; }) || null;
     }
 
-    // ── Audio Player ──
-    var audio = new Audio();
+    // ── Audio Player (shared) ──
     var currentRelease = -1;
     var currentTrack = -1;
     var isPlaying = false;
     var modalOpen = false;
     var modalReleaseIndex = -1;
-
-    function formatTime(s) {
-      if (isNaN(s)) return '0:00';
-      var m = Math.floor(s / 60);
-      var sec = Math.floor(s % 60);
-      return m + ':' + (sec < 10 ? '0' : '') + sec;
-    }
 
     function highlightActive() {
       document.querySelectorAll('.sb-track').forEach(function(el) {
@@ -1241,40 +1383,12 @@
       }
     }
 
-    function playTrack(ri, ti) {
-      var rel = RELEASES[ri];
-      var trk = rel.tracks[ti];
-      if (!trk.src) {
-        console.warn('No audio source for', rel.title, trk.title);
-        return;
-      }
-
-      currentRelease = ri;
-      currentTrack = ti;
-
-      audio.src = trk.src;
-      audio.play();
-      isPlaying = true;
-
-      document.getElementById('player-bar').classList.add('active');
-      document.getElementById('pb-name').textContent = trk.side + '. ' + trk.title + '  \u2014  ' + rel.title;
-      document.getElementById('pb-play').textContent = '\u25AE\u25AE';
+    document.addEventListener('dax-player-change', function(e) {
+      currentRelease = e.detail.ri;
+      currentTrack = e.detail.ti;
+      isPlaying = e.detail.playing;
       highlightActive();
-    }
-
-    function togglePlay() {
-      if (!audio.src) return;
-      if (audio.paused) {
-        audio.play();
-        isPlaying = true;
-        document.getElementById('pb-play').textContent = '\u25AE\u25AE';
-      } else {
-        audio.pause();
-        isPlaying = false;
-        document.getElementById('pb-play').textContent = '\u25B6';
-      }
-      highlightActive();
-    }
+    });
 
     // ── Modal ──
     var lastClickedTile = null; // track which tile was clicked for reverse animation
@@ -1286,12 +1400,14 @@
       lastClickedTile = clickedTileEl || null;
 
       // Populate modal content
-      document.getElementById('modal-title').textContent = rel.artist + ' — ' + rel.title;
-      document.getElementById('modal-meta').textContent = rel.label + ' / ' + rel.year;
-      document.getElementById('modal-catalog').textContent = rel.catalog;
+      document.getElementById('modal-title').textContent = rel.title;
+      document.getElementById('modal-artist').textContent = rel.artist;
+      var metaEl = document.getElementById('modal-meta');
+      metaEl.innerHTML = '<span>' + rel.label + '</span><span>' + rel.year + '</span><span>' + rel.catalog + '</span>';
       var descEl = document.getElementById('modal-desc');
-      descEl.textContent = rel.desc || '';
-      descEl.style.display = rel.desc ? 'block' : 'none';
+      var descText = (rel.desc || '').replace(/\\n/g, '\n');
+      descEl.textContent = descText;
+      descEl.style.display = descText ? 'block' : 'none';
       document.getElementById('modal-art-img').src = encodeURI(rel.art);
 
       var tl = document.getElementById('modal-tracklist');
@@ -1299,32 +1415,31 @@
       rel.tracks.forEach(function(trk, ti) {
         var row = document.createElement('div');
         row.className = 'modal-track';
+        row.dataset.trackIndex = ti;
+        row.dataset.releaseIndex = ri;
         if (currentRelease === ri && currentTrack === ti) row.classList.add('active');
+
+        var num = document.createElement('span');
+        num.className = 'mt-num';
+        num.textContent = String(ti + 1).padStart(2, '0');
 
         var icon = document.createElement('span');
         icon.className = 'mt-play';
-        icon.textContent = (currentRelease === ri && currentTrack === ti && isPlaying) ? '\u25AE\u25AE' : '\u25B6';
-        icon.addEventListener('click', function(e) {
-          e.stopPropagation();
-          if (currentRelease === ri && currentTrack === ti && isPlaying) {
-            togglePlay();
-          } else {
-            playTrack(ri, ti);
-          }
-        });
 
         var name = document.createElement('span');
-        name.textContent = trk.side + '. ' + trk.title;
-        name.addEventListener('click', function(e) {
-          e.stopPropagation();
+        name.className = 'mt-title';
+        name.textContent = trk.title;
+
+        row.addEventListener('click', function() {
           if (currentRelease === ri && currentTrack === ti && isPlaying) {
-            togglePlay();
+            DaxPlayer.toggle();
           } else {
-            playTrack(ri, ti);
+            DaxPlayer.play(ri, ti);
           }
         });
 
         row.addEventListener('mouseenter', playPop);
+        row.appendChild(num);
         row.appendChild(icon);
         row.appendChild(name);
         tl.appendChild(row);
@@ -1333,6 +1448,7 @@
       var linksEl = document.getElementById('modal-links');
       linksEl.innerHTML = '';
       Object.keys(rel.links).forEach(function(key) {
+        if (key === 'beatport' || key === 'spotify') return;
         if (rel.links[key] && rel.links[key] !== '#') {
           var a = document.createElement('a');
           a.href = rel.links[key];
@@ -1345,9 +1461,9 @@
       });
 
       // Reset reveal states
-      document.getElementById('modal-info').classList.remove('reveal');
-      document.getElementById('modal-art').classList.remove('reveal');
-      document.getElementById('modal-close').classList.remove('reveal');
+      document.getElementById('modal-banner').classList.remove('reveal');
+      document.getElementById('modal-content').classList.remove('reveal');
+      document.getElementById('modal-close-x').classList.remove('reveal');
 
       var overlay = document.getElementById('modal-overlay');
 
@@ -1408,241 +1524,340 @@
             t.style.transform = baseTransform + ' translate(' + t._scatterTX + 'px,' + t._scatterTY + 'px) rotate(' + randomRot + 'deg)';
           });
 
-          // ── Phase 3: Spiral — cinematic slow-motion rotation ──
+          // ── Phase 3: Flying art with attitude ──
           setTimeout(function() {
+            // Grab position before hiding
+            var freshRect = clickedTileEl.getBoundingClientRect();
+            // Hide original tile immediately to prevent double
+            clickedTileEl.style.visibility = 'hidden';
+
             var flyer = document.createElement('div');
             flyer.id = 'flying-art';
             var flyImg = document.createElement('img');
             flyImg.src = encodeURI(rel.art);
             flyer.appendChild(flyImg);
 
-            // Start at tile position
-            var freshRect = clickedTileEl.getBoundingClientRect();
             flyer.style.top = freshRect.top + 'px';
             flyer.style.left = freshRect.left + 'px';
             flyer.style.width = freshRect.width + 'px';
             flyer.style.height = freshRect.height + 'px';
-            flyer.style.transform = 'perspective(1400px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)';
+            flyer.style.transform = 'perspective(1200px) rotateY(0deg) rotateX(0deg)';
+            flyer.style.transition = 'none';
             document.body.appendChild(flyer);
 
-            clickedTileEl.style.opacity = '0';
-
-            overlay.classList.add('open');
-            overlay.offsetHeight;
-            overlay.classList.add('visible');
-            modalOpen = true;
-
+            // Sassy lift — kicks up, tilts
             requestAnimationFrame(function() {
-              var artEl = document.getElementById('modal-art');
-              var artRect = artEl.getBoundingClientRect();
-
-              // Sassy lift — kicks up with attitude, tilts like it's looking over its shoulder
               flyer.style.transition = 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
-              var midX = (freshRect.left + artRect.left) * 0.5;
-              var midY = Math.min(freshRect.top, artRect.top) - 40;
+              var midX = window.innerWidth / 2 - freshRect.width * 0.6;
+              var midY = window.innerHeight * 0.25;
               flyer.style.top = midY + 'px';
               flyer.style.left = midX + 'px';
-              flyer.style.width = (artRect.width * 0.65) + 'px';
-              flyer.style.height = (artRect.height * 0.65) + 'px';
-              flyer.style.transform = 'perspective(1400px) rotateY(45deg) rotateX(-8deg) rotateZ(-3deg)';
+              flyer.style.width = (freshRect.width * 1.2) + 'px';
+              flyer.style.height = (freshRect.height * 1.2) + 'px';
+              flyer.style.transform = 'perspective(1200px) rotateY(35deg) rotateX(-6deg)';
 
-              // Swagger across — confident glide, leans the other way
+              // Swagger — glide to fullscreen
               setTimeout(function() {
                 flyer.style.transition = 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
-                flyer.style.top = (artRect.top + 10) + 'px';
-                flyer.style.left = artRect.left + 'px';
-                flyer.style.width = artRect.width + 'px';
-                flyer.style.height = artRect.height + 'px';
-                flyer.style.transform = 'perspective(1400px) rotateY(-12deg) rotateX(4deg) rotateZ(1.5deg)';
+                flyer.style.top = '0px';
+                flyer.style.left = '0px';
+                flyer.style.width = '100vw';
+                flyer.style.height = '100vh';
+                flyer.style.transform = 'none';
+                flyer.style.borderRadius = '0';
 
-                // Lands with a little head-tilt, then settles
+                // Once fullscreen, darken flyer and reveal modal behind it
                 setTimeout(function() {
-                  flyer.style.transition = 'transform 0.6s cubic-bezier(0.19, 1, 0.22, 1)';
-                  flyer.style.transform = 'perspective(1400px) rotateY(3deg) rotateX(-1deg) rotateZ(-0.3deg)';
+                  // Show modal behind the flyer
+                  overlay.classList.add('open');
+                  overlay.scrollTop = 0;
+                  overlay.offsetHeight;
+                  overlay.classList.add('visible');
+                  modalOpen = true;
 
-                  // Final exhale — perfectly flat
+                  // Fade flyer out so modal banner takes over seamlessly
+                  flyer.style.transition = 'opacity 0.4s ease';
+                  flyer.style.opacity = '0';
+
                   setTimeout(function() {
-                    flyer.style.transition = 'transform 0.4s cubic-bezier(0.19, 1, 0.22, 1)';
-                    flyer.style.transform = 'perspective(1400px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)';
-
-                    setTimeout(function() {
-                      artEl.classList.add('reveal');
-                      document.getElementById('modal-info').classList.add('reveal');
-                      document.getElementById('modal-close').classList.add('reveal');
-                      if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
-                    }, 300);
+                    if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+                    document.getElementById('modal-content').classList.add('reveal');
+                    document.getElementById('modal-close-x').classList.add('reveal');
                   }, 400);
-                }, 550);
+                }, 700);
               }, 400);
             });
-          }, 350); // delay after scatter starts before spiral begins
-        }, 900); // the scatter happens ~1s after click
+          }, 350);
+        }, 900);
 
       } else {
         // ── Instant open (from sidebar) ──
         document.getElementById('sidebar').classList.add('dimmed');
         overlay.classList.add('open');
+        overlay.scrollTop = 0;
         overlay.offsetHeight;
         overlay.classList.add('visible');
-        document.getElementById('modal-art').classList.add('reveal');
-        document.getElementById('modal-info').classList.add('reveal');
-        document.getElementById('modal-close').classList.add('reveal');
+        document.getElementById('modal-content').classList.add('reveal');
+        document.getElementById('modal-close-x').classList.add('reveal');
         modalOpen = true;
       }
     }
 
     function closeModal() {
       var overlay = document.getElementById('modal-overlay');
-      var artEl = document.getElementById('modal-art');
-      var infoEl = document.getElementById('modal-info');
+      var bannerEl = document.getElementById('modal-banner');
+      var contentEl = document.getElementById('modal-content');
 
-      // Fade out modal info and close button first
-      infoEl.classList.remove('reveal');
-      document.getElementById('modal-close').classList.remove('reveal');
+      // Fade out modal content first
+      contentEl.classList.remove('reveal');
+      document.getElementById('modal-close-x').classList.remove('reveal');
 
       if (lastClickedTile) {
-        // ── Animated close: reverse the full sequence ──
-        var artRect = artEl.getBoundingClientRect();
+        // ── Animated close with reverse sass ──
         var lb = document.querySelector('.label');
         var sb = document.getElementById('sidebar');
         var allTiles = document.getElementById('scene').querySelectorAll('.tile');
         var savedTile = lastClickedTile;
 
-        // Phase 1: Content fades down (reverse of fade-up)
-        // info + close button already have reveal removed above
+        // Panel slides down
+        // (reveal already removed above)
 
-        // Phase 2: After content fades, reverse spiral back to tile
+        // After panel fades, reverse the art
         setTimeout(function() {
-          // Create flyer at modal-art position
+          // Create flyer at full screen
           var flyer = document.createElement('div');
           flyer.id = 'flying-art';
           var flyImg = document.createElement('img');
           flyImg.src = document.getElementById('modal-art-img').src;
           flyer.appendChild(flyImg);
-          flyer.style.top = artRect.top + 'px';
-          flyer.style.left = artRect.left + 'px';
-          flyer.style.width = artRect.width + 'px';
-          flyer.style.height = artRect.height + 'px';
-          flyer.style.transform = 'perspective(1400px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)';
+          flyer.style.top = '0px';
+          flyer.style.left = '0px';
+          flyer.style.width = '100vw';
+          flyer.style.height = '100vh';
+          flyer.style.transform = 'perspective(1200px) rotateY(0deg) rotateX(0deg)';
+          flyer.style.transition = 'none';
           document.body.appendChild(flyer);
 
-          // Hide modal art (flyer replaces it)
-          artEl.classList.remove('reveal');
-
-          // Fade out overlay bg
+          // Hide overlay behind flyer
           overlay.classList.remove('visible');
 
-          // Sync target with current scroll so there's no drift when we resume
           targetX = scrollX;
           targetY = scrollY;
 
-          // Force one layout pass to get tile positions (but keep layout paused)
+          // Kick back with lean
           requestAnimationFrame(function() {
-            layoutTiles();
-
-            var tileRect = savedTile.getBoundingClientRect();
-            var midX = (artRect.left + tileRect.left) * 0.5;
-            var midY = Math.min(artRect.top, tileRect.top) - 40;
-
-            // Reverse sass — kicks back with a lean
             flyer.style.transition = 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
-            flyer.style.transform = 'perspective(1400px) rotateY(-12deg) rotateX(4deg) rotateZ(1.5deg)';
+            flyer.style.transform = 'perspective(1200px) rotateY(-10deg) rotateX(3deg)';
 
-            // Swagger back — leans the other way, shrinks toward tile
             setTimeout(function() {
-              flyer.style.transition = 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+              overlay.classList.remove('open');
+              contentEl.classList.remove('reveal');
+
+              // Compute tile target
+              requestAnimationFrame(function() {
+                layoutTiles();
+              });
+
+              var tileRect = savedTile.getBoundingClientRect();
+              var midX = window.innerWidth / 2 - tileRect.width * 0.6;
+              var midY = window.innerHeight * 0.25;
+
+              // Swagger back — shrink with tilt
+              flyer.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
               flyer.style.top = midY + 'px';
               flyer.style.left = midX + 'px';
-              flyer.style.width = (tileRect.width * 1.5) + 'px';
-              flyer.style.height = (tileRect.height * 1.5) + 'px';
-              flyer.style.transform = 'perspective(1400px) rotateY(45deg) rotateX(-8deg) rotateZ(-3deg)';
+              flyer.style.width = (tileRect.width * 1.3) + 'px';
+              flyer.style.height = (tileRect.height * 1.3) + 'px';
+              flyer.style.transform = 'perspective(1200px) rotateY(30deg) rotateX(-5deg)';
 
-              // Tucks back into the grid
+              // Tuck back into tile
               setTimeout(function() {
+                tileRect = savedTile.getBoundingClientRect();
                 flyer.style.transition = 'all 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
                 flyer.style.top = tileRect.top + 'px';
                 flyer.style.left = tileRect.left + 'px';
                 flyer.style.width = tileRect.width + 'px';
                 flyer.style.height = tileRect.height + 'px';
-                flyer.style.transform = 'perspective(1400px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)';
-              }, 550);
-            }, 400);
+                flyer.style.transform = 'perspective(1200px) rotateY(0deg) rotateX(0deg)';
 
-            // Gather tiles back after the dance is done
-            setTimeout(function() {
-              // Remove flyer, show origin tile
-              if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
-              savedTile.classList.remove('scatter-origin');
-              savedTile.style.opacity = '';
-
-              // Tiles are still in scattered positions with scattering class
-              // Keep layout paused — compute grid positions manually and transition
-
-              // Swap scattering for gathering
-              allTiles.forEach(function(t) {
-                if (t === savedTile) return;
-                t.classList.remove('scattering');
-                t.classList.add('gathering');
-              });
-
-              // Compute where each tile should be in the grid and set it
-              // (This is what layoutTiles does, replicated here for the transition)
-              requestAnimationFrame(function() {
-                var cxV = VW / 2, cyV = VH / 2;
-                for (var i = 0; i < tiles.length; i++) {
-                  var t = tiles[i];
-                  if (t.el === savedTile) continue;
-                  var sg = staggerFor(t.logR);
-                  var x = t.logC * STEP_X + sg - scrollX + offsetX;
-                  var y = t.logR * STEP_Y - scrollY + offsetY;
-                  // Match globe + depth from layoutTiles
-                  var tcx = x + SZ / 2, tcy = y + SZ / 2;
-                  var gdx = (tcx - cxV) / cxV, gdy = (tcy - cyV) / cyV;
-                  var gDist = Math.sqrt(gdx * gdx + gdy * gdy);
-                  var gFalloff = gDist * gDist * gDist * 0.2;
-                  var fScale = Math.max(0.4, tiles[i].depth * (1 - gFalloff * (1.5 - tiles[i].depth)));
-                  t.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + fScale.toFixed(4) + ')';
-                }
-
-                // After tiles gather back, clean up everything
                 setTimeout(function() {
+                  if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
+                  savedTile.classList.remove('scatter-origin');
+                  savedTile.style.opacity = '';
+                  savedTile.style.visibility = '';
+
+                  // Gather tiles back
                   allTiles.forEach(function(t) {
-                    t.classList.remove('gathering');
-                    t.classList.remove('lifting');
+                    if (t === savedTile) return;
+                    t.classList.remove('scattering');
+                    t.classList.add('gathering');
                   });
 
-                  // Resume normal layout loop
-                  layoutPaused = false;
-                  overlay.classList.remove('open');
+                  requestAnimationFrame(function() {
+                    var cxV = VW / 2, cyV = VH / 2;
+                    for (var i = 0; i < tiles.length; i++) {
+                      var t = tiles[i];
+                      if (t.el === savedTile) continue;
+                      var sg = staggerFor(t.logR);
+                      var x = t.logC * STEP_X + sg - scrollX + offsetX;
+                      var y = t.logR * STEP_Y - scrollY + offsetY;
+                      var tcx = x + SZ / 2, tcy = y + SZ / 2;
+                      var gdx = (tcx - cxV) / cxV, gdy = (tcy - cyV) / cyV;
+                      var gDist = Math.sqrt(gdx * gdx + gdy * gdy);
+                      var gFalloff = gDist * gDist * gDist * 0.2;
+                      var fScale = Math.max(0.4, tiles[i].depth * (1 - gFalloff * (1.5 - tiles[i].depth)));
+                      t.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + fScale.toFixed(4) + ')';
+                    }
 
-                  // Bring back sidebar, label
-                  lb.classList.remove('fading');
-                  sb.classList.remove('fading');
-                  sb.classList.remove('dimmed');
-                  lb.classList.add('returning');
-                  sb.classList.add('returning');
+                    setTimeout(function() {
+                      allTiles.forEach(function(t) {
+                        t.classList.remove('gathering');
+                        t.classList.remove('lifting');
+                      });
+                      layoutPaused = false;
 
-                  setTimeout(function() {
-                    lb.classList.remove('returning');
-                    sb.classList.remove('returning');
-                  }, 500);
-                }, 750);
-              });
-            }, 1500); // after most of the spin is done
+                      lb.classList.remove('fading');
+                      sb.classList.remove('fading');
+                      sb.classList.remove('dimmed');
+                      lb.classList.add('returning');
+                      sb.classList.add('returning');
+
+                      setTimeout(function() {
+                        lb.classList.remove('returning');
+                        sb.classList.remove('returning');
+                      }, 500);
+                    }, 750);
+                  });
+                }, 450);
+              }, 500);
+            }, 400);
           });
-        }, 500); // wait for content to fade out
+        }, 600);
 
       } else {
-        // ── Instant close ──
-        artEl.classList.remove('reveal');
+        // ── Close from sidebar open (no tile to return to) ──
         overlay.classList.remove('visible');
         document.getElementById('sidebar').classList.remove('dimmed');
         layoutPaused = false;
-        setTimeout(function() { overlay.classList.remove('open'); }, 400);
+        setTimeout(function() { overlay.classList.remove('open'); }, 500);
       }
 
       modalOpen = false;
       lastClickedTile = null;
+    }
+
+    // ── Switch release while modal is open ──
+    var switchBusy = false;
+    function switchModal(ri) {
+      var rel = RELEASES[ri];
+      if (!rel || switchBusy) return;
+      switchBusy = true;
+      modalReleaseIndex = ri;
+      lastClickedTile = null;
+
+      var contentEl = document.getElementById('modal-content');
+      var bannerImg = document.getElementById('modal-art-img');
+      var closeX = document.getElementById('modal-close-x');
+
+      // Phase 1: Panel drops away with a kick
+      contentEl.style.transition = 'opacity 0.35s ease, transform 0.45s cubic-bezier(0.55, 0, 1, 0.45)';
+      contentEl.classList.remove('reveal');
+      contentEl.style.transform = 'translateY(60px) scale(0.97)';
+      closeX.classList.remove('reveal');
+
+      // Background art pulses (scale up slightly, darken)
+      bannerImg.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease';
+      bannerImg.style.transform = 'scale(1.08)';
+      bannerImg.style.opacity = '0.4';
+
+      setTimeout(function() {
+        // Phase 2: Swap content while hidden
+        document.getElementById('modal-title').textContent = rel.title;
+        document.getElementById('modal-artist').textContent = rel.artist;
+        document.getElementById('modal-meta').innerHTML = '<span>' + rel.label + '</span><span>' + rel.year + '</span><span>' + rel.catalog + '</span>';
+        var descEl = document.getElementById('modal-desc');
+        var descText = (rel.desc || '').replace(/\\n/g, '\n');
+        descEl.textContent = descText;
+        descEl.style.display = descText ? 'block' : 'none';
+
+        // Crossfade art
+        bannerImg.style.transition = 'none';
+        bannerImg.style.opacity = '0';
+        bannerImg.src = encodeURI(rel.art);
+
+        var tl = document.getElementById('modal-tracklist');
+        tl.innerHTML = '';
+        rel.tracks.forEach(function(trk, ti) {
+          var row = document.createElement('div');
+          row.className = 'modal-track';
+          row.dataset.trackIndex = ti;
+          row.dataset.releaseIndex = ri;
+          if (currentRelease === ri && currentTrack === ti) row.classList.add('active');
+
+          var num = document.createElement('span');
+          num.className = 'mt-num';
+          num.textContent = String(ti + 1).padStart(2, '0');
+
+          var icon = document.createElement('span');
+          icon.className = 'mt-play';
+
+          var name = document.createElement('span');
+          name.className = 'mt-title';
+          name.textContent = trk.title;
+
+          row.addEventListener('click', function() {
+            if (currentRelease === ri && currentTrack === ti && isPlaying) {
+              DaxPlayer.toggle();
+            } else {
+              DaxPlayer.play(ri, ti);
+            }
+          });
+          row.addEventListener('mouseenter', playPop);
+          row.appendChild(num);
+          row.appendChild(icon);
+          row.appendChild(name);
+          tl.appendChild(row);
+        });
+
+        var linksEl = document.getElementById('modal-links');
+        linksEl.innerHTML = '';
+        Object.keys(rel.links).forEach(function(key) {
+          if (key === 'beatport' || key === 'spotify') return;
+          if (rel.links[key] && rel.links[key] !== '#') {
+            var a = document.createElement('a');
+            a.href = rel.links[key];
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = key;
+            a.addEventListener('mouseenter', playPop);
+            linksEl.appendChild(a);
+          }
+        });
+
+        document.getElementById('modal-overlay').scrollTop = 0;
+
+        // Phase 3: New art fades in with scale settle
+        requestAnimationFrame(function() {
+          bannerImg.style.transition = 'opacity 0.5s ease, transform 0.7s cubic-bezier(0.19, 1, 0.22, 1)';
+          bannerImg.style.opacity = '1';
+          bannerImg.style.transform = 'scale(1)';
+
+          // Phase 4: Panel rises from below with spring
+          setTimeout(function() {
+            contentEl.style.transition = 'opacity 0.6s cubic-bezier(0.19, 1, 0.22, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
+            contentEl.style.transform = '';
+            contentEl.classList.add('reveal');
+            closeX.classList.add('reveal');
+
+            // Clean up inline styles after animation so close/open still works
+            setTimeout(function() {
+              contentEl.style.transition = '';
+              bannerImg.style.transition = '';
+              switchBusy = false;
+            }, 700);
+          }, 250);
+        });
+      }, 450);
     }
 
     // ── Scroll-to-release from sidebar ──
@@ -1718,7 +1933,9 @@
 
     // ── Subtle pop sound on hover ──
     var popCtx = null;
+    var soundEnabled = localStorage.getItem('dax-sound') !== 'off';
     function playPop() {
+      if (!soundEnabled) return;
       if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
       var osc = popCtx.createOscillator();
       var gain = popCtx.createGain();
@@ -1733,6 +1950,18 @@
       osc.stop(popCtx.currentTime + 0.08);
     }
 
+    // Sound toggle
+    (function() {
+      var btn = document.getElementById('soundToggle');
+      function updateIcon() { btn.classList.toggle('off', !soundEnabled); }
+      updateIcon();
+      btn.addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        localStorage.setItem('dax-sound', soundEnabled ? 'on' : 'off');
+        updateIcon();
+      });
+    })();
+
     // ── Sidebar rendering ──
     function renderSidebar() {
       var list = document.getElementById('sidebar-list');
@@ -1740,11 +1969,16 @@
       RELEASES.forEach(function(rel, ri) {
         var div = document.createElement('div');
         div.className = 'sb-release';
+        var searchParts = [rel.artist, rel.title, rel.catalog];
+        rel.tracks.forEach(function(t) { searchParts.push(typeof t === 'string' ? t : t.title); });
+        div.dataset.search = searchParts.join(' ').toLowerCase();
 
         var title = document.createElement('div');
         title.className = 'sb-release-title';
         title.textContent = rel.artist + ' — ' + rel.title;
-        title.addEventListener('click', function() { scrollToRelease(ri); });
+        title.addEventListener('click', function() {
+          if (modalOpen) { switchModal(ri); } else { scrollToRelease(ri); }
+        });
         title.addEventListener('mouseenter', playPop);
         div.appendChild(title);
 
@@ -1760,9 +1994,9 @@
           icon.addEventListener('click', function(e) {
             e.stopPropagation();
             if (currentRelease === ri && currentTrack === ti && isPlaying) {
-              togglePlay();
+              DaxPlayer.toggle();
             } else {
-              playTrack(ri, ti);
+              DaxPlayer.play(ri, ti);
             }
           });
 
@@ -1771,9 +2005,9 @@
           name.addEventListener('click', function(e) {
             e.stopPropagation();
             if (currentRelease === ri && currentTrack === ti && isPlaying) {
-              togglePlay();
+              DaxPlayer.toggle();
             } else {
-              playTrack(ri, ti);
+              DaxPlayer.play(ri, ti);
             }
           });
 
@@ -1784,6 +2018,18 @@
         });
 
         list.appendChild(div);
+      });
+
+      // Search filtering
+      var sbSearch = document.getElementById('sb-search');
+      sbSearch.addEventListener('input', function() {
+        var q = this.value.toLowerCase().trim();
+        document.querySelectorAll('.sb-release').forEach(function(el) {
+          el.style.display = (!q || el.dataset.search.indexOf(q) > -1) ? '' : 'none';
+        });
+      });
+      sbSearch.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') sbSearch.blur();
       });
     }
 
@@ -1799,7 +2045,7 @@
     const STAGGER = [0, STEP_X * 0.5, STEP_X * 0.25];
 
     // Pool: enough tiles to cover viewport + 1 buffer on each side
-    const SIDEBAR_W = 240;
+    const SIDEBAR_W = (window.innerWidth <= 800) ? 0 : 240;
     const VW = window.innerWidth - SIDEBAR_W;
     const VH = window.innerHeight;
 
@@ -1948,10 +2194,32 @@
     var currentStiffness = STIFFNESS;
 
     window.addEventListener('wheel', function(e) {
-      if (e.target.closest('#sidebar')) return; // let sidebar scroll naturally
+      if (e.target.closest('#sidebar')) return;
+      if (e.target.closest('#modal-overlay')) return;
       e.preventDefault();
       targetX += e.deltaX;
       targetY += e.deltaY;
+    }, { passive: false });
+
+    // Touch drag support
+    var touchStartX = 0, touchStartY = 0, touchLastX = 0, touchLastY = 0;
+    scene.addEventListener('touchstart', function(e) {
+      if (e.target.closest('#dax-sidebar') || e.target.closest('#dax-player-bar')) return;
+      var t = e.touches[0];
+      touchStartX = touchLastX = t.clientX;
+      touchStartY = touchLastY = t.clientY;
+    }, { passive: true });
+
+    scene.addEventListener('touchmove', function(e) {
+      if (e.target.closest('#dax-sidebar') || e.target.closest('#dax-player-bar')) return;
+      e.preventDefault();
+      var t = e.touches[0];
+      var dx = touchLastX - t.clientX;
+      var dy = touchLastY - t.clientY;
+      targetX += dx;
+      targetY += dy;
+      touchLastX = t.clientX;
+      touchLastY = t.clientY;
     }, { passive: false });
 
     function lerp(a, b, t) { return a + (b - a) * t; }
@@ -2032,40 +2300,16 @@
       });
     });
 
-    // ── Player bar controls ──
-    document.getElementById('pb-play').addEventListener('click', togglePlay);
+    // ── Modal & keyboard controls ──
     document.getElementById('modal-close').addEventListener('click', closeModal);
     document.getElementById('modal-close').addEventListener('mouseenter', playPop);
+    document.getElementById('modal-close-x').addEventListener('click', closeModal);
+    document.getElementById('modal-close-x').addEventListener('mouseenter', playPop);
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && modalOpen) closeModal();
       if (e.key === ' ' || e.code === 'Space') {
         e.preventDefault();
-        if (currentRelease >= 0) togglePlay();
-      }
-    });
-
-    audio.addEventListener('timeupdate', function() {
-      var pct = (audio.currentTime / audio.duration) * 100;
-      document.getElementById('pb-progress').style.width = pct + '%';
-      document.getElementById('pb-time').textContent =
-        formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
-    });
-
-    document.getElementById('pb-progress-wrap').addEventListener('click', function(e) {
-      var rect = this.getBoundingClientRect();
-      var pct = (e.clientX - rect.left) / rect.width;
-      audio.currentTime = pct * audio.duration;
-    });
-
-    audio.addEventListener('ended', function() {
-      var rel = RELEASES[currentRelease];
-      if (currentTrack < rel.tracks.length - 1) {
-        playTrack(currentRelease, currentTrack + 1);
-      } else if (currentRelease < RELEASES.length - 1) {
-        playTrack(currentRelease + 1, 0);
-      } else {
-        isPlaying = false;
-        document.getElementById('pb-play').textContent = '\u25B6';
+        if (currentRelease >= 0) DaxPlayer.toggle();
       }
     });
 
@@ -2074,7 +2318,20 @@
     layoutTiles();
     requestAnimationFrame(rafLoop);
     document.querySelectorAll('nav a').forEach(function(a) { a.addEventListener('mouseenter', playPop); });
+
+    // ── Theme toggle ──
+    var themeToggle = document.getElementById('themeToggle');
+    var savedTheme = localStorage.getItem('dax-theme');
+    if (savedTheme === 'light') document.documentElement.classList.add('light');
+
+    themeToggle.addEventListener('click', function() {
+      document.documentElement.classList.toggle('light');
+      var isLight = document.documentElement.classList.contains('light');
+      localStorage.setItem('dax-theme', isLight ? 'light' : 'dark');
+      playPop();
+    });
   </script>
+  <script src="player.js"></script>
 
 </body>
 </html>

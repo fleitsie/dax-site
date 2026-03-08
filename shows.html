@@ -7,18 +7,56 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="player.css">
   <style>
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --text-a50: rgba(255,255,255,0.5);
+      --text-a38: rgba(255,255,255,0.38);
+      --text-a25: rgba(255,255,255,0.25);
+      --text-a10: rgba(255,255,255,0.1);
+      --accent: #39ff14;
+      --cursor-bg: #fff;
+      --scan-text: #000;
+      --redact-bg: #fff;
+      --flap-bg: #181818;
+      --flap-top: #1c1c1c;
+      --flap-border: #000;
+      --flap-text: #e8e8e8;
+      --tab-underline: #fff;
+    }
+
+    html.light {
+      --bg: #B5B0A7;
+      --text: #1a1916;
+      --text-a50: rgba(26,25,22,0.5);
+      --text-a38: rgba(26,25,22,0.38);
+      --text-a25: rgba(26,25,22,0.25);
+      --text-a10: rgba(26,25,22,0.1);
+      --accent: #39ff14;
+      --cursor-bg: #1a1916;
+      --scan-text: #B5B0A7;
+      --redact-bg: #1a1916;
+      --flap-bg: #A8A39A;
+      --flap-top: #ADA8A0;
+      --flap-border: rgba(26,25,22,0.15);
+      --flap-text: #1a1916;
+      --tab-underline: #1a1916;
+    }
+
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     html, body {
-      background: #000;
-      color: #fff;
+      background: var(--bg);
+      color: var(--text);
       font-family: 'IBM Plex Mono', monospace;
       font-size: 15.1px;
       line-height: 1.5;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
       overflow-y: scroll;
+      transition: background 0.5s ease, color 0.5s ease;
     }
 
     .page {
@@ -32,7 +70,7 @@
       font-size: 0.8rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.38);
+      color: var(--text-a38);
       margin-bottom: 0.25rem;
       margin-left: -10%;
     }
@@ -42,7 +80,7 @@
       font-weight: 500;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: #fff;
+      color: var(--text);
       margin-bottom: 2.5rem;
       margin-left: -10%;
     }
@@ -51,7 +89,7 @@
       display: inline-block;
       width: 0.55em;
       height: 1em;
-      background: #fff;
+      background: var(--cursor-bg);
       vertical-align: text-bottom;
       margin-left: 1px;
       animation: blink 0.9s step-end infinite;
@@ -69,7 +107,7 @@
       justify-content: flex-start;
       gap: 0.55rem;
       margin-bottom: 2.5rem;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid var(--text-a10);
       padding-bottom: 0;
       margin-left: -10%;
       margin-right: -10%;
@@ -80,7 +118,7 @@
       font-size: 0.9rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.25);
+      color: var(--text-a25);
       background: none;
       border: none;
       cursor: pointer;
@@ -94,12 +132,12 @@
       position: absolute;
       bottom: -1px; left: 0.8rem; right: 0.8rem;
       height: 1px;
-      background: #fff;
+      background: var(--tab-underline);
       opacity: 0;
     }
 
-    .year-tab:hover { color: #39ff14; }
-    .year-tab.active { color: #39ff14; }
+    .year-tab:hover { color: var(--accent); }
+    .year-tab.active { color: var(--accent); }
     .year-tab.active::after { opacity: 1; }
 
     /* ── Show list ── */
@@ -114,7 +152,7 @@
       font-size: 0.82rem;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #fff;
+      color: var(--text);
       padding: 0.38rem 0.4rem;
       margin: 0 -0.4rem;
       cursor: default;
@@ -131,11 +169,11 @@
       position: absolute;
       left: 0; top: 0;
       width: 0; height: 100%;
-      background: #39ff14;
+      background: var(--accent);
       z-index: -1;
       transition: width 0.3s ease-out;
     }
-    .shows-list[data-style="1"] .show-item:hover { color: #000; }
+    .shows-list[data-style="1"] .show-item:hover { color: var(--scan-text); }
     .shows-list[data-style="1"] .show-item:hover::after { width: 100%; }
     .shows-list[data-style="1"] .show-item:not(:hover)::after { width: 0; }
 
@@ -144,7 +182,7 @@
       position: absolute;
       top: 0; left: 0;
       height: 100%;
-      background: #fff;
+      background: var(--redact-bg);
       z-index: 1;
       pointer-events: none;
       width: 0;
@@ -167,13 +205,13 @@
       width: 0.65em;
       height: 1.3em;
       text-align: center;
-      background: #181818;
+      background: var(--flap-bg);
       border-radius: 2px;
       margin: 0 0.5px;
       vertical-align: middle;
       overflow: hidden;
       font-size: 0.82rem;
-      color: #e8e8e8;
+      color: var(--flap-text);
     }
     .shows-list[data-style="6"] .flap-cell.space {
       background: none;
@@ -184,15 +222,15 @@
       top: 0; left: 0; right: 0;
       height: 50%;
       overflow: hidden;
-      background: #1c1c1c;
-      border-bottom: 1px solid #000;
+      background: var(--flap-top);
+      border-bottom: 1px solid var(--flap-border);
     }
     .shows-list[data-style="6"] .flap-cell .fbot {
       position: absolute;
       bottom: 0; left: 0; right: 0;
       height: 50%;
       overflow: hidden;
-      background: #181818;
+      background: var(--flap-bg);
     }
     .shows-list[data-style="6"] .flap-cell .ftop span,
     .shows-list[data-style="6"] .flap-cell .fbot span {
@@ -215,13 +253,13 @@
     }
     .shows-list[data-style="6"] .flap-cell .fflip.fflip-top {
       top: 0;
-      background: #1c1c1c;
-      border-bottom: 1px solid #000;
+      background: var(--flap-top);
+      border-bottom: 1px solid var(--flap-border);
       transform-origin: bottom center;
     }
     .shows-list[data-style="6"] .flap-cell .fflip.fflip-bot {
       top: 50%;
-      background: #181818;
+      background: var(--flap-bg);
       transform-origin: top center;
     }
     .shows-list[data-style="6"] .flap-cell .fflip span {
@@ -239,8 +277,13 @@
       .shows-list { column-count: 3; }
     }
     @media (max-width: 600px) {
-      .page { padding: 2rem 1.25rem 6rem; }
-      .shows-list { column-count: 2; }
+      .page { padding: 2rem 1rem 6rem; }
+      .site-header { margin-left: 0; }
+      .page-title { margin-left: 0; }
+      .year-tabs { margin-left: 0; margin-right: 0; flex-wrap: wrap; }
+      .shows-list { column-count: 2; margin-left: 0; margin-right: 0; column-gap: 1.5rem; }
+      .show-item { font-size: 0.6rem; }
+      nav { padding: 14px 20px; gap: 18px; font-size: 13px; }
     }
     @media (max-width: 380px) {
       .shows-list { column-count: 1; }
@@ -257,12 +300,50 @@
       text-transform: uppercase;
     }
     nav a {
-      color: rgba(255,255,255,0.5);
+      color: var(--text-a50);
       text-decoration: none;
       transition: color 0.15s;
     }
-    nav a:hover { color: #39ff14; }
-    nav a.active { color: #fff; }
+    nav a:hover { color: var(--accent); }
+    nav a.active { color: var(--text); }
+
+    /* Theme toggle */
+    .theme-toggle {
+      margin-left: auto;
+      display: flex; align-items: center;
+      cursor: pointer;
+    }
+    .theme-toggle-track {
+      width: 32px; height: 16px;
+      background: var(--text-a10);
+      border-radius: 8px;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+    .theme-toggle-thumb {
+      width: 12px; height: 12px;
+      background: var(--text-a50);
+      border-radius: 50%;
+      position: absolute;
+      top: 2px; left: 2px;
+      transition: left 0.3s ease, background 0.3s ease;
+    }
+    html.light .theme-toggle-thumb { left: 18px; }
+    html.light .theme-toggle-track { background: var(--text-a25); }
+
+    /* Sound toggle */
+    .sound-toggle {
+      display: flex; align-items: center;
+      cursor: pointer;
+      color: var(--text-a35);
+      transition: color 0.2s;
+      margin-left: 12px;
+    }
+    .sound-toggle:hover { color: var(--text-a70); }
+    .sound-toggle svg { width: 14px; height: 14px; }
+    .sound-toggle .sound-dot { transition: opacity 0.3s; }
+    .sound-toggle.off { color: var(--text-a15); }
+    .sound-toggle.off .sound-dot { opacity: 0; }
   </style>
 </head>
 <body>
@@ -270,6 +351,22 @@
     <a href="index.html">Home</a>
     <a href="shows.html" class="active">Shows</a>
     <a href="releases.html">MNNM BLK</a>
+    <div class="theme-toggle" id="themeToggle">
+      <div class="theme-toggle-track"><div class="theme-toggle-thumb"></div></div>
+    </div>
+    <div class="sound-toggle" id="soundToggle" title="Toggle UI sounds">
+      <svg viewBox="0 0 16 16" fill="currentColor" stroke="none">
+        <circle cx="8" cy="8" r="2"/>
+        <circle class="sound-dot" cx="3" cy="4" r="1"/>
+        <circle class="sound-dot" cx="13" cy="4" r="1"/>
+        <circle class="sound-dot" cx="3" cy="12" r="1"/>
+        <circle class="sound-dot" cx="13" cy="12" r="1"/>
+        <circle class="sound-dot" cx="8" cy="1.5" r="0.8"/>
+        <circle class="sound-dot" cx="8" cy="14.5" r="0.8"/>
+        <circle class="sound-dot" cx="1.5" cy="8" r="0.8"/>
+        <circle class="sound-dot" cx="14.5" cy="8" r="0.8"/>
+      </svg>
+    </div>
   </nav>
   <div class="page" style="padding-top: 5rem;">
     <p class="site-header">DAX J</p>
@@ -1629,7 +1726,9 @@
 
     // ── Pop sound ──
     var popCtx = null;
+    var soundEnabled = localStorage.getItem('dax-sound') !== 'off';
     function playPop() {
+      if (!soundEnabled) return;
       if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
       var osc = popCtx.createOscillator();
       var gain = popCtx.createGain();
@@ -1644,6 +1743,18 @@
       osc.stop(popCtx.currentTime + 0.08);
     }
 
+    // Sound toggle
+    (function() {
+      var btn = document.getElementById('soundToggle');
+      function updateIcon() { btn.classList.toggle('off', !soundEnabled); }
+      updateIcon();
+      btn.addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        localStorage.setItem('dax-sound', soundEnabled ? 'on' : 'off');
+        updateIcon();
+      });
+    })();
+
     renderTabs();
     renderShows(years[0]);
 
@@ -1657,6 +1768,18 @@
     };
     // Trigger once for initial render
     document.querySelectorAll('.show-item').forEach(function(el) { el.addEventListener('mouseenter', playPop); });
+
+    // Theme toggle
+    var savedTheme = localStorage.getItem('dax-theme');
+    if (savedTheme === 'light') document.documentElement.classList.add('light');
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      document.documentElement.classList.toggle('light');
+      var isLight = document.documentElement.classList.contains('light');
+      localStorage.setItem('dax-theme', isLight ? 'light' : 'dark');
+      playPop();
+    });
   </script>
+  <script src="releases-data.js"></script>
+  <script src="player.js"></script>
 </body>
 </html>

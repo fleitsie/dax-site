@@ -1,0 +1,296 @@
+/* ── Shared Player — player.css ── */
+
+:root {
+  --pb-bg: rgba(10,10,10,0.96);
+  --pb-border: rgba(255,255,255,0.06);
+  --pb-text: rgba(255,255,255,0.55);
+  --pb-text-dim: rgba(255,255,255,0.25);
+  --pb-text-faint: rgba(255,255,255,0.35);
+  --pb-text-ghost: rgba(255,255,255,0.08);
+  --pb-icon: rgba(255,255,255,0.45);
+  --pb-icon-dim: rgba(255,255,255,0.35);
+  --pb-sidebar-bg: rgba(0,0,0,0.92);
+  --pb-tab-bg: rgba(0,0,0,0.9);
+  --pb-tab-border: rgba(255,255,255,0.1);
+  --pb-hover-bg: rgba(255,255,255,0.03);
+  --pb-title-text: rgba(255,255,255,0.85);
+  --pb-track-text: rgba(255,255,255,0.4);
+  --pb-track-hover: rgba(255,255,255,0.85);
+  --pb-heading: rgba(255,255,255,0.25);
+  --pb-accent: #39ff14;
+  --pb-accent-dim: rgba(57,255,20,0.08);
+  --pb-scrollbar: rgba(255,255,255,0.12);
+}
+
+html.light {
+  --pb-bg: rgba(181,176,167,0.96);
+  --pb-border: rgba(26,25,22,0.06);
+  --pb-text: rgba(26,25,22,0.55);
+  --pb-text-dim: rgba(26,25,22,0.25);
+  --pb-text-faint: rgba(26,25,22,0.35);
+  --pb-text-ghost: rgba(26,25,22,0.08);
+  --pb-icon: rgba(26,25,22,0.45);
+  --pb-icon-dim: rgba(26,25,22,0.35);
+  --pb-sidebar-bg: rgba(181,176,167,0.92);
+  --pb-tab-bg: rgba(181,176,167,0.9);
+  --pb-tab-border: rgba(26,25,22,0.1);
+  --pb-hover-bg: rgba(26,25,22,0.03);
+  --pb-title-text: rgba(26,25,22,0.85);
+  --pb-track-text: rgba(26,25,22,0.4);
+  --pb-track-hover: rgba(26,25,22,0.85);
+  --pb-heading: rgba(26,25,22,0.25);
+  --pb-accent: #39ff14;
+  --pb-accent-dim: rgba(57,255,20,0.08);
+  --pb-scrollbar: rgba(26,25,22,0.12);
+}
+
+/* ── Player Bar ── */
+#dax-player-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 300;
+  height: 44px;
+  background: var(--pb-bg);
+  border-top: 1px solid var(--pb-border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  transform: translateY(44px);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#dax-player-bar.open { transform: translateY(0); }
+
+#dax-pb-play {
+  background: none; border: none;
+  cursor: pointer; padding: 0;
+  display: flex; align-items: center;
+}
+#dax-pb-play svg { fill: var(--pb-icon); width: 16px; height: 16px; transition: fill 0.12s; }
+#dax-pb-play:hover svg { fill: var(--pb-accent); }
+
+#dax-pb-info {
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pb-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex-shrink: 0;
+  max-width: 260px;
+}
+#dax-pb-info span { color: var(--pb-text-dim); }
+
+#dax-pb-progress-wrap {
+  flex: 1;
+  height: 3px;
+  background: var(--pb-text-ghost);
+  cursor: pointer;
+  border-radius: 1px;
+  position: relative;
+}
+#dax-pb-progress {
+  height: 100%;
+  background: var(--pb-accent);
+  width: 0;
+  border-radius: 1px;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+#dax-pb-time {
+  font-size: 0.44rem;
+  letter-spacing: 0.08em;
+  color: var(--pb-text-dim);
+  flex-shrink: 0;
+  width: 75px;
+  text-align: right;
+}
+
+#dax-pb-vol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+#dax-pb-mute {
+  background: none; border: none;
+  cursor: pointer; padding: 0;
+  display: flex; align-items: center;
+}
+#dax-pb-mute svg { color: var(--pb-icon); width: 15px; height: 15px; transition: color 0.12s; }
+#dax-pb-mute:hover svg { color: var(--pb-accent); }
+#dax-pb-vol-wrap {
+  width: 70px; height: 3px;
+  background: var(--pb-text-ghost);
+  border-radius: 1px;
+  cursor: pointer;
+  position: relative;
+}
+#dax-pb-vol-fill {
+  height: 100%; width: 80%;
+  background: var(--pb-text-faint);
+  border-radius: 1px;
+  transition: width 0.08s linear;
+}
+#dax-pb-vol-wrap:hover #dax-pb-vol-fill { background: var(--pb-accent); }
+
+/* ── Sidebar Tab (hamburger, left edge) ── */
+#dax-sidebar-tab {
+  position: fixed;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  z-index: 301;
+  width: 28px; height: 48px;
+  background: var(--pb-tab-bg);
+  border: 1px solid var(--pb-tab-border);
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s;
+}
+#dax-sidebar-tab.shifted { left: 240px; }
+#dax-sidebar-tab:hover { background: var(--pb-accent-dim); }
+#dax-sidebar-tab svg { stroke: var(--pb-icon-dim); transition: stroke 0.15s; }
+#dax-sidebar-tab:hover svg { stroke: var(--pb-accent); }
+#dax-sidebar-tab.playing svg { stroke: var(--pb-accent); }
+
+/* ── Release Browser Sidebar (left) ── */
+#dax-sidebar {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: 240px;
+  background: var(--pb-sidebar-bg);
+  border-right: 1px solid var(--pb-border);
+  z-index: 290;
+  transform: translateX(-240px);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'IBM Plex Mono', monospace;
+}
+#dax-sidebar.open { transform: translateX(0); }
+#dax-sidebar.closing {
+  transform: translateX(-240px);
+  transition: transform 0.6s cubic-bezier(0.68, -0.4, 0.27, 1.3);
+}
+
+#dax-sb-header {
+  padding: 1.6rem 1rem 0.8rem;
+  font-size: 0.52rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--pb-heading);
+  flex-shrink: 0;
+}
+
+#dax-sb-search-wrap {
+  padding: 0.4rem 1rem 0.8rem;
+  flex-shrink: 0;
+}
+#dax-sb-search {
+  width: 100%;
+  background: var(--pb-text-ghost);
+  border: 1px solid var(--pb-border);
+  color: var(--pb-title-text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.6rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+#dax-sb-search::placeholder {
+  color: var(--pb-text-dim);
+}
+#dax-sb-search:focus {
+  border-color: var(--pb-accent);
+}
+
+#dax-sb-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 1rem 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pb-scrollbar) transparent;
+}
+#dax-sb-list::-webkit-scrollbar { width: 4px; }
+#dax-sb-list::-webkit-scrollbar-track { background: transparent; }
+#dax-sb-list::-webkit-scrollbar-thumb { background: var(--pb-scrollbar); border-radius: 2px; }
+
+.dax-sb-release { margin-bottom: 1rem; }
+
+.dax-sb-release-title {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pb-title-text);
+  cursor: pointer;
+  padding: 0.2rem 0;
+  transition: color 0.15s;
+}
+.dax-sb-release-title:hover { color: var(--pb-accent); }
+
+.dax-sb-track {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0 0.15rem 0.4rem;
+  cursor: pointer;
+  transition: color 0.15s;
+  color: var(--pb-track-text);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.dax-sb-track:hover { color: var(--pb-track-hover); }
+.dax-sb-track.active { color: var(--pb-accent); }
+
+.dax-sb-play-icon {
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+#dax-pb-dismiss {
+  display: none;
+  background: none; border: none;
+  color: var(--pb-icon-dim);
+  font-size: 18px; cursor: pointer;
+  padding: 0 0 0 4px;
+  transition: color 0.15s;
+}
+#dax-pb-dismiss:hover { color: var(--pb-accent); }
+
+/* ── Mobile ── */
+@media (max-width: 800px) {
+  #dax-sidebar-tab { display: flex !important; border-color: rgba(57,255,20,0.2); }
+  #dax-sidebar-tab svg { stroke: var(--pb-accent); }
+  #dax-pb-dismiss { display: block; }
+  #dax-sidebar { width: 220px; }
+  #dax-sidebar.open { transform: translateX(0); }
+  #dax-sidebar.closing { transform: translateX(-220px); }
+  #dax-sidebar-tab.shifted { left: 220px; }
+  .dax-sb-release-title { font-size: 0.5rem; }
+  .dax-sb-track { font-size: 9px; }
+  .dax-sb-release { margin-bottom: 0.7rem; }
+  #dax-sb-header { font-size: 0.44rem; padding: 1.2rem 0.8rem 0.5rem; }
+  #dax-sb-search-wrap { padding: 0.3rem 0.8rem 0.6rem; }
+  #dax-sb-search { font-size: 16px; padding: 0.4rem 0.5rem; transform: scale(0.55); transform-origin: left center; width: 182%; }
+  #dax-sb-list { padding: 0 0.8rem 1rem; }
+}
+@media (max-width: 600px) {
+  #dax-pb-info { max-width: 120px; }
+  #dax-pb-vol { display: none; }
+  #dax-pb-time { display: none; }
+}

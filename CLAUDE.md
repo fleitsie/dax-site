@@ -4,24 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Static HTML/CSS/JS artist website for DAX J (techno DJ/producer). No build system, no framework, no npm. Deployed via Netlify drag-and-drop.
+Static HTML/CSS/JS artist website for DAX J (techno DJ/producer). No build system, no framework, no npm. Deployed via GitHub Pages.
 
 ## Files
 
-- `index.html` — Design theme picker showing 4 layout concepts (T2 Greige, T3 Warm Brown, T4 Graphite, T6 Zoom)
+- `index.html` — Home page: two-column layout (BIT shows left, releases right) with magnetic zoom, player sidebar
 - `shows.html` — Tour dates, 4-column terminal layout with scramble hover effect
-- `releases.html` — Album art infinite-scroll grid with 3D tilt hover
-- `netlify.toml` — Redirects all `/*` to `/index.html` (status 200)
+- `releases.html` — MNNM BLK: album art infinite-scroll grid with 3D tilt hover, sidebar, audio player
+- `releases-data.js` — Shared release data with track audio URLs (R2 CDN)
 
 ## Design System
 
-**shows.html** uses a strict terminal/monospace aesthetic:
-- Font: IBM Plex Mono only — weights 300, 400, 500. No display fonts.
-- Colors: `#000` background, `#fff` text, `#3fe1b1` cyan accent on hover
-- All text uppercase, dense, small (0.52–0.72rem)
-- Blinking cursor `▋` in header via CSS animation
+All pages use IBM Plex Mono only (weights 300, 400, 500).
 
-**releases.html** and **index.html** use Bebas Neue + IBM Plex Mono + DM Sans.
+**Dark mode** (default): `#000` bg, `#fff` text, `#39ff14` green accent
+**Light mode** (toggle): `#B5B0A7` warm brown bg, `#1a1916` text, `#39ff14` accent
+
+Theme toggle on all pages (top-right nav). Preference stored in `localStorage` key `dax-theme`.
 
 ## Shows Data
 

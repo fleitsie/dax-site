@@ -4,37 +4,627 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DAX J</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="player.css">
   <style>
+
+    :root {
+      --bg: #000;
+      --bg-85: rgba(0,0,0,0.85);
+      --bg-92: rgba(0,0,0,0.92);
+      --bg-95: rgba(0,0,0,0.95);
+      --bg-96: rgba(10,10,10,0.96);
+      --bg-90: rgba(0,0,0,0.9);
+      --text: #fff;
+      --text-a80: rgba(255,255,255,0.8);
+      --text-a70: rgba(255,255,255,0.7);
+      --text-a60: rgba(255,255,255,0.6);
+      --text-a55: rgba(255,255,255,0.55);
+      --text-a50: rgba(255,255,255,0.5);
+      --text-a45: rgba(255,255,255,0.45);
+      --text-a40: rgba(255,255,255,0.4);
+      --text-a35: rgba(255,255,255,0.35);
+      --text-a30: rgba(255,255,255,0.3);
+      --text-a25: rgba(255,255,255,0.25);
+      --text-a20: rgba(255,255,255,0.2);
+      --text-a15: rgba(255,255,255,0.15);
+      --text-a10: rgba(255,255,255,0.1);
+      --text-a08: rgba(255,255,255,0.08);
+      --text-a06: rgba(255,255,255,0.06);
+      --text-a03: rgba(255,255,255,0.03);
+      --accent: #39ff14;
+      --accent-a30: rgba(57,255,20,0.3);
+      --accent-a08: rgba(57,255,20,0.08);
+      --shadow: rgba(0,0,0,0.8);
+    }
+
+    html.light {
+      --bg: #B5B0A7;
+      --bg-85: rgba(181,176,167,0.85);
+      --bg-92: rgba(181,176,167,0.92);
+      --bg-95: rgba(181,176,167,0.95);
+      --bg-96: rgba(181,176,167,0.96);
+      --bg-90: rgba(181,176,167,0.9);
+      --text: #1a1916;
+      --text-a80: rgba(26,25,22,0.8);
+      --text-a70: rgba(26,25,22,0.7);
+      --text-a60: rgba(26,25,22,0.6);
+      --text-a55: rgba(26,25,22,0.55);
+      --text-a50: rgba(26,25,22,0.5);
+      --text-a45: rgba(26,25,22,0.45);
+      --text-a40: rgba(26,25,22,0.4);
+      --text-a35: rgba(26,25,22,0.35);
+      --text-a30: rgba(26,25,22,0.3);
+      --text-a25: rgba(26,25,22,0.25);
+      --text-a20: rgba(26,25,22,0.2);
+      --text-a15: rgba(26,25,22,0.15);
+      --text-a10: rgba(26,25,22,0.1);
+      --text-a08: rgba(26,25,22,0.08);
+      --text-a06: rgba(26,25,22,0.1);
+      --text-a03: rgba(26,25,22,0.03);
+      --accent: #39ff14;
+      --accent-a30: rgba(57,255,20,0.3);
+      --accent-a08: rgba(57,255,20,0.08);
+      --shadow: rgba(26,25,22,0.25);
+    }
+
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      background: #000;
-      color: #fff;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.5s ease, color 0.5s ease;
       font-family: 'IBM Plex Mono', monospace;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
       -webkit-font-smoothing: antialiased;
-      overflow-y: scroll;
     }
+
+    /* Nav */
     nav {
       position: fixed; top: 0; left: 0; right: 0;
       display: flex; align-items: center; gap: 26px;
       padding: 19px 32px;
       z-index: 300;
-      font-family: 'IBM Plex Mono', monospace;
       font-size: 14px;
       font-weight: 400;
       letter-spacing: 0.22em;
       text-transform: uppercase;
+      background: var(--bg-85);
+      border-bottom: 1px solid var(--text-a06);
     }
     nav a {
-      color: rgba(255,255,255,0.5);
+      color: var(--text-a50);
       text-decoration: none;
       transition: color 0.15s;
     }
-    nav a:hover { color: #39ff14; }
-    nav a.active { color: #fff; }
+    nav a:hover { color: var(--accent); }
+    nav a.active { color: var(--text); }
+
+    /* Two-column layout */
+    .main-grid {
+      display: flex;
+      height: calc(100vh - 56px - 48px);
+      margin-top: 56px;
+    }
+
+    /* Column wrappers with fixed headers */
+    .col-wrap {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .col-wrap-left {
+      width: 18%;
+      flex-shrink: 0;
+      border-right: 1px solid var(--text-a06);
+      transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .col-wrap-left:hover { width: 50%; }
+
+    .col-wrap-right {
+      flex: 1;
+    }
+
+    .col-header {
+      padding: 16px 24px 12px;
+      font-size: 1.2rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      border-bottom: 1px solid var(--text-a06);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 0.55em;
+      height: 1em;
+      background: var(--text);
+      vertical-align: text-bottom;
+      margin-left: 1px;
+      animation: blink 0.9s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* LEFT — shows list */
+    .col-left {
+      flex: 1;
+      overflow: auto;
+      min-width: 0;
+      cursor: crosshair;
+    }
+
+    .col-left-inner {
+      padding: 30px 24px 40px;
+      width: 100%;
+      min-height: 100%;
+      will-change: transform;
+      transform-origin: center center;
+    }
+
+    /* Hide scrollbars */
+    .col-left::-webkit-scrollbar { width: 0; height: 0; }
+    .col-left { scrollbar-width: none; -ms-overflow-style: none; }
+    .col-right::-webkit-scrollbar { width: 0; height: 0; }
+    .col-right { scrollbar-width: none; -ms-overflow-style: none; }
+
+    /* Shows */
+    .shows-list { list-style: none; }
+
+    .show-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--text-a06);
+      font-size: 2.4rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: padding-left 0.2s;
+      white-space: nowrap;
+    }
+    .show-row:first-child { border-top: 1px solid var(--text-a06); }
+    .show-row:hover { padding-left: 6px; }
+
+    .show-date {
+      color: var(--text-a40);
+      flex-shrink: 0;
+      width: auto;
+    }
+
+    .show-info {
+      flex: 1;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .show-venue {
+      color: var(--text-a35);
+    }
+
+    .show-tickets {
+      flex-shrink: 0;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.2rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--accent-a30);
+      padding: 5px 14px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .show-tickets:hover {
+      background: var(--accent-a08);
+      border-color: var(--accent);
+    }
+
+    .shows-loading {
+      font-size: 2rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-a20);
+      padding: 20px 0;
+      white-space: nowrap;
+    }
+
+    .left-footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--text-a06);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-a15);
+      white-space: nowrap;
+    }
+
+    /* RIGHT — release images, starts expanded */
+    .col-right {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      cursor: crosshair;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mag-item {
+      height: 33vh;
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+      border-bottom: 1px solid var(--text-a06);
+      cursor: pointer;
+    }
+
+    .mag-wrap {
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+
+    .mag-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.5) contrast(1.1) brightness(0.7);
+      will-change: transform;
+      transition: filter 0.4s ease;
+    }
+
+    .mag-item:hover .mag-wrap img {
+      filter: saturate(0.75) contrast(1.1) brightness(0.85);
+    }
+
+    .mag-label {
+      position: absolute;
+      bottom: 14px; left: 16px;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-a70);
+      pointer-events: none;
+    }
+
+    .mag-artist {
+      position: absolute;
+      bottom: 30px; left: 16px;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-a35);
+      pointer-events: none;
+    }
+
+    .mag-catalog {
+      position: absolute;
+      top: 14px; right: 16px;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-a20);
+      pointer-events: none;
+    }
+
+    /* Modal overlay */
+    #modal-overlay {
+      position: fixed; inset: 0;
+      background: var(--bg-95);
+      z-index: 400;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    #modal-overlay.open {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #modal-overlay.visible { opacity: 1; }
+
+    #modal-content {
+      display: flex;
+      gap: 4rem;
+      max-width: 1100px;
+      width: 90%;
+      align-items: center;
+    }
+
+    #modal-art {
+      width: 400px; height: 400px;
+      flex-shrink: 0;
+      box-shadow: 0 20px 60px var(--shadow);
+    }
+
+    #modal-art img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+
+    #modal-info {
+      flex: 1; min-width: 0;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    #modal-title {
+      font-size: 1.4rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text); margin-bottom: 0.4rem;
+    }
+
+    #modal-meta {
+      font-size: 0.58rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-a35);
+      margin-bottom: 0.3rem;
+    }
+
+    #modal-catalog {
+      font-size: 0.52rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-a25);
+      margin-bottom: 1.6rem;
+    }
+
+    #modal-price {
+      font-size: 1rem; font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    #modal-price.sold-out {
+      color: var(--text-a35);
+      text-decoration: line-through;
+    }
+
+    #modal-type {
+      font-size: 0.48rem; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--text-a25);
+      margin-bottom: 1.2rem;
+    }
+
+    #modal-desc {
+      font-size: 0.56rem; line-height: 1.7;
+      letter-spacing: 0.04em;
+      color: var(--text-a55);
+      max-width: 480px;
+    }
+
+    #modal-tracklist { margin-top: 1rem; }
+
+    .modal-track {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.25rem 0; font-size: 0.58rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text-a55); cursor: pointer;
+      transition: color 0.15s;
+    }
+    .modal-track:hover { color: var(--text); }
+    .modal-track.playing { color: var(--accent); }
+
+    .mt-play { display: flex; align-items: center; flex-shrink: 0; }
+    .mt-play svg { width: 12px; height: 12px; fill: currentColor; }
+
+    #modal-links { display: flex; gap: 0.8rem; margin-top: 1.6rem; }
+
+    #modal-links a {
+      font-size: 0.48rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--text-a50);
+      text-decoration: none; border: 1px solid var(--text-a20);
+      padding: 0.4rem 1rem; transition: color 0.15s, border-color 0.15s;
+    }
+    #modal-links a:hover { color: var(--accent); border-color: var(--accent); }
+    #modal-links a.disabled {
+      color: var(--text-a25); border-color: var(--text-a10);
+      cursor: default; pointer-events: none;
+    }
+
+    .mag-item.sold-out .mag-wrap img {
+      filter: saturate(0) contrast(1.1) brightness(0.4);
+    }
+
+    #modal-close {
+      position: fixed; bottom: 3rem; left: 50%;
+      transform: translateX(-50%);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.52rem; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--text-a50);
+      background: none; border: 1px solid var(--text-a25);
+      padding: 0.6rem 2.4rem; cursor: pointer; z-index: 410;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    #modal-close:hover { color: var(--accent); border-color: var(--accent); }
+
+    #modal-close-x {
+      position: fixed; top: 20px; right: 24px; z-index: 410;
+      background: var(--bg-85);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--text-a20);
+      color: var(--text-a50);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px; width: 40px; height: 40px;
+      display: none; align-items: center; justify-content: center;
+      cursor: pointer; transition: color 0.15s, border-color 0.15s;
+    }
+    #modal-overlay.open #modal-close-x { display: flex; }
+    #modal-close-x:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Subscribe footer bar */
+    .subscribe-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 14px 32px;
+      background: var(--bg-92);
+      border-top: 1px solid var(--text-a06);
+    }
+
+    .subscribe-bar label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-a35);
+    }
+
+    .subscribe-bar input[type="email"] {
+      background: none;
+      border: 1px solid var(--text-a20);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      padding: 7px 14px;
+      width: 240px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .subscribe-bar input:focus { border-color: var(--accent); }
+
+    .subscribe-bar button {
+      background: none;
+      border: 1px solid var(--text-a25);
+      color: var(--text-a50);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 7px 20px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .subscribe-bar button:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* Modal track play buttons */
+    .modal-track {
+      cursor: pointer;
+      transition: color 0.12s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-track:hover { color: var(--text-a80); }
+    .modal-track.playing { color: var(--accent); }
+    .modal-track .mt-play {
+      width: 12px; height: 12px; flex-shrink: 0;
+      opacity: 0; transition: opacity 0.12s;
+    }
+    .modal-track:hover .mt-play { opacity: 1; }
+    .modal-track.playing .mt-play { opacity: 1; }
+    .modal-track .mt-play svg { fill: var(--text-a40); width: 12px; height: 12px; }
+    .modal-track.playing .mt-play svg { fill: var(--accent); }
+
+    @media (max-width: 800px) {
+      nav { font-size: 13px; padding: 14px 20px; gap: 18px; }
+      .main-grid { flex-direction: column; height: auto; }
+      .col-wrap-left { width: 100%; max-height: 40vh; }
+      .col-wrap-left:hover { width: 100%; }
+      .col-wrap-right { width: 100%; }
+      html, body { height: auto; overflow-y: scroll; }
+
+      .show-row {
+        font-size: 0.75rem;
+        gap: 10px;
+        padding: 8px 0;
+      }
+      .show-tickets {
+        font-size: 0.5rem;
+        padding: 3px 8px;
+      }
+      .col-wrap-left { max-height: 35vh; }
+
+      #modal-overlay.open {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: 2rem 0 5rem;
+      }
+      #modal-content {
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 92%;
+        align-items: center;
+      }
+      #modal-art { width: 70vw; height: 70vw; max-width: 320px; max-height: 320px; }
+      #modal-info { text-align: center; }
+      #modal-title { font-size: 1rem; }
+      #modal-price { font-size: 0.85rem; }
+      #modal-desc { font-size: 0.52rem; max-width: 100%; }
+      #modal-tracklist { text-align: left; }
+      .modal-track { justify-content: center; font-size: 0.52rem; }
+      #modal-links { justify-content: center; }
+      #modal-close {
+        position: sticky; bottom: 0;
+        left: 0; right: 0; width: 100%;
+        transform: none;
+        background: var(--bg);
+        border-radius: 0;
+        padding: 1rem;
+        font-size: 0.5rem;
+        z-index: 410;
+      }
+
+      .mag-item { height: 45vh; }
+    }
+
+    /* Light mode image adjustments */
+    html.light .mag-wrap img {
+      filter: saturate(0.85) contrast(1.05) brightness(1);
+    }
+    html.light .mag-item:hover .mag-wrap img {
+      filter: saturate(0.9) contrast(1.05) brightness(1.02);
+    }
+    html.light .mag-item {
+      border-radius: 3px;
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      margin-left: auto;
+      display: flex; align-items: center;
+      cursor: pointer;
+    }
+    .theme-toggle-track {
+      width: 32px; height: 16px;
+      background: var(--text-a10);
+      border-radius: 8px;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+    .theme-toggle-thumb {
+      width: 12px; height: 12px;
+      background: var(--text-a50);
+      border-radius: 50%;
+      position: absolute;
+      top: 2px; left: 2px;
+      transition: left 0.3s ease, background 0.3s ease;
+    }
+    html.light .theme-toggle-thumb { left: 18px; }
+    html.light .theme-toggle-track { background: var(--text-a25); }
+
+    /* Sound toggle */
+    .sound-toggle {
+      display: flex; align-items: center;
+      cursor: pointer;
+      color: var(--text-a35);
+      transition: color 0.2s;
+      margin-left: 12px;
+    }
+    .sound-toggle:hover { color: var(--text-a70); }
+    .sound-toggle svg { width: 14px; height: 14px; }
+    .sound-toggle .sound-dot { transition: opacity 0.3s; }
+    .sound-toggle.off { color: var(--text-a15); }
+    .sound-toggle.off .sound-dot { opacity: 0; }
   </style>
 </head>
 <body>
@@ -42,10 +632,897 @@
     <a href="index.html" class="active">Home</a>
     <a href="shows.html">Shows</a>
     <a href="releases.html">MNNM BLK</a>
+    <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-track"><div class="theme-toggle-thumb"></div></div></div>
+    <div class="sound-toggle" id="soundToggle" title="Toggle UI sounds">
+      <svg viewBox="0 0 16 16" fill="currentColor" stroke="none">
+        <circle cx="8" cy="8" r="2"/>
+        <circle class="sound-dot" cx="3" cy="4" r="1"/>
+        <circle class="sound-dot" cx="13" cy="4" r="1"/>
+        <circle class="sound-dot" cx="3" cy="12" r="1"/>
+        <circle class="sound-dot" cx="13" cy="12" r="1"/>
+        <circle class="sound-dot" cx="8" cy="1.5" r="0.8"/>
+        <circle class="sound-dot" cx="8" cy="14.5" r="0.8"/>
+        <circle class="sound-dot" cx="1.5" cy="8" r="0.8"/>
+        <circle class="sound-dot" cx="14.5" cy="8" r="0.8"/>
+      </svg>
+    </div>
   </nav>
+
+  <!-- Modal -->
+  <div id="modal-overlay">
+    <button id="modal-close-x">&times;</button>
+    <div id="modal-content">
+      <div id="modal-art"><img id="modal-art-img" src="" alt=""></div>
+      <div id="modal-info">
+        <div id="modal-title"></div>
+        <div id="modal-meta"></div>
+        <div id="modal-catalog"></div>
+        <div id="modal-price"></div>
+        <div id="modal-type"></div>
+        <div id="modal-desc"></div>
+        <div id="modal-tracklist"></div>
+        <div id="modal-links"></div>
+      </div>
+    </div>
+    <button id="modal-close">Close</button>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- Left: shows -->
+    <div class="col-wrap col-wrap-left">
+      <div class="col-header">Upcoming Shows<span class="cursor"></span></div>
+      <div class="col-left" id="colLeft">
+        <div class="col-left-inner" id="colLeftInner">
+          <div class="shows-list" id="showsList">
+            <div class="shows-loading">Loading shows...</div>
+          </div>
+          <div class="left-footer">&copy; 2026 Dax J</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: merch -->
+    <div class="col-wrap col-wrap-right">
+      <div class="col-header">Merch<span class="cursor"></span></div>
+      <div class="col-right" id="colRight"></div>
+    </div>
+
+  </div>
+
+  <div class="subscribe-bar">
+    <label>Stay updated</label>
+    <input type="email" placeholder="your@email.com">
+    <button>Subscribe</button>
+  </div>
+
+  <script src="merch-data.js"></script>
   <script>
+    var RELEASES = [
+      {
+        title: "Reign of Terror",
+        artist: "Dax J",
+        desc: "A classic Dax J ep gets its Monnom Black debut, originally released in 2016 on Electric Deluxe. Vinyl coming soon",
+        label: "Monnom Black",
+        year: 2025,
+        catalog: "MONNOMX02",
+        art: "images%20from%20me%20to%20you/displaywindow/illusions-of-power.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/reign-of-terror", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Reign Of Terror", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-01-reign-of-terror.mp3" },
+          { side: "2", title: "Harry The Hatchet", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-02-harry-the-hatchet.mp3" },
+          { side: "3", title: "Cartagena Square", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-03-cartagena-square.mp3" },
+          { side: "4", title: "Zulu Nation", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-04-zulu-nation.mp3" },
+          { side: "5", title: "The Quest", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-05-the-quest.mp3" },
+          { side: "6", title: "Breaking Visions", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnomx02-06-breaking-visions.mp3" },
+        ]
+      },
+      {
+        title: "Quantum Leap EP",
+        artist: "LPV",
+        desc: "LPV makes a striking debut on Monnom Black with an expansive double EP, delivering eight meticulously crafted tracks that fuse dub, bleep, and bass into peak-time weapons. His release showcases a dynamic range, from intense, Basic Channel-inspired dub techno workouts to deeper, bleep-laced techno grooves that weave hypnotic precision with relentless drive. Each track is a versatile cut, crafted for special moments, blending atmospheric depth with pure momentum, cementing LPV's arrival as a formidable force.",
+        label: "Monnom Black",
+        year: 2025,
+        catalog: "MONNOM039",
+        art: "images%20from%20me%20to%20you/displaywindow/a1876063433_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/quantum-leap-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Quantum Leap", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-01-quantum-leap.mp3" },
+          { side: "2", title: "Beyond The Veil", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-02-beyond-the-veil.mp3" },
+          { side: "3", title: "Spatial Interference", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-03-spatial-interference.mp3" },
+          { side: "4", title: "Broken Tape", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-04-broken-tape.mp3" },
+          { side: "5", title: "Warp Drive Wander", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-05-warp-drive-wander.mp3" },
+          { side: "6", title: "Black Sand Beach", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-06-black-sand-beach.mp3" },
+          { side: "7", title: "97100", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-07-97100.mp3" },
+          { side: "8", title: "Chillness", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom039-08-chillness.mp3" },
+        ]
+      },
+      {
+        title: "Beyond The Visible Spectrum EP",
+        artist: "UMWELT",
+        desc: "Umwelt unveils his latest EP, featuring six tracks that highlight his unique analog style. Fusing techno, electro, and machine-driven rhythms, crafting his signature sonic landscapes that define the Umwelt sound.",
+        label: "Monnom Black",
+        year: 2025,
+        catalog: "MONNOM038",
+        art: "images%20from%20me%20to%20you/displaywindow/a1702394469_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/beyond-the-visible-spectrum-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Beyond The Visible Spectrum", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom038-01-beyond-the-visible-spectrum.mp3" },
+          { side: "2", title: "Holographic Existence", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom038-02-holographic-existence.mp3" },
+          { side: "3", title: "The Path of Loneliness", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom038-03-the-path-of-loneliness.mp3" },
+          { side: "4", title: "Bodyhost", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom038-04-bodyhost.mp3" },
+          { side: "5", title: "Fugitive Forms", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom038-05-fugitive-forms.mp3" },
+          { side: "6", title: "Ghostdancer", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom038-06-ghostdancer.mp3" },
+        ]
+      },
+      {
+        title: "Mechanized EP",
+        artist: "Lars Huismann",
+        desc: "Berlin-based techno producer Lars Huismann makes his debut on Monnom Black with eight tracks crafted with meticulous precision, blending hypnotic melodies and intense dubbed-out grooves.\n\n\n\nsome track snippets -  www.instagram.com/p/DCRNVpIsOXX/?img_index=1",
+        label: "Monnom Black",
+        year: 2024,
+        catalog: "MONNOM037",
+        art: "images%20from%20me%20to%20you/displaywindow/a2791266284_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/mechanized-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Functions", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-01-functions.mp3" },
+          { side: "2", title: "Dominion", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-02-dominion.mp3" },
+          { side: "3", title: "Orbital", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-03-orbital.mp3" },
+          { side: "4", title: "Claws", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-04-claws.mp3" },
+          { side: "5", title: "Somatic", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-05-somatic.mp3" },
+          { side: "6", title: "Aeon", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-06-aeon.mp3" },
+          { side: "7", title: "Metamorphosis", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-07-metamorphosis.mp3" },
+          { side: "8", title: "Diffusion", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom037-08-diffusion.mp3" },
+        ]
+      },
+      {
+        title: "War Is Peace, Freedom is Slavery, Ignorance is Strength",
+        artist: "Dax J",
+        desc: "Referencing the political slogans in Orwell's dystopian novel 1984, where language is manipulated to control and oppress, we find a stark reflection in modern society, where truth is frequently distorted, and freedoms are increasingly compromised—echoing the very tactics Orwell warned against",
+        label: "Monnom Black",
+        year: 2024,
+        catalog: "MONNOM036",
+        art: "images%20from%20me%20to%20you/displaywindow/a2275957915_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/war-is-peace-freedom-is-slavery-ignorance-is-strength", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Royal Flush", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-01-royal-flush.mp3" },
+          { side: "2", title: "Liberation Techniques", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-02-liberation-techniques.mp3" },
+          { side: "3", title: "Femme Fatale", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-03-femme-fatale.mp3" },
+          { side: "4", title: "Anti Gravity Racing", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-04-anti-gravity-racing.mp3" },
+          { side: "5", title: "Orwellian Times", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-05-orwellian-times.mp3" },
+          { side: "6", title: "No Time To Lose", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-06-no-time-to-lose.mp3" },
+          { side: "7", title: "Tropical Grift", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-07-tropical-grift.mp3" },
+          { side: "8", title: "Overclocking", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-08-overclocking.mp3" },
+          { side: "9", title: "Meet Your Maker", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-09-meet-your-maker.mp3" },
+          { side: "10", title: "Not tonight pal", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom036-10-not-tonight-pal.mp3" },
+        ]
+      },
+      {
+        title: "The World Of Monnom Black III",
+        artist: "Monnom Black",
+        desc: "",
+        label: "Monnom Black",
+        year: 2023,
+        catalog: "MONNOM035",
+        art: "images%20from%20me%20to%20you/displaywindow/a1286263440_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/the-world-of-monnom-black-iii", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Silhouetten der Nacht", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-01-silhouetten-der-nacht.mp3" },
+          { side: "2", title: "Ceoid", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-02-ceoid.mp3" },
+          { side: "3", title: "Basikstruktur", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-03-basikstruktur.mp3" },
+          { side: "4", title: "Echoes of The Storm", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-04-echoes-of-the-storm.mp3" },
+          { side: "5", title: "Timeline Off", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-05-timeline-off.mp3" },
+          { side: "6", title: "Passing Clouds", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-06-passing-clouds.mp3" },
+          { side: "7", title: "Arrival", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-07-arrival.mp3" },
+          { side: "8", title: "Reunion", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-08-reunion.mp3" },
+          { side: "9", title: "Euphoria", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-09-euphoria.mp3" },
+          { side: "10", title: "Magma", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-10-magma.mp3" },
+          { side: "11", title: "Planga", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-11-planga.mp3" },
+          { side: "12", title: "Raw Audio Models", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-12-raw-audio-models.mp3" },
+          { side: "13", title: "One Step Closer to the Truth", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-13-one-step-closer-to-the-truth.mp3" },
+          { side: "14", title: "Predator in the Zoo", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-14-predator-in-the-zoo.mp3" },
+          { side: "15", title: "Dreampunk", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-15-dreampunk.mp3" },
+          { side: "16", title: "Mars", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-16-mars.mp3" },
+          { side: "17", title: "Take it or Leave it", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-17-take-it-or-leave-it.mp3" },
+          { side: "18", title: "Plane to Lisboa", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-18-plane-to-lisboa.mp3" },
+          { side: "19", title: "Surface", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-19-surface.mp3" },
+          { side: "20", title: "To the Edge", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom035-20-to-the-edge.mp3" },
+        ]
+      },
+      {
+        title: "Legacy LP",
+        artist: "Thomas P. Heckmann",
+        desc: "Monnom Black presents\u201d Legacy\u201c, an introspective journey through the illustrious career of the legendary German electronic artist, Thomas P. Heckmann. This momentous release marks the first time Heckmann curates a comprehensive compilation, delving into all his various aliases and timeless tracks, including Knarz, AGE, Heckmann, Skydiver, Spectral Emotions, Purple Plejade, and the infamous DRAX, which commemorates its 30th anniversary this year. \"Legacy\" encompasses a total of 23 tracks, 17 slated across three slabs of vinyl with an additonal six digital bonuses, featuring the cream of Heckmann's underground hits, such as \"Himmel Und Hoelle,\" \"Tanzmaschine,\" \"Teufelswerk,\" and \"EBM1,\" alongside lesser-known gems like \"Chiswick Days\" and \"Parnophelia.\" Throughout his career, Heckmann has showcased his prowess across multiple shades of electronic genres. However, it is his contributions to Industrial, EBM-Techno, Acid, and Experimental that have propelled him to notoriety. In 1994, Heckmann's acid-infused masterpiece, \"Amphetamine\" as DRAX LTD. II, launched him into the global spotlight as a force to be reckoned with. Having released his latest studio album, \"Body Music,\" in 2018 on Monnom Black, Heckmann subsequently featured on The World of Monnom Black compilations. Now, he returns to celebrate his groundbreaking contributions to electronic music and enduring Legacy with this special release.",
+        label: "Monnom Black",
+        year: 2023,
+        catalog: "MONNOM034",
+        art: "images%20from%20me%20to%20you/displaywindow/a3240486097_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/legacy-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Himmel & Hoelle", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-01-himmel-hoelle.mp3" },
+          { side: "2", title: "Realms", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-02-realms.mp3" },
+          { side: "3", title: "EBM1", src: "" },
+          { side: "4", title: "Teufelswerk", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-04-teufelswerk.mp3" },
+          { side: "5", title: "Dunkel", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-05-dunkel.mp3" },
+          { side: "6", title: "Amphetamine", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-06-amphetamine.mp3" },
+          { side: "7", title: "Phosphene", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-07-phosphene.mp3" },
+          { side: "8", title: "II-1", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-08-ii-1.mp3" },
+          { side: "9", title: "Tanzmaschine", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-09-tanzmaschine.mp3" },
+          { side: "10", title: "Kind der Nacht", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-10-kind-der-nacht.mp3" },
+          { side: "11", title: "Violent Stains", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-11-violent-stains.mp3" },
+          { side: "12", title: "Interior", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-12-interior.mp3" },
+          { side: "13", title: "CPU 93 Moulder", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-13-cpu-93-moulder.mp3" },
+          { side: "14", title: "Virtual Plane", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-02-virtual-plane.mp3" },
+          { side: "15", title: "Back Up", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-15-back-up.mp3" },
+          { side: "16", title: "Body Music EBM3", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-16-body-music-ebm3.mp3" },
+          { side: "17", title: "Parnophelia", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-17-parnophelia.mp3" },
+          { side: "18", title: "Skydiver", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-18-skydiver.mp3" },
+          { side: "19", title: "Spectral Emotions", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-19-spectral-emotions.mp3" },
+          { side: "20", title: "Art Mechanique", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-20-art-mechanique.mp3" },
+          { side: "21", title: "Chiswick days", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-21-chiswick-days.mp3" },
+          { side: "22", title: "Belzebub", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-22-belzebub.mp3" },
+          { side: "23", title: "Doomsday", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom034-23-doomsday.mp3" },
+        ]
+      },
+      {
+        title: "Digi Spa EP",
+        artist: "LDS",
+        desc: "LDS returns to Monnom Black and hits a career high with his new ep, an astonishing take on modern dub techno featuring 6 tracks of futuristic grooves. LDS is an artist that stands at the cutting edge of technology, influenced by artificial intelligence and digital innovation. The ep showcases his unique production aesthetic, complex sound design and nuanced details that place him a cut above the rest. AI was used to create the artwork for the release, merging together the digital and physical realms, moving ever closer to the singularity.",
+        label: "Monnom Black",
+        year: 2023,
+        catalog: "MONNOM033",
+        art: "images%20from%20me%20to%20you/displaywindow/a1405643370_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/digi-spa-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Texture Mapping (Avantgarde Radio Mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom033-01-texture-mapping-avantgarde-radio-mix.mp3" },
+          { side: "2", title: "Nord Dab", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom033-02-nord-dab.mp3" },
+          { side: "3", title: "GLO3", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom033-03-glo3.mp3" },
+          { side: "4", title: "Digi Spa", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom033-04-digi-spa.mp3" },
+          { side: "5", title: "Fuenf Formen", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom033-05-fuenf-formen.mp3" },
+          { side: "6", title: "Texture Mapping (Thema Mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom033-06-texture-mapping-thema-mix.mp3" },
+        ]
+      },
+      {
+        title: "Petra 02 (Dax J Remix) EP",
+        artist: "Christopher Just",
+        desc: "Electronic pioneer, Christopher Just's initial music came out in 1993 under his own name and various pseudonyms, like \u201cDJ One finger\u201d and \u201cilsa Gold\u201d. The \u201cPetra\u201d project was originally released in 1996 showcasing the ferocious sound of 90\u2019s analog hardware. Over 25 years later Dax J presents his colossal remix of the relativity unknown and now unearthed gem that went under the radar for so many years. The B - side of the record comes with a signature Dax J deep percussive groove, \u201cThe Train\u201d",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM032",
+        art: "images%20from%20me%20to%20you/displaywindow/a1082716305_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/petra-02-dax-j-remix-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Petra 02 (Dax J Remix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom032-01-petra-02-dax-j-remix.mp3" },
+          { side: "2", title: "The Train", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom032-02-the-train.mp3" },
+        ]
+      },
+      {
+        title: "Generation Lost EP",
+        artist: "Ryuji Takeuchi",
+        desc: "Legendary Techno artist from Japan, Ryuji Takeuchi, releases his first EP on Monnom Black. Generation Lost EP represents a new evolved sound from Ryuji, inspired from his roots, laying down his signature grooves of percussive driving techno and the classic sound that he pioneered since the late 90's and early 2000's!\n\n\n\nArtwork photograph taken by Normski in LA, 1990",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM031",
+        art: "images%20from%20me%20to%20you/displaywindow/a3288770580_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/generation-lost-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Crevice", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom031-01-crevice.mp3" },
+          { side: "2", title: "Dignity", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom031-02-dignity.mp3" },
+          { side: "3", title: "Open Seam", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom031-03-open-seam.mp3" },
+          { side: "4", title: "Enlightenment", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom031-04-enlightenment.mp3" },
+        ]
+      },
+      {
+        title: "Brixton EP",
+        artist: "Dax J",
+        desc: "Dax J presents a new EP of advanced percussive, acid techno & warehouse grooves. Brixton EP\n\n\n\nAll tracks written, produced and mixed by Dax J, 2022\n\n\n\nPicture shot by acclaimed photographer Masataka Ishida, in Brixton London, 1999",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM030",
+        art: "images%20from%20me%20to%20you/displaywindow/a3456703649_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/brixton-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Brixton", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom030-01-brixton.mp3" },
+          { side: "2", title: "Reshape The Future", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom030-02-reshape-the-future.mp3" },
+          { side: "3", title: "World Deception Alliance", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom030-03-world-deception-alliance.mp3" },
+          { side: "4", title: "China White", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom030-04-china-white.mp3" },
+        ]
+      },
+      {
+        title: "Dead Eyes Society LP",
+        artist: "Umwelt",
+        desc: "Monnom Black presents Umwelt's new studio album \u201cDead Eyes Society\u201d, a stunning piece of work and the culmination of 30 years of artistic refinement. Umwelt is a truly rare underground electronic artist in the world of Techno and is without doubt one of the most important and prolific French electronic producers of a generation. A techno activist since the 90's boasting over 50 releases to date. Throughout his career he has crafted a pure analog, unmistakable, signature sound, mixing dark, cinematic melancholy with the electro-techno grit he is so renowned for. \n\n\n\nThe sound of the album is influenced by late 90\u2019s and early 00\u2019s techno contrasted with an avant-garde approach to recording and sound design. Throughout the album Umwelt lays down beautiful grooves and his space techno melodies in uncompromising fashion, blended with classic synthwork and run through his famous analog outboard chains. With \u201cDead Eyes Society\u201d Umwelt has crafted his most powerful techno album to date and solidified himself as an exceptional artist and titanic figure of modern electronic music.\n\n\n\nReleased 22nd July on Double 12\" Vinyl + Digital\n\n\n\nPicture by acclaimed photographer Cam Linh, her work has been featured across multiple Parisian exhibitions and has worked closely with Umwelt over the past years.",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM029",
+        art: "images%20from%20me%20to%20you/displaywindow/a3612426603_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/dead-eyes-society-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Generation One", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-01-generation-one.mp3" },
+          { side: "2", title: "Captive Universe", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-02-captive-universe.mp3" },
+          { side: "3", title: "Dead Eyes Society", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-03-dead-eyes-society.mp3" },
+          { side: "4", title: "Brightness Falls From The Air", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-04-brightness-falls-from-the-air.mp3" },
+          { side: "5", title: "The Lost Dreamer", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-05-the-lost-dreamer.mp3" },
+          { side: "6", title: "Codebreaker", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-06-codebreaker.mp3" },
+          { side: "7", title: "Light Chaser", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-07-light-chaser.mp3" },
+          { side: "8", title: "Dark Star Renegade", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-08-dark-star-renegade.mp3" },
+          { side: "9", title: "Conversation In The Dark Waters", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom029-09-conversation-in-the-dark-waters.mp3" },
+        ]
+      },
+      {
+        title: "Soul Enforcer LP",
+        artist: "Dax J",
+        desc: "19-track album Soul Enforcer LP, Monnom Black 028. Techno, Jungle, dub, acid, recorded from 2005 - 2022.",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM028",
+        art: "images%20from%20me%20to%20you/displaywindow/a1410557316_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/soul-enforcer-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Sunrise in Kyiv", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-01-sunrise-in-kyiv.mp3" },
+          { side: "2", title: "The Final Wavescape", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-02-the-final-wavescape.mp3" },
+          { side: "3", title: "Deepest Border Lines", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-03-deepest-border-lines.mp3" },
+          { side: "4", title: "Giza", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-04-giza.mp3" },
+          { side: "5", title: "Troubles With Tina (unfiltered mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-05-troubles-with-tina-unfiltered-mix.mp3" },
+          { side: "6", title: "Skyline At Night", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-06-skyline-at-night.mp3" },
+          { side: "7", title: "Stealth Mode", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-07-stealth-mode.mp3" },
+          { side: "8", title: "Fills Munk", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-08-fills-munk.mp3" },
+          { side: "9", title: "Praying To The Porcelain God", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-09-praying-to-the-porcelain-god.mp3" },
+          { side: "10", title: "Walking Home From The Club On A Cold Winter Morning", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-10-walking-home-from-the-club-on-a-cold-winter-morning.mp3" },
+          { side: "11", title: "T3000", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-11-t3000.mp3" },
+          { side: "12", title: "Virgil's Pad (breakbeat mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-12-virgils-pad-breakbeat-mix.mp3" },
+          { side: "13", title: "Summer In Tottenham (unreleased 2005)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-13-summer-in-tottenham-unreleased-2005.mp3" },
+          { side: "14", title: "Passing Over", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-14-passing-over.mp3" },
+          { side: "15", title: "The Director Of Chaos", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-15-the-director-of-chaos.mp3" },
+          { side: "16", title: "Ur Names Not Down Ur Not Coming In", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-16-ur-names-not-down-ur-not-coming-in.mp3" },
+          { side: "17", title: "Demised (chill mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-17-demised-chill-mix.mp3" },
+          { side: "18", title: "Jungler '05", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-18-jungler-05.mp3" },
+          { side: "19", title: "Fin (live take edit mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom028-19-fin-live-take-edit-mix.mp3" },
+        ]
+      },
+      {
+        title: "Daytona EP",
+        artist: "Fractions",
+        desc: "Delivering their signature no-nonsense EBM infused techno, Fractions return to Monnom Black with their 2nd highly anticipated EP of uncompromised club music that crosses the boundaries of sonic analogue sound design with innovative results. The ep is the sublimation of experimental overtones and modular beats, to make for a diverse approach that challenges the existing order in electronic music. \u201cOur Daytona EP is an evolution of our sound, thanks to a new hardware-centric production featuring various machines and a new modular rack\u201d - Fractions Picture by acclaimed photographer Molly Macindoe taken from - Out of Order, a photobook documenting the free party movement of the 90\u2019s.",
+        label: "Monnom Black",
+        year: 2022,
+        catalog: "MONNOM027",
+        art: "images%20from%20me%20to%20you/displaywindow/a4279162120_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/daytona-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Daytona", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom027-01-daytona.mp3" },
+          { side: "2", title: "Hater Squad", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom027-02-hater-squad.mp3" },
+          { side: "3", title: "Dead Air", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom027-03-dead-air.mp3" },
+          { side: "4", title: "Sonder", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom027-04-sonder.mp3" },
+        ]
+      },
+      {
+        title: "Utopian Surrealism LP",
+        artist: "Dax J",
+        desc: "Dax J's Utopian Surrealism observes our transition into a new dystopian era. It reflects the strain in distinguishing truth and reality from the ever-growing radicalised networks of global manipulation, whilst extreme polarised realities, AI, deception, and mass poverty stay hidden away as we accelerate into the next stage of evolution. Utopian Surrealism is Dax J's 3rd studio album. Written during lockdown, Inspired by Yuval Noah Harari's book Sapiens.",
+        label: "Monnom Black",
+        year: 2021,
+        catalog: "MONNOM026",
+        art: "images%20from%20me%20to%20you/displaywindow/a3414222201_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/utopian-surrealism-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Universal Future Sound", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom025-01-universal-future-sound.mp3" },
+          { side: "2", title: "East London Back Alleys (Jungle Techno Mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom026-02-east-london-back-alleys-jungle-techno-mix.mp3" },
+          { side: "3", title: "Opioiding (Fentanyl Mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom026-03-opioiding-fentanyl-mix.mp3" },
+          { side: "4", title: "The Second Renaissance (Final Dystopia)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom026-04-the-second-renaissance-final-dystopia.mp3" },
+          { side: "5", title: "Utopian Surrealism", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom025-03-utopian-surrealism.mp3" },
+          { side: "6", title: "Anthropic Demise", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom026-06-anthropic-demise.mp3" },
+          { side: "7", title: "Industrial Cyber Technologies", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom026-07-industrial-cyber-technologies.mp3" },
+          { side: "8", title: "None The Wiser", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom026-08-none-the-wiser.mp3" },
+          { side: "9", title: "Simulated Reality (Terafactory AI Electronics)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom025-02-simulated-reality-terafactory-ai-electronics.mp3" },
+          { side: "10", title: "Sentient Glory", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom026-10-sentient-glory.mp3" },
+        ]
+      },
+      {
+        title: "Utopian Surrealism Album Sampler",
+        artist: "Dax J",
+        desc: "",
+        label: "Monnom Black",
+        year: 2021,
+        catalog: "MONNOM025",
+        art: "images%20from%20me%20to%20you/displaywindow/a3592528568_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/utopian-surrealism-album-sampler", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Universal Future Sound", src: "" },
+          { side: "2", title: "Simulated Reality (Terafactory AI Electronics)", src: "" },
+          { side: "3", title: "Utopian Surrealism", src: "" },
+        ]
+      },
+      {
+        title: "Unholy Empire",
+        artist: "Aahan",
+        desc: "Release date: 15th January 2021 Aahan releases his first EP on Monnom Black, the Toronto artist fuses 4 rough techno cuts of unrelenting pressure together with his signature percussive grooves. CONTACT EMAIL: hatemusic1@gmail.com",
+        label: "Monnom Black",
+        year: 2021,
+        catalog: "MONNOM024",
+        art: "images%20from%20me%20to%20you/displaywindow/a2412796709_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/unholy-empire-3", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Body Shop", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom024-01-body-shop.mp3" },
+          { side: "2", title: "Are You Feeling Oppressed ft The Dag", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom024-02-are-you-feeling-oppressed-ft-the-dag.mp3" },
+          { side: "3", title: "Understand And Heal", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom024-03-understand-and-heal.mp3" },
+          { side: "4", title: "Unholy Empire", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom024-04-unholy-empire.mp3" },
+        ]
+      },
+      {
+        title: "Organic Computer Awareness",
+        artist: "LDS",
+        desc: "Known for his futuristic, dub techno sound, Stuttgart's LDS releases his 1st full EP on Monnom Black to shine some light during these cold isolated times. The deep, innovative ambiences take influence from artificial intelligence, creating LDS's unique and unconventional take on dub techno and the sound of the future. LDS brings forth his vision during an uncertain time for both nightlife and the world whilst humanity stands at the hinge of merging with machines. Hardwax - \"Excellently refreshing, inducing Dub Techno warp flight!\"",
+        label: "Monnom Black",
+        year: 2020,
+        catalog: "MONNOM023",
+        art: "images%20from%20me%20to%20you/displaywindow/a2700681520_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/organic-computer-awareness", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "The 0 To 1 Infinity", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom023-01-the-0-to-1-infinity.mp3" },
+          { side: "2", title: "Grain Rain", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom023-02-grain-rain.mp3" },
+          { side: "3", title: "Kgtrs", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom023-03-kgtrs.mp3" },
+          { side: "4", title: "Punk Coding", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom023-04-punk-coding.mp3" },
+          { side: "5", title: "Organic Computer Awareness", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom023-05-organic-computer-awareness.mp3" },
+          { side: "6", title: "The Extasy Of Constructing", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom023-06-the-extasy-of-constructing.mp3" },
+        ]
+      },
+      {
+        title: "End Of Opulence",
+        artist: "Dax J",
+        desc: "Dax J returns to his label Monnom Black, bringing with him four cuts of pulsating techno!",
+        label: "Monnom Black",
+        year: 2020,
+        catalog: "MONNOM022",
+        art: "images%20from%20me%20to%20you/displaywindow/a4264431482_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/end-of-opulence", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "End Of Opulence", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom022-01-end-of-opulence.mp3" },
+          { side: "2", title: "Pulse Wave", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom022-02-pulse-wave.mp3" },
+          { side: "3", title: "Counter Culture", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom022-03-counter-culture.mp3" },
+          { side: "4", title: "Self Medication", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom022-04-self-medication.mp3" },
+        ]
+      },
+      {
+        title: "NITE NRG",
+        artist: "Fractions",
+        desc: "Fractions return to Monnom Black with a full EP of sonic disturbances and ominous cuts. Their integral work on this project is the perfect sublimation of acid and techno.",
+        label: "Monnom Black",
+        year: 2020,
+        catalog: "MONNOM021",
+        art: "images%20from%20me%20to%20you/displaywindow/a1574826057_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/nite-nrg", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "NITE NRG", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom021-01-nite-nrg.mp3" },
+          { side: "2", title: "Do You Believe", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom021-02-do-you-believe.mp3" },
+          { side: "3", title: "All The Streets Are Silent", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom021-03-all-the-streets-are-silent.mp3" },
+          { side: "4", title: "Hive Mind", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom021-04-hive-mind.mp3" },
+        ]
+      },
+      {
+        title: "The World Of Monnom Black II",
+        artist: "Various Artists",
+        desc: "To celebrate its landmark 20th release, Monnom Black invites you to enter The World of Monnom Black II \u2013 a return trip to techno\u2019s most uncompromising landscape. The triple vinyl release features 14 hand-picked contributions from the label\u2019s trusted collaborators alongside cutting-edge artists new to the roster; making this compilation one of the label\u2019s most varied and innovative collections yet.",
+        label: "Monnom Black",
+        year: 2019,
+        catalog: "MONNOM020",
+        art: "images%20from%20me%20to%20you/displaywindow/a2701339670_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/the-world-of-monnom-black-ii", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Zero Ground", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-01-zero-ground.mp3" },
+          { side: "2", title: "Drive Me Up", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-02-drive-me-up.mp3" },
+          { side: "3", title: "Hope Reminds Me Of Her", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-03-hope-reminds-me-of-her.mp3" },
+          { side: "4", title: "Big Bad City (Dax J Mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-04-big-bad-city-dax-j-mix.mp3" },
+          { side: "5", title: "Atlantyda", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-05-atlantyda.mp3" },
+          { side: "6", title: "Algorithmic Reality", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-06-algorithmic-reality.mp3" },
+          { side: "7", title: "Distant Voices", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-07-distant-voices.mp3" },
+          { side: "8", title: "God Knows You're A Cunt", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-08-god-knows-youre-a-cunt.mp3" },
+          { side: "9", title: "Holocene", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-09-holocene.mp3" },
+          { side: "10", title: "Zephyr", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-10-zephyr.mp3" },
+          { side: "11", title: "Venting ft. The Dag", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-11-venting-ft-the-dag.mp3" },
+          { side: "12", title: "Lorry", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-12-lorry.mp3" },
+          { side: "13", title: "Kind Der Nacht", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-13-kind-der-nacht.mp3" },
+          { side: "14", title: "Devious Methods", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom020-14-devious-methods.mp3" },
+        ]
+      },
+      {
+        title: "King Of The Sewers EP",
+        artist: "Dax J & UVB",
+        desc: "To help celebrate the release of 'King Of The Sewers' EP on Monnom Black, we caught up with Berlin-based producers Dax J and UVB for a quick-fire interview in order to learn more about the intricacies of their studio collaboration and how the love of 135 BPM techno helped forge their friendship.",
+        label: "Monnom Black",
+        year: 2019,
+        catalog: "MONNOM019",
+        art: "images%20from%20me%20to%20you/displaywindow/a1790919903_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/king-of-the-sewers-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Murder Wave", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom019-01-murder-wave.mp3" },
+          { side: "2", title: "Enrico (Don't cry you can live)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom019-02-enrico-dont-cry-you-can-live.mp3" },
+          { side: "3", title: "Killer & Clutch", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom019-03-killer-clutch.mp3" },
+          { side: "4", title: "King Of The Sewers", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom019-04-king-of-the-sewers.mp3" },
+        ]
+      },
+      {
+        title: "Chaos Come To Conquer EP",
+        artist: "Dax J",
+        desc: "Dax J returns to Monnom Black with an ep of uncompromising warehouse tracks, drifting through acid, UK & jungle influences to create an iconic onslaught of ominous Techno cuts.",
+        label: "Monnom Black",
+        year: 2019,
+        catalog: "MONNOM018",
+        art: "images%20from%20me%20to%20you/displaywindow/a73328866_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/chaos-come-to-conquer-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Chaos Come To Conquer", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom018-01-chaos-come-to-conquer.mp3" },
+          { side: "2", title: "Tenshun", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom018-02-tenshun.mp3" },
+          { side: "3", title: "Speedball", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom018-03-speedball.mp3" },
+          { side: "4", title: "The Drome (SE1)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom018-04-the-drome-se1.mp3" },
+        ]
+      },
+      {
+        title: "The World Of Monnom Black",
+        artist: "Various Artists",
+        desc: "",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM017",
+        art: "images%20from%20me%20to%20you/displaywindow/a3587730533_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/the-world-of-monnom-black", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Someone I know", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-01-someone-i-know.mp3" },
+          { side: "2", title: "Virtual Plane", src: "" },
+          { side: "3", title: "Strange Mind", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-03-strange-mind.mp3" },
+          { side: "4", title: "Opressor", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-04-opressor.mp3" },
+          { side: "5", title: "Gundam", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-05-gundam.mp3" },
+          { side: "6", title: "I Will Always Hate You", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-06-i-will-always-hate-you.mp3" },
+          { side: "7", title: "Pleroma", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-07-pleroma.mp3" },
+          { side: "8", title: "Midnight Vigil", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-08-midnight-vigil.mp3" },
+          { side: "9", title: "Rituals Of Tears", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-09-rituals-of-tears.mp3" },
+          { side: "10", title: "Inter Dimensional Hardcore Business", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-10-inter-dimensional-hardcore-business.mp3" },
+          { side: "11", title: "Dosis", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-11-dosis.mp3" },
+          { side: "12", title: "Liquid Zoo", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-12-liquid-zoo.mp3" },
+          { side: "13", title: "Factory 4", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-13-factory-4.mp3" },
+          { side: "14", title: "Urban Meditation", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom017-14-urban-meditation.mp3" },
+        ]
+      },
+      {
+        title: "Body Music Remixes",
+        artist: "Thomas P. Heckmann",
+        desc: "Thomas P. Heckmann's album Body Music on Monnom Black gets remixed with 4 acidic cuts from techno legends; CUB (Regis & Simon Shreeve), CJ Bolland, The Horrorist and label boss Dax J.",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM016",
+        art: "images%20from%20me%20to%20you/displaywindow/a1153893099_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/body-music-remixes", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Provide The Future (Dax J Remix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom016-01-provide-the-future-dax-j-remix.mp3" },
+          { side: "2", title: "Acid Head (CUB Remix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom016-02-acid-head-cub-remix.mp3" },
+          { side: "3", title: "Acid Head (CJ Bolland Bad Acid Remix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom016-03-acid-head-cj-bolland-bad-acid-remix.mp3" },
+          { side: "4", title: "Departure (The Horrorist Remix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom016-04-departure-the-horrorist-remix.mp3" },
+        ]
+      },
+      {
+        title: "Redemption EP",
+        artist: "Dax J",
+        desc: "Dax J returns to Monnom Black with a double EP of Techno and Acid weapons!",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM015",
+        art: "images%20from%20me%20to%20you/displaywindow/a249503936_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/redemption-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "No Redemption", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-01-no-redemption.mp3" },
+          { side: "2", title: "Sin And Salvation", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-02-sin-and-salvation.mp3" },
+          { side: "3", title: "Offending Public Morality (Dax J Dub Mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-03-offending-public-morality-dax-j-dub-mix.mp3" },
+          { side: "4", title: "Two Foot Shallow", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-04-two-foot-shallow.mp3" },
+          { side: "5", title: "Voltaire", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-05-voltaire.mp3" },
+          { side: "6", title: "The Tyranny", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-06-the-tyranny.mp3" },
+          { side: "7", title: "Condition The Masses", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-07-condition-the-masses.mp3" },
+          { side: "8", title: "Russian Blood Lines", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-08-russian-blood-lines.mp3" },
+          { side: "9", title: "Acid Ascention (Dax J Club Mix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom015-09-acid-ascention-dax-j-club-mix.mp3" },
+        ]
+      },
+      {
+        title: "Offending Public Morality LP",
+        artist: "Dax J",
+        desc: "Dax J\u2019s success within the challenging environment of international DJing and music production has been considerable, yet he hasn\u2019t chosen to passively bask in the comfort of his accomplishments. Instead, he has used his recent experiences to create sonic weapons to confront \u201cpublic morality\u201d with a themed album of the same name. The concept of \u201cpublic morality\u201d is one that can be used to help solidify the bonds that hold together society, but on the other hand, it can also provide the basis for acts of exclusion and scapegoating within that same society.\n\n\n\nTouching upon numerous \u201chot button\u201d issues that could offend non-reflective, puritanical sensibilities (i.e. drug abuse, racism, prostitution, murder), Offending Public Morality sprawls out like a foreboding urban landscape and calls upon all kinds of sound elements that will be new to those already familiar with Dax J. Though he has been closely identified with the techno genre this new set makes knowing nods towards his influences in the UK jungle / drum \u2018n bass scene, while also undertaking exercises in IDM, EBM, acid and other forms of uncategorizable intensity. From the introductory \u201cBabylon Brutality\u201d, which nails gritty film samples to a lush vocal elegy and authoritarian percussion, Dax J presents a story wherein creative, exploratory energy is constantly forced to contend with paranoiac, racist and exploitative tendencies. It\u2019s a relentless record typified by dark undertones and raw, unfiltered energy.\n\n\n\nEqual portions of positive excitement and dread are present in the sequencer-powered, dialed-in rush of \u201cReclaim Our Lost Honor\u201d or \u201cOffending Public Morality\u201d (whose Middle Eastern-flavored keys separate it from many likeminded journeys into Euro-coldness), while acid-dripping cuts like \u201cUnrepentacostal\u201d and the jungle cyborg stomp \u201cMustapha Mond\u201d take a darker, chillier approach. There are plenty of seductive moments to keep the force of impact from being too overwhelming \u2013 especially Zanias\u2019 guest vocal turn on \u201cWaves of Isolation,\u201d and the flaring brightness of \u201cFeed The Pigeons\u201d \u2013 but these moments of beauty tend to only highlight the importance of Dax J\u2019s overall message.\n\n\n\nThat this message can be conveyed clearly with such a variety of different sound techniques is a real testament to Dax J\u2019s skill as a producer, but also to his perceptiveness and his resilience in the face of adversity.\n\n\n\nOffending Public Morality draws up the lines of conflict in a way that\u2019s vivid and loud as possible; using radical sounds to document the ongoing struggle between free expression and violent repression.",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM014",
+        art: "images%20from%20me%20to%20you/displaywindow/a1848851896_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/offending-public-morality-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Babylon Brutality", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-01-babylon-brutality.mp3" },
+          { side: "2", title: "The Art Of Murder", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-02-the-art-of-murder.mp3" },
+          { side: "3", title: "Looking For Tina", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-03-looking-for-tina.mp3" },
+          { side: "4", title: "1001 Amen Nights", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-04-1001-amen-nights.mp3" },
+          { side: "5", title: "Waves Of Isolation", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-05-waves-of-isolation.mp3" },
+          { side: "6", title: "Reclaim Our Lost Honor", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-06-reclaim-our-lost-honor.mp3" },
+          { side: "7", title: "Unrepentacostal", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-07-unrepentacostal.mp3" },
+          { side: "8", title: "Feed The Pigeons", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-08-feed-the-pigeons.mp3" },
+          { side: "9", title: "Offending Public Morality", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-09-offending-public-morality.mp3" },
+          { side: "10", title: "It's a Trap", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-10-its-a-trap.mp3" },
+          { side: "11", title: "Mustapha Mond", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-11-mustapha-mond.mp3" },
+          { side: "12", title: "Kerb Crawling", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-12-kerb-crawling.mp3" },
+          { side: "13", title: "Acid Ascention", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-13-acid-ascention.mp3" },
+          { side: "14", title: "Death Is Imminent", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom014-14-death-is-imminent.mp3" },
+        ]
+      },
+      {
+        title: "Body Music LP",
+        artist: "Thomas P. Heckmann",
+        desc: "Monnom Black is proud to present BODY MUSIC - the new album from legendary electronic Thomas P. Heckmann is a man who needs little introduction. The German producer has flexed his prowess across all shades of electronic music, but it\u2019s his contributions to EBM-Techno, Acid, Industrial and Experimental that has earned him his notoriety, and it was in 1994 when he dropped an acid-tinged \u2018Amphetamine\u2019 as DRAX LTD. II that shot him into being recognised as a power to be reckoned with. For the production of BODY MUSIC, Heckmann has utilised 30 years worth of acquired knowledge to create a hard-hitting album which bears all the grit Heckmann is renowned for. Harmonising analogue and digital wares to create an utterly immersive album over the course of 14 tracks. Tracks such as Provide the Future, Bloody Vacant and Zeitmaschine are prime examples of how TPH can bring forth his charismatic productions into the contemporary techno climate, whilst sealing each track with his signature stamp. His vast knowledge of modular and analogue syntheses teamed with his ability to build tension proves optimal in BODY MUSIC\u2019s storytelling. The album\u2019s mission statement is simple: \u201cConnecting the future with the past.\u201d Tracks such as EBM3 start off where Thomas left off back in the early 2000s - sequels to EBM1 and EBM2. The LP will be presented over three slabs of vinyl, with the album covering significant ground in techno, EBM, acid and electro (and many chasms in between). BODY MUSIC is a prime example of why TPH has remained so in demand and relevant over the years - and now more than ever. Includes unlimited streaming of Body Music LP via the free Bandcamp app, plus high-quality download in MP3, FLAC and more.",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM013",
+        art: "images%20from%20me%20to%20you/displaywindow/a4218549728_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/body-music-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Provide The Future", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-01-provide-the-future.mp3" },
+          { side: "2", title: "Parasomnia", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-02-parasomnia.mp3" },
+          { side: "3", title: "Zeitmaschine", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom012-01-zeitmaschine.mp3" },
+          { side: "4", title: "Body Music (EBM 3)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-04-body-music-ebm-3.mp3" },
+          { side: "5", title: "Bodywrap", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-05-bodywrap.mp3" },
+          { side: "6", title: "Cabin Fever", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-06-cabin-fever.mp3" },
+          { side: "7", title: "The Hand That Rocks", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-07-the-hand-that-rocks.mp3" },
+          { side: "8", title: "Bloody Vacant", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-08-bloody-vacant.mp3" },
+          { side: "9", title: "No Saint", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-09-no-saint.mp3" },
+          { side: "10", title: "Acid Head", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-10-acid-head.mp3" },
+          { side: "11", title: "Hardbeatfunk", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-11-hardbeatfunk.mp3" },
+          { side: "12", title: "Veitstanz", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-12-veitstanz.mp3" },
+          { side: "13", title: "Drowning", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-13-drowning.mp3" },
+          { side: "14", title: "Departure", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom013-14-departure.mp3" },
+        ]
+      },
+      {
+        title: "Body Music Album Teaser",
+        artist: "Thomas P. Heckmann",
+        desc: "",
+        label: "Monnom Black",
+        year: 2018,
+        catalog: "MONNOM012",
+        art: "images%20from%20me%20to%20you/displaywindow/a1161642819_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/body-music-album-teaser", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Zeitmaschine", src: "" },
+          { side: "2", title: "Provide the Future", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom012-02-provide-the-future.mp3" },
+          { side: "3", title: "Bodywrap Dub", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom012-03-bodywrap-dub.mp3" },
+        ]
+      },
+      {
+        title: "State of Control EP",
+        artist: "I Hate Models",
+        desc: "I Hate Models makes his debut on Monnom Black bringing his trademark sound and style, anthemic ebm, acid, rave, techno killers. Absolutely Essential!",
+        label: "Monnom Black",
+        year: 2017,
+        catalog: "MONNOM011",
+        art: "images%20from%20me%20to%20you/displaywindow/a3084015627_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/state-of-control-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "State Of Control", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom011-01-state-of-control.mp3" },
+          { side: "2", title: "She Said Fuck People I Have Drugs", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom011-02-she-said-fuck-people-i-have-drugs.mp3" },
+          { side: "3", title: "Emerald", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom011-03-emerald.mp3" },
+          { side: "4", title: "Last Kiss Before Death", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom011-04-last-kiss-before-death.mp3" },
+        ]
+      },
+      {
+        title: "LSD EP",
+        artist: "Remco Beekwilder",
+        desc: "Monnom Black debuts a brand new artist to the label for its esteemed Tenth release. Coming straight out of Holland is fast rising starlight, Remco Beekwilder! Here he arrives with his monumental LSD EP. Absolute Essential Floor Killer!",
+        label: "Monnom Black",
+        year: 2017,
+        catalog: "MONNOM010",
+        art: "images%20from%20me%20to%20you/displaywindow/a1420756438_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/lsd-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "LSD", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom010-01-lsd.mp3" },
+          { side: "2", title: "Concrete Jungle", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom010-02-concrete-jungle.mp3" },
+          { side: "3", title: "Rave Mood", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom010-03-rave-mood.mp3" },
+          { side: "4", title: "Human Mind", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom010-04-human-mind.mp3" },
+        ]
+      },
+      {
+        title: "The Invisible Man EP",
+        artist: "Dax J",
+        desc: "",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM009",
+        art: "images%20from%20me%20to%20you/displaywindow/a58995424_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/the-invisible-man-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "The Wonk", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom009-01-the-wonk.mp3" },
+          { side: "2", title: "The Invisible Man", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom009-02-the-invisible-man.mp3" },
+          { side: "3", title: "Wir Leben F\u00fcr Die Nacht", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom009-03-wir-leben-fr-die-nacht.mp3" },
+          { side: "4", title: "The Bounce", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom009-04-the-bounce.mp3" },
+          { side: "5", title: "Surrender feat. Cat Yen", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom009-05-surrender-feat-cat-yen.mp3" },
+        ]
+      },
+      {
+        title: "Highest Sense EP",
+        artist: "Stranger",
+        desc: "Monnom Black 008\n\n\n\nStranger - Highest Sense EP\n\n\n\nMonnom Black 008 comes from Stranger, one of Rotterdams fast rising talents. Known for his love of classic Techno, Stranger delivers 4 peak-time Rave Acidic cuts, ready to do the damage. Highly Recommended!",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM008",
+        art: "images%20from%20me%20to%20you/displaywindow/a3329437732_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/highest-sense-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Highest Sense", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom008-01-highest-sense.mp3" },
+          { side: "2", title: "Play Some Rave For Me", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom008-02-play-some-rave-for-me.mp3" },
+          { side: "3", title: "Ommoord", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom008-03-ommoord.mp3" },
+          { side: "4", title: "Doorklapgabber", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom008-04-doorklapgabber.mp3" },
+        ]
+      },
+      {
+        title: "Shades Of Black LP",
+        artist: "Dax J",
+        desc: "Monnom Black introduces Dax J's 1st solo full length Techno album Shades of Black. Drawing inspiration from Acid, Jungle, Drum n Bass & UK Rave, combining a diverse fusion of tempos, moods and breakbeats. Essential and Highly Recommended!",
+        label: "Monnom Black",
+        year: 2015,
+        catalog: "MONNOM007",
+        art: "images%20from%20me%20to%20you/displaywindow/a669957456_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/shades-of-black-lp", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Orlok's Symphony", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-01-orloks-symphony.mp3" },
+          { side: "2", title: "Beyond The Planets", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-02-beyond-the-planets.mp3" },
+          { side: "3", title: "Renegades Of Conflict", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-03-renegades-of-conflict.mp3" },
+          { side: "4", title: "Devine Right", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-04-devine-right.mp3" },
+          { side: "5", title: "In The Shadows", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-05-in-the-shadows.mp3" },
+          { side: "6", title: "Protect The Prophecy", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-06-protect-the-prophecy.mp3" },
+          { side: "7", title: "Requiem Souls", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-07-requiem-souls.mp3" },
+          { side: "8", title: "Black Pegasus", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-08-black-pegasus.mp3" },
+          { side: "9", title: "Sempa", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-09-sempa.mp3" },
+          { side: "10", title: "Afterlife", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom007-10-afterlife.mp3" },
+        ]
+      },
+      {
+        title: "Mispress EP",
+        artist: "Binny",
+        desc: "Monnom Black welcomes Binny to the label. His Mispress EP consists of 4 peak-time bombs, in classic Binny style that he is known so well for. Inspired from Mills, Surgeon and old school 90's techno with a modern day twist.",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM006",
+        art: "images%20from%20me%20to%20you/displaywindow/a4227370301_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/mispress-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Mispress", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom006-01-mispress.mp3" },
+          { side: "2", title: "Outline", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom006-02-outline.mp3" },
+          { side: "3", title: "Quarantine", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom006-03-quarantine.mp3" },
+          { side: "4", title: "Event Horizon", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom006-04-event-horizon.mp3" },
+        ]
+      },
+      {
+        title: "Imperial Propaganda EP",
+        artist: "Dax J",
+        desc: "Dax J delivers the 5th edition of Monnom Black. 4 raw, peak time techno slammers ready to shake the floor. Comes with additional limited bespoke art insert & sticker",
+        label: "Monnom Black",
+        year: 2015,
+        catalog: "MONNOM005",
+        art: "images%20from%20me%20to%20you/displaywindow/a65816871_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/imperial-propaganda-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Imperial Propaganda", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom005-01-imperial-propaganda.mp3" },
+          { side: "2", title: "Closer To God", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom005-02-closer-to-god.mp3" },
+          { side: "3", title: "The Future", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom005-03-the-future.mp3" },
+          { side: "4", title: "Twilight Zone", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom005-04-twilight-zone.mp3" },
+        ]
+      },
+      {
+        title: "Vyper EP",
+        artist: "Emmanuel",
+        desc: "",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM004",
+        art: "images%20from%20me%20to%20you/displaywindow/a2166016869_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/vyper-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Vyper EP", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom004-01-vyper-ep.mp3" },
+          { side: "2", title: "Mind Your Business", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom004-02-mind-your-business.mp3" },
+          { side: "3", title: "One Million Enemies", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom004-03-one-million-enemies.mp3" },
+        ]
+      },
+      {
+        title: "Infinite Abyss EP",
+        artist: "Dax J",
+        desc: "The 3rd Release from Monnom Black sees 4 new original tracks from Dax J. Acidic, rave dance-floor weapons",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM003",
+        art: "images%20from%20me%20to%20you/displaywindow/a141418457_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/infinite-abyss-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Zion", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom003-01-zion.mp3" },
+          { side: "2", title: "Infinite Abyss", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom003-02-infinite-abyss.mp3" },
+          { side: "3", title: "Distant Futures", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom003-03-distant-futures.mp3" },
+          { side: "4", title: "Inca Trail", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom003-04-inca-trail.mp3" },
+        ]
+      },
+      {
+        title: "Basement EP",
+        artist: "Kaelan",
+        desc: "",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM002",
+        art: "images%20from%20me%20to%20you/displaywindow/a3041096079_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/basement-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Mod 2", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom002-01-mod-2.mp3" },
+          { side: "2", title: "Darkpole", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom002-02-darkpole.mp3" },
+          { side: "3", title: "K1", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom002-03-k1.mp3" },
+          { side: "4", title: "Mod 2 (NX1 Remix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom002-04-mod-2-nx1-remix.mp3" },
+        ]
+      },
+      {
+        title: "Dreamscape EP",
+        artist: "Dax J",
+        desc: "",
+        label: "Monnom Black",
+        year: 2016,
+        catalog: "MONNOM001",
+        art: "images%20from%20me%20to%20you/displaywindow/a1442108399_10.jpg",
+        links: { bandcamp: "https://monnomblack.bandcamp.com/album/dreamscape-ep", beatport: "#", spotify: "#" },
+        tracks: [
+          { side: "1", title: "Dreamscape", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom001-01-dreamscape.mp3" },
+          { side: "2", title: "Planet X", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom001-02-planet-x.mp3" },
+          { side: "3", title: "Planet X (Mark Broom Remix)", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom001-03-planet-x-mark-broom-remix.mp3" },
+          { side: "4", title: "Alpha Rhythm", src: "https://pub-e1383eba60f34889b595e68af46326a0.r2.dev/monnom001-04-alpha-rhythm.mp3" },
+        ]
+      },
+    ];
+
+
+
+    // Build merch items
+    var colRight = document.getElementById('colRight');
+    MERCH.forEach(function(item, i) {
+      if (item.soldOut) return;
+      var el = document.createElement('div');
+      el.className = 'mag-item';
+      el.dataset.index = i;
+      var label = item.artist ? item.artist + ' \u2014 ' + item.title : item.title;
+      el.innerHTML = '<div class="mag-wrap"><img src="' + item.img + '" alt=""></div>' +
+        '<span class="mag-catalog">' + item.price + (item.soldOut ? ' \u2014 Sold Out' : '') + '</span>' +
+        '<span class="mag-artist">' + (item.artist || 'Monnom Black') + '</span>' +
+        '<span class="mag-label">' + item.title + '</span>';
+      colRight.appendChild(el);
+    });
+
+    // Drag-to-pan on shows column
+    (function() {
+      var col = document.getElementById('colLeft');
+      var dragging = false, startX, startY, scrollX, scrollY;
+
+      col.addEventListener('mousedown', function(e) {
+        dragging = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        scrollX = col.scrollLeft;
+        scrollY = col.scrollTop;
+        col.style.cursor = 'grabbing';
+
+        function onMove(e2) {
+          var dx = e2.clientX - startX;
+          var dy = e2.clientY - startY;
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragging = true;
+          col.scrollLeft = scrollX - dx;
+          col.scrollTop = scrollY - dy;
+        }
+        function onUp() {
+          col.style.cursor = 'crosshair';
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    })();
+
+    // Pop sound
     var popCtx = null;
+    var soundEnabled = localStorage.getItem('dax-sound') !== 'off';
     function playPop() {
+      if (!soundEnabled) return;
       if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
       var osc = popCtx.createOscillator();
       var gain = popCtx.createGain();
@@ -59,7 +1536,254 @@
       osc.start(popCtx.currentTime);
       osc.stop(popCtx.currentTime + 0.08);
     }
-    document.querySelectorAll('nav a').forEach(function(a) { a.addEventListener('mouseenter', playPop); });
+
+    // Sound toggle
+    (function() {
+      var btn = document.getElementById('soundToggle');
+      function updateIcon() { btn.classList.toggle('off', !soundEnabled); }
+      updateIcon();
+      btn.addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        localStorage.setItem('dax-sound', soundEnabled ? 'on' : 'off');
+        updateIcon();
+      });
+    })();
+
+    // Magnetic cursor-parallax zoom — simple in-place scale + translate
+    function bindMagneticZoom() {
+      var SCALE = 1.12, PULL = 12, LERP_IN = 0.10, LERP_OUT = 0.07;
+
+      document.querySelectorAll('.mag-wrap').forEach(function(wrap) {
+        var img = wrap.querySelector('img');
+        if (!img) return;
+
+        var targetX = 0, targetY = 0, curX = 0, curY = 0;
+        var targetS = 1, curS = 1, raf = null, active = false;
+
+        function lerp(a, b, t) { return a + (b - a) * t; }
+
+        function tick() {
+          var speed = active ? LERP_IN : LERP_OUT;
+          curX = lerp(curX, targetX, speed);
+          curY = lerp(curY, targetY, speed);
+          curS = lerp(curS, targetS, speed);
+          img.style.transform = 'scale(' + curS + ') translate(' + curX + 'px, ' + curY + 'px)';
+          var settled = !active && Math.abs(curX) < 0.05 && Math.abs(curY) < 0.05 && Math.abs(curS - 1) < 0.001;
+          if (!settled) raf = requestAnimationFrame(tick);
+          else { img.style.transform = ''; raf = null; }
+        }
+
+        wrap.addEventListener('mouseenter', function() {
+          active = true; targetS = SCALE;
+          if (!raf) raf = requestAnimationFrame(tick);
+        });
+        wrap.addEventListener('mousemove', function(e) {
+          var r = wrap.getBoundingClientRect();
+          var nx = (e.clientX - r.left) / r.width - 0.5;
+          var ny = (e.clientY - r.top) / r.height - 0.5;
+          targetX = -nx * PULL * 2;
+          targetY = -ny * PULL * 2;
+        });
+        wrap.addEventListener('mouseleave', function() {
+          active = false; targetX = 0; targetY = 0; targetS = 1;
+          if (!raf) raf = requestAnimationFrame(tick);
+        });
+      });
+    }
+
+    bindMagneticZoom();
+
+    // Magnetic zoom on left column (shows) — cursor is the magnet (desktop only)
+    (function() {
+      if (window.innerWidth <= 800) return;
+      var col = document.getElementById('colLeft');
+      var inner = document.getElementById('colLeftInner');
+      var SCALE = 1.35, LERP_IN = 0.08, LERP_OUT = 0.05;
+      var targetS = 1, curS = 1, raf = null, active = false;
+
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function tick() {
+        var speed = active ? LERP_IN : LERP_OUT;
+        curS = lerp(curS, targetS, speed);
+        inner.style.transform = 'scale(' + curS + ')';
+        var settled = !active && Math.abs(curS - 1) < 0.001;
+        if (!settled) raf = requestAnimationFrame(tick);
+        else { inner.style.transform = ''; inner.style.transformOrigin = ''; raf = null; }
+      }
+
+      col.addEventListener('mouseenter', function() {
+        active = true; targetS = SCALE;
+        if (!raf) raf = requestAnimationFrame(tick);
+      });
+      col.addEventListener('mousemove', function(e) {
+        var r = col.getBoundingClientRect();
+        var px = ((e.clientX - r.left) / r.width * 100);
+        var py = ((e.clientY - r.top) / r.height * 100);
+        inner.style.transformOrigin = px + '% ' + py + '%';
+      });
+      col.addEventListener('mouseleave', function() {
+        active = false; targetS = 1;
+        if (!raf) raf = requestAnimationFrame(tick);
+      });
+    })();
+
+    // ─── Modal ───
+    var overlay = document.getElementById('modal-overlay');
+    var closeBtn = document.getElementById('modal-close');
+
+    function openModal(index) {
+      var item = MERCH[index];
+      document.getElementById('modal-art-img').src = item.img;
+      document.getElementById('modal-title').textContent = item.title;
+      document.getElementById('modal-meta').textContent = item.artist || 'Monnom Black';
+      document.getElementById('modal-catalog').textContent = item.catalog || '';
+
+      var priceEl = document.getElementById('modal-price');
+      priceEl.textContent = item.soldOut ? item.price + ' \u2014 Sold Out' : item.price;
+      priceEl.className = item.soldOut ? 'sold-out' : '';
+
+      document.getElementById('modal-type').textContent = item.type;
+      document.getElementById('modal-desc').textContent = item.desc || '';
+
+      // Match to a release for playable tracks
+      var tl = document.getElementById('modal-tracklist');
+      tl.innerHTML = '';
+      var matchedRi = -1;
+      var titleLower = item.title.toLowerCase();
+      for (var r = 0; r < RELEASES.length; r++) {
+        if (RELEASES[r].title.toLowerCase() === titleLower) { matchedRi = r; break; }
+      }
+      if (matchedRi < 0 && item.catalog) {
+        for (var r2 = 0; r2 < RELEASES.length; r2++) {
+          if (RELEASES[r2].catalog === item.catalog) { matchedRi = r2; break; }
+        }
+      }
+      if (matchedRi >= 0) {
+        var rel = RELEASES[matchedRi];
+        var PLAY_PATH = 'M5 2v12l9-6z';
+        var PAUSE_PATH = 'M4 2h3v12H4zM9 2h3v12H9z';
+        var ps = window.DaxPlayer ? DaxPlayer.getState() : { ri: -1, ti: -1, playing: false };
+        rel.tracks.forEach(function(t, ti) {
+          var trackTitle = typeof t === 'string' ? t : t.title;
+          var div = document.createElement('div');
+          div.className = 'modal-track';
+          div.dataset.trackIndex = ti;
+          div.dataset.releaseIndex = matchedRi;
+          var isActive = (matchedRi === ps.ri && ti === ps.ti && ps.playing);
+          if (isActive) div.classList.add('playing');
+          div.innerHTML =
+            '<span class="mt-play"><svg viewBox="0 0 16 16"><path d="' + (isActive ? PAUSE_PATH : PLAY_PATH) + '"/></svg></span>' +
+            '<span>' + (ti + 1) + '. ' + trackTitle + '</span>';
+          div.addEventListener('click', function(e) {
+            e.stopPropagation();
+            DaxPlayer.play(matchedRi, ti);
+            playPop();
+          });
+          tl.appendChild(div);
+        });
+      }
+
+      var links = document.getElementById('modal-links');
+      if (item.soldOut) {
+        links.innerHTML = '<a class="disabled">Sold Out</a>';
+      } else {
+        links.innerHTML = '<a href="' + item.url + '" target="_blank" rel="noopener">Buy on Bandcamp</a>';
+      }
+
+      overlay.classList.add('open');
+      requestAnimationFrame(function() {
+        overlay.classList.add('visible');
+      });
+    }
+
+    // Sync modal track highlights with player state
+    document.addEventListener('dax-player-change', function(e) {
+      var PLAY_PATH = 'M5 2v12l9-6z';
+      var PAUSE_PATH = 'M4 2h3v12H4zM9 2h3v12H9z';
+      document.querySelectorAll('.modal-track').forEach(function(el) {
+        var ti = parseInt(el.dataset.trackIndex);
+        var ri = parseInt(el.dataset.releaseIndex);
+        var isThis = ri === e.detail.ri && ti === e.detail.ti;
+        el.classList.toggle('playing', isThis && e.detail.playing);
+        var svg = el.querySelector('.mt-play svg path');
+        if (svg) svg.setAttribute('d', (isThis && e.detail.playing) ? PAUSE_PATH : PLAY_PATH);
+      });
+    });
+
+    function closeModal() {
+      overlay.classList.remove('visible');
+      setTimeout(function() { overlay.classList.remove('open'); }, 400);
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    closeBtn.addEventListener('mouseenter', playPop);
+    document.getElementById('modal-close-x').addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+
+    // Click on merch items
+    document.querySelectorAll('.mag-item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        openModal(parseInt(item.dataset.index));
+        playPop();
+      });
+    });
+
+    // Pop sounds on nav
+    document.querySelectorAll('nav a, .show-tickets').forEach(function(el) {
+      el.addEventListener('mouseenter', playPop);
+    });
+
+    // Fetch shows from Bandsintown API
+    function cleanVenue(name) {
+      return (name || '').replace(/\s+\d{4}\s*$/, '').trim();
+    }
+
+    fetch('https://rest.bandsintown.com/artists/id_1054709/events?app_id=24227d96e107168700635bb384feee25')
+      .then(function(r) { return r.json(); })
+      .then(function(events) {
+        var el = document.getElementById('showsList');
+        if (!events.length) { el.innerHTML = '<div class="shows-loading">No upcoming shows</div>'; return; }
+        el.innerHTML = '';
+        events.forEach(function(ev) {
+          var d = new Date(ev.datetime);
+          var dd = String(d.getDate()).padStart(2, '0');
+          var mm = String(d.getMonth() + 1).padStart(2, '0');
+          var city = ev.venue.city;
+          var venue = cleanVenue(ev.venue.name);
+          var ticketUrl = (ev.offers && ev.offers.length) ? ev.offers[0].url : ev.url;
+          var row = document.createElement('div');
+          row.className = 'show-row';
+          var venueHtml = venue ? ', <span class="show-venue">' + venue + '</span>' : '';
+          row.innerHTML = '<span class="show-date">' + dd + '/' + mm + '</span>' +
+            '<span class="show-info">' + city + venueHtml + '</span>' +
+            '<a class="show-tickets" href="' + ticketUrl + '" target="_blank" rel="noopener">Tickets</a>';
+          row.querySelector('.show-tickets').addEventListener('mouseenter', playPop);
+          el.appendChild(row);
+        });
+      })
+      .catch(function() {
+        document.getElementById('showsList').innerHTML = '<div class="shows-loading">Could not load shows</div>';
+      });
+
+    // Theme toggle
+    var savedTheme = localStorage.getItem('dax-theme');
+    if (savedTheme === 'light') document.documentElement.classList.add('light');
+    document.getElementById('themeToggle').addEventListener('click', function() {
+      document.documentElement.classList.toggle('light');
+      var isLight = document.documentElement.classList.contains('light');
+      localStorage.setItem('dax-theme', isLight ? 'light' : 'dark');
+      playPop();
+    });
   </script>
+  <script src="player.js"></script>
+
 </body>
 </html>
